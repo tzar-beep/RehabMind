@@ -1,81 +1,158 @@
-# RehabMind
+# 🧠 RehabMind
 
 **AI-assisted, clinician-bounded speech and language practice for people recovering from
 stroke-related aphasia.**
 
-Patients name pictures by speaking or typing. RehabMind transcribes speech on its own
-server, scores each answer, and personalizes the next exercise, always inside limits set by
-the patient's clinician. Clinicians see real practice data, manage those limits as versioned
-settings, and can audit every AI decision.
+![Next.js](https://img.shields.io/badge/NEXT.JS-16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white&labelColor=555)
+![FastAPI](https://img.shields.io/badge/FASTAPI-PYTHON%203.12-009688?style=for-the-badge&logo=fastapi&logoColor=white&labelColor=555)
+![PostgreSQL](https://img.shields.io/badge/POSTGRESQL-18-4169E1?style=for-the-badge&logo=postgresql&logoColor=white&labelColor=555)
+![Redis](https://img.shields.io/badge/REDIS-SESSIONS%20%7C%20JOBS-DC382D?style=for-the-badge&logo=redis&logoColor=white&labelColor=555)
 
-> Academic / research prototype. Not a diagnostic tool, not clinically validated, and not
-> an autonomous system: the clinician is always the authority.
+![Speech](https://img.shields.io/badge/SPEECH-FASTER--WHISPER%20(LOCAL)-6A1B9A?style=for-the-badge&labelColor=555)
+![AI](https://img.shields.io/badge/GEN%20AI-VALIDATED%20%7C%20AUDITED%20%7C%20NON--AGENTIC-0B7A75?style=for-the-badge&labelColor=555)
+![Security](https://img.shields.io/badge/SECURITY-RBAC%20%7C%20CSP%20%7C%20AES--GCM-4CAF50?style=for-the-badge&labelColor=555)
+
+![Accessibility](https://img.shields.io/badge/ACCESSIBILITY-WCAG%202.1%20AA-1565C0?style=for-the-badge&labelColor=555)
+![Tests](https://img.shields.io/badge/TESTS-PYTEST%20%7C%20VITEST%20%7C%20PLAYWRIGHT-E67E22?style=for-the-badge&labelColor=555)
+![Cost](https://img.shields.io/badge/COST-%240%20%7C%20NO%20API%20KEYS-2E7D32?style=for-the-badge&labelColor=555)
+![Status](https://img.shields.io/badge/STATUS-ACADEMIC%20PROTOTYPE-9E9E9E?style=for-the-badge&labelColor=555)
+
+Patients name pictures by **speaking or typing**. RehabMind transcribes speech on its own
+server, scores each answer, and personalizes the next exercise, always **inside limits set
+by the patient's clinician**. Clinicians see real practice data, manage those limits as
+versioned settings, and can audit every AI decision.
+
+> ⚠️ Academic / research prototype. Not a diagnostic tool, not clinically validated, and
+> not an autonomous system: the clinician is always the authority.
 
 ---
 
-## Highlights
+## 📸 Screenshots
 
-**For patients**
-- One picture, one question, one big button: designed to reduce cognitive load
-- Answer by **voice or typing**, with progressive hints (meaning first, then first sound)
-- Warm, honest feedback that always shows the picture with the correct word
-- Accessible: WCAG 2.1 AA target, large targets, legible typography, reduced motion
+| Patient: picture naming with hints | Patient: supportive feedback |
+|---|---|
+| ![Practice with hints](docs/images/practice-hints.png) | ![Feedback](docs/images/practice-feedback.png) |
 
-**For clinicians**
-- Dashboard of assigned patients with factual activity, and nothing invented
-- Accuracy and difficulty trends, session history, transcript confidence
-- **Versioned practice limits**: each change creates a new immutable version
-- **AI audit log**: what the AI suggested, which check rejected it, and what the patient got
+| Clinician: patient overview & trends | Clinician: versioned practice limits |
+|---|---|
+| ![Overview](docs/images/clinician-overview.png) | ![Constraints](docs/images/clinician-constraints.png) |
 
-**Safety by design**
-- `MAX_DIFFICULTY = 3` ⇒ never difficulty 4: enforced by the progression rule, the
-  generator, a single exercise issuer **and** a database trigger
-- Generative AI is a bounded component, not an agent: every output passes format,
-  clinical and safety validation, with retry and a deterministic fallback
-- Patient audio is **encrypted, transcribed locally, then deleted**; Whisper
-  hallucinations are never scored
-- Strict data isolation: clinicians only ever see their own patients
+<details>
+<summary><b>Clinician: AI audit log</b></summary>
 
-**$0 to run**: no paid APIs and no keys. Speech recognition (faster-whisper) and AI
-personalization run locally.
+![AI audit log](docs/images/clinician-ai-log.png)
+</details>
 
-## Architecture
+---
 
+## ✨ Highlights
+
+| 🧑‍🦽 Patients | 🩺 Clinicians | 🛡️ Safety by design |
+|---|---|---|
+| One picture, one question, one big button | Dashboard of assigned patients (real data only) | `MAX_DIFFICULTY` enforced in 4 independent layers, incl. a DB trigger |
+| Answer by **voice or typing** | Accuracy & difficulty trends, session history | Generative AI is bounded: schema → clinical → safety validation |
+| Hints: meaning first, then first sound | **Versioned practice limits** (never edited, only superseded) | Retry + deterministic fallback; patients are never blocked |
+| Warm, honest feedback with the correct word | **AI audit log**: suggestion, verdict, what the patient got | Audio **encrypted → transcribed locally → deleted** |
+| Large targets, legible font, reduced motion | Transcript confidence, never raw audio | Whisper hallucinations are never scored |
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    B([Browser]) -- HTTPS --> C[Caddy<br/>TLS · HSTS]
+    C --> W[Next.js 16<br/>UI · CSP nonce]
+    W -- /api --> A[FastAPI<br/>RBAC · sessions]
+    A --> P[(PostgreSQL<br/>roles · triggers)]
+    A --> R[(Redis<br/>sessions · queue)]
+    A --> M[(MinIO<br/>encrypted audio)]
+    R --> K[ARQ worker]
+    K --> S[faster-whisper<br/>local STT]
+    K --> M
+    A --> AI[AI provider<br/>offline · validated]
 ```
-Browser ─HTTPS─▶ Caddy ─▶ Next.js (UI) ─▶ FastAPI ─▶ PostgreSQL · Redis · MinIO
-                                          ARQ worker ─▶ faster-whisper · AI provider
+
+Modular monolith plus a background worker. Only Caddy is exposed. The API, database, cache and
+storage are internal.
+
+## 🔁 Core practice loop
+
+```mermaid
+flowchart TD
+    E[Exercise shown] --> R{Patient answers}
+    R -- types --> SC[Deterministic scoring]
+    R -- speaks --> ENC[Encrypt audio] --> STT[Local Whisper] --> DEL[Delete audio]
+    DEL --> REL{Transcript reliable?}
+    REL -- no --> E
+    REL -- yes --> SC
+    SC --> PERF[Update performance profile]
+    PERF --> GEN[AI proposes next exercise]
+    GEN --> V{Schema · clinical · safety checks}
+    V -- pass --> ISS[ExerciseIssuer + DB trigger]
+    V -- fail --> RT[Retry] --> V2{Still failing?}
+    V2 -- yes --> FB[Rule-based fallback] --> ISS
+    V2 -- no --> ISS
+    ISS --> E
 ```
 
-Modular monolith + background worker. Next.js 16, TypeScript, Tailwind · FastAPI,
-SQLAlchemy 2, Alembic · PostgreSQL 18 · Redis 8 · MinIO · faster-whisper.
+## 🛡️ Clinical safety layers
 
-## Quick start (local development)
+```mermaid
+flowchart LR
+    L1[1. Progression rule<br/>clamped to range] --> L2[2. Generator<br/>picks only allowed pictures]
+    L2 --> L3[3. ExerciseIssuer<br/>sole creator, validates]
+    L3 --> L4[4. PostgreSQL trigger<br/>rejects out-of-range rows]
+    L4 --> OK([Patient receives<br/>a safe exercise])
+```
+
+The runtime database role cannot alter tables, disable the trigger, or edit constraint
+versions and audit logs.
+
+---
+
+## 🧰 Tech stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · Zod · Lucide |
+| Backend | FastAPI · Pydantic v2 · SQLAlchemy 2 (async) · Alembic |
+| Data | PostgreSQL 18 · Redis 8 · MinIO (S3-compatible) |
+| Speech | faster-whisper `small.en` (CPU int8, self-hosted) |
+| AI | Provider interface + offline deterministic provider (pluggable, e.g. Ollama) |
+| Ops | Docker Compose · Caddy · GitHub Actions |
+| Testing | pytest · Hypothesis · Vitest · Playwright · axe-core |
+
+## 🚀 Quick start
 
 ```bash
-cp .env.example .env                       # then fill in the change-me values
+cp .env.example .env                       # fill in the change-me values
 docker compose up -d --wait
-cd backend && uv run python -m app.scripts.provision_storage
+cd backend
+uv run python -m app.scripts.provision_storage
 uv run alembic upgrade head && uv run python -m app.scripts.seed_dev
 uv run uvicorn app.main:app --port 8000    # API
-uv run python -m app.workers.main          # speech worker (another terminal)
-cd ../frontend && npm install && npm run dev   # http://localhost:3000
+uv run python -m app.workers.main          # speech worker (second terminal)
+cd ../frontend && npm install && npm run dev   # → http://localhost:3000
 ```
 
-Self-hosted production-like stack: see [docs/deployment.md](docs/deployment.md).
+Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.prod.yaml up -d --build`
+(see [deployment](docs/deployment.md)).
 
-## Quality
+## ✅ Quality
 
-150+ backend tests, frontend unit tests, Playwright end-to-end tests with axe
-accessibility checks, dependency audits and CI.
+- **146** backend tests, including property-based tests of the max-difficulty rule
+- Frontend unit tests and **Playwright end-to-end** tests, with axe accessibility checks on every screen
+- Phone and tablet layout checks, dependency audits, and a CI workflow
 
-## Documentation
+## 📚 Documentation
 
 [Architecture](docs/architecture.md) ·
-[Development](docs/development.md) ·
 [Clinical constraints](docs/clinical-constraints.md) ·
 [AI pipeline](docs/ai-pipeline.md) ·
 [Clinician workflow](docs/clinician-workflow.md) ·
 [Security](docs/security.md) ·
 [Privacy](docs/privacy.md) ·
 [Accessibility](docs/accessibility.md) ·
-[Deployment](docs/deployment.md)
+[Deployment](docs/deployment.md) ·
+[Development](docs/development.md)
