@@ -1,6 +1,9 @@
-import pytest
+import logging
 
-from app.core.config import get_settings
+import pytest
+from pydantic import SecretStr, ValidationError
+
+from app.core.config import Settings, get_settings
 from app.core.logging import _redact
 from app.scripts.seed_dev import assert_seed_allowed
 
@@ -34,3 +37,49 @@ async def test_security_headers(client):
     r = await client.get("/api/health/live")
     assert r.headers["x-content-type-options"] == "nosniff"
     assert r.headers["cache-control"] == "no-store"
+
+
+def _prod(**overrides):
+    strong = SecretStr("x" * 32)
+    base = get_settings().model_dump()
+    base.update(
+        app_env="production",
+        frontend_origins=["https://rehabmind.example"],
+        postgres_app_password=strong,
+        postgres_migrator_password=strong,
+        redis_password=strong,
+        s3_secret_key=strong,
+        audio_encryption_key=strong,
+        ai_fake_fault_rate=0,
+        seed_dev_password=None,
+    )
+    base.update(overrides)
+    return Settings.model_validate(base)
+
+
+def test_production_settings_accept_strong_configuration():
+    assert _prod().is_production
+
+
+@pytest.mark.parametrize(
+    ("override", "message"),
+    [
+        ({"redis_password": SecretStr("change-me-redis")}, "REDIS_PASSWORD"),
+        ({"s3_secret_key": SecretStr("short")}, "S3_SECRET_KEY"),
+        ({"ai_fake_fault_rate": 0.2}, "AI_FAKE_FAULT_RATE"),
+        ({"seed_dev_password": SecretStr("x" * 20)}, "SEED_DEV_PASSWORD"),
+        ({"frontend_origins": ["http://rehabmind.example"]}, "https"),
+    ],
+)
+def test_production_refuses_unsafe_configuration(override, message):
+    with pytest.raises(ValidationError, match=message):
+        _prod(**override)
+
+
+async def test_access_log_has_route_templates_not_ids(client, caplog):
+    caplog.set_level(logging.INFO, logger="app.access")
+    pid = "11111111-1111-1111-1111-111111111111"
+    await client.get(f"/api/v1/patients/{pid}?secret=1")
+    [record] = [r for r in caplog.records if r.name == "app.access"]
+    assert record.data["route"] == "/api/v1/patients/{patient_id}"
+    assert pid not in str(record.data) and "secret" not in str(record.data)

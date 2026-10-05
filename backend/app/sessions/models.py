@@ -19,6 +19,8 @@ class PracticeSession(Base):
             unique=True,
             postgresql_where=text("status = 'active'"),
         ),
+        # Clinician history/trends: a patient's sessions by time.
+        Index("ix_practice_sessions_patient_started", "patient_id", "started_at"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -35,6 +37,8 @@ class ExerciseResponse(Base):
     """A patient's answer and its deterministic score. Doubles as the performance event log."""
 
     __tablename__ = "exercise_responses"
+    # Clinician summaries: a patient's most recent responses.
+    __table_args__ = (Index("ix_exercise_responses_patient_created", "patient_id", "created_at"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     exercise_id: Mapped[uuid.UUID] = mapped_column(

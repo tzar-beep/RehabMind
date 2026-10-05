@@ -2,7 +2,7 @@ import os
 
 # Must be set before any app import: tests use an isolated database and Redis DB.
 os.environ["APP_ENV"] = "test"
-os.environ["POSTGRES_DB"] = "stroke_recovery_test"
+os.environ["POSTGRES_DB"] = "rehabmind_test"
 os.environ["REDIS_URL"] = "redis://127.0.0.1:6379/15"
 # Faulty AI outputs on: every test also proves validation and fallback hold.
 os.environ["AI_PROVIDER"] = "fake"

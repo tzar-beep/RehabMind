@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, Integer, SmallInteger, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, SmallInteger, String, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -17,6 +17,8 @@ class AIGeneration(Base):
     """
 
     __tablename__ = "ai_generations"
+    # Clinician AI audit log: a patient's most recent attempts.
+    __table_args__ = (Index("ix_ai_generations_patient_created", "patient_id", "created_at"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     created_at: Mapped[datetime] = mapped_column(

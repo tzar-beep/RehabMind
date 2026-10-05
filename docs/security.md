@@ -32,8 +32,8 @@ CORS lists explicit origins only — never `*` with credentials (enforced at sta
 | Role | Rights |
 |---|---|
 | `postgres` | Container admin only; never used by the app |
-| `sra_migrator` | Owns schema; runs Alembic |
-| `sra_app` | Runtime: DML only; cannot create/alter tables or disable triggers; INSERT/SELECT only on `audit_logs` |
+| `rehabmind_migrator` | Owns schema; runs Alembic |
+| `rehabmind_app` | Runtime: DML only; cannot create/alter tables or disable triggers; INSERT/SELECT only on `audit_logs` |
 
 ## Audit
 
@@ -51,9 +51,40 @@ Unhandled errors return a generic message. Responses carry `no-store`, `nosniff`
 `.env` is git-ignored; `.env.example` holds placeholders only. Settings fail fast when a
 required secret is missing. Dev seed refuses to run unless `APP_ENV=development` on a local DB.
 
-## Known gaps (Phase 6)
+## Browser hardening
 
-- Health check uses MinIO root credentials → scoped storage credentials.
-- Content-Security-Policy header.
-- Secrets manager for production; TLS termination and HSTS at the edge.
-- Login rate limit by IP relies on `X-Forwarded-For` from the trusted Next.js proxy.
+- Per-request nonce CSP (`src/proxy.ts`): scripts only from this origin with the nonce,
+  `object-src 'none'`, `frame-ancestors 'none'`, `form-action 'self'`; HSTS in production.
+- `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: same-origin`, microphone limited to self.
+
+## Storage
+
+The app uses a least-privilege storage user (`S3_ACCESS_KEY`) that can only put/get/delete
+under `ephemeral-audio/audio/*`; it cannot change bucket policy, lifecycle or versioning,
+create buckets, or list other buckets. Root keys exist only in `provision_storage`.
+
+## Abuse limits
+
+Login: per account and per IP. Speech uploads: 30 per patient per minute, 2 MB each,
+one in flight per exercise.
+
+## Production guards
+
+Startup fails in production with placeholder or short secrets, non-HTTPS or wildcard origins,
+a non-zero demo AI fault rate, or a dev seed password present.
+
+## Logging
+
+Access logs record method, route template, status and duration only — no IDs, query strings,
+bodies or cookies. Unmatched paths are logged as `unmatched`.
+
+## Supply chain
+
+`npm audit --omit=dev` and `pip-audit` run in CI (both clean at Phase 6). Images are pinned
+by digest (infrastructure) or version (application bases).
+
+## Remaining gaps
+
+- Encryption key from a managed KMS; encrypted volumes and backups.
+- Login IP limit trusts `X-Forwarded-For` from the proxy chain (Caddy → Next → API).
+- No penetration test or formal threat model review.

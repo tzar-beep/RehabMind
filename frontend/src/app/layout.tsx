@@ -11,7 +11,7 @@ const atkinson = Atkinson_Hyperlegible_Next({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Stroke Recovery AI", template: "%s · Stroke Recovery AI" },
+  title: { default: "RehabMind", template: "%s · RehabMind" },
   description: "Personalized language practice for aphasia recovery.",
   robots: { index: false, follow: false },
 };

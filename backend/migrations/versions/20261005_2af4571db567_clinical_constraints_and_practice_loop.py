@@ -299,7 +299,7 @@ def upgrade() -> None:
         "ON exercises FOR EACH ROW EXECUTE FUNCTION enforce_exercise_constraints()"
     )
     # Constraint sets are immutable versions; the runtime role may only add new ones.
-    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON clinical_constraint_sets FROM sra_app")
+    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON clinical_constraint_sets FROM rehabmind_app")
 
 
 def downgrade() -> None:

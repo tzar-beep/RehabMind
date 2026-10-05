@@ -232,3 +232,39 @@ async def test_unreliable_transcripts_are_never_scored(care, stt, text, no_speec
     async with SessionLocal() as db:
         assert (await db.get(Exercise, uuid.UUID(ex["id"]))).status == "pending"
         assert (await db.execute(select(ExerciseResponse))).first() is None
+
+
+def test_app_storage_credentials_are_least_privilege():
+    """The app's storage user can only touch audio/* in its bucket."""
+    from botocore.exceptions import ClientError
+
+    client = get_audio_store().store.client
+    bucket = get_audio_store().store.bucket
+    for action in (
+        lambda: client.put_object(Bucket=bucket, Key="other/x", Body=b"x"),
+        lambda: client.create_bucket(Bucket="rehabmind-not-allowed"),
+        lambda: client.delete_bucket_lifecycle(Bucket=bucket),
+        lambda: client.put_bucket_versioning(
+            Bucket=bucket, VersioningConfiguration={"Status": "Enabled"}
+        ),
+    ):
+        with pytest.raises(ClientError, match="AccessDenied"):
+            action()
+    # Listing is filtered to the one bucket it may use; it can still write audio.
+    assert [b["Name"] for b in client.list_buckets()["Buckets"]] == [bucket]
+    client.put_object(Bucket=bucket, Key="audio/probe", Body=b"x")
+    client.delete_object(Bucket=bucket, Key="audio/probe")
+
+
+async def test_speech_uploads_are_rate_limited(care):  # noqa: F811
+    from app.speech.router import UPLOADS_PER_MINUTE
+
+    app.dependency_overrides[get_job_queue] = lambda: InlineQueue(FakeProvider(), run=False)
+    try:
+        patient, ex = await speech_plan(care)
+        codes = [
+            (await upload(patient, ex["id"])).status_code for _ in range(UPLOADS_PER_MINUTE + 1)
+        ]
+    finally:
+        app.dependency_overrides.pop(get_job_queue, None)
+    assert codes[0] == 202 and set(codes[1:-1]) == {409} and codes[-1] == 429

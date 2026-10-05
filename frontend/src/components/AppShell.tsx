@@ -27,7 +27,7 @@ export function AppShell({
             <span aria-hidden="true" className="mr-2 text-accent">
               ●
             </span>
-            Stroke Recovery AI
+            RehabMind
             {roleLabel && (
               <span className="ml-3 text-base font-normal text-ink-muted">
                 {roleLabel}

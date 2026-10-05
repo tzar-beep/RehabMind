@@ -1,6 +1,6 @@
 # Architecture
 
-Stroke Recovery AI is a **modular monolith with background workers**. It is a
+RehabMind is a **modular monolith with background workers**. It is a
 controlled application pipeline, not an agentic system: every AI call is a single,
 bounded, schema-validated request made by deterministic application code.
 
@@ -41,7 +41,7 @@ exercise ─▶ response (text | speech)
 | Same origin | Next.js rewrites `/api/*` to FastAPI | First-party `SameSite=Lax` cookie, no credentialed CORS |
 | CSRF | SameSite=Lax + Origin check on unsafe methods | Defence in depth without token plumbing |
 | Passwords | Argon2id | Current OWASP recommendation |
-| DB roles | `sra_migrator` owns schema; `sra_app` DML only | Runtime cannot alter schema or disable safety triggers |
+| DB roles | `rehabmind_migrator` owns schema; `rehabmind_app` DML only | Runtime cannot alter schema or disable safety triggers |
 | Constraint enforcement | Single `ExerciseIssuer` service + DB trigger | Two independent layers guard the max-difficulty invariant |
 | Constraint versions | Immutable, append-only constraint sets | Every exercise records the exact version it was validated against |
 | Audio | App-level AES-GCM before upload; delete after processing; 1-day bucket expiry backstop; versioning off | Encryption independent of provider; deletion is real |
@@ -69,4 +69,4 @@ services, never through each other's tables. Modules are added only when a phase
 3. Speech input + STT + scoring + performance profile ✅ — see [privacy.md](privacy.md)
 4. AI personalization + validation pipeline + fallback + audit ✅ — see [ai-pipeline.md](ai-pipeline.md)
 5. Clinician platform ✅ — see [clinician-workflow.md](clinician-workflow.md)
-6. Production hardening
+6. Production hardening ✅ — see [deployment.md](deployment.md), [security.md](security.md), [accessibility.md](accessibility.md)

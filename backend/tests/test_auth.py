@@ -35,17 +35,17 @@ async def test_inactive_user_cannot_login(client):
 
 async def test_unauthenticated_and_forged_sessions_rejected(client):
     assert (await client.get(ME)).status_code == 401
-    client.cookies.set("sra_session", "forged-token")
+    client.cookies.set("rehabmind_session", "forged-token")
     assert (await client.get(ME)).status_code == 401
 
 
 async def test_logout_revokes_session_server_side(client):
     await create_user("p@x.test", Role.PATIENT)
     await login(client, "p@x.test")
-    token = client.cookies["sra_session"]
+    token = client.cookies["rehabmind_session"]
     assert (await client.post("/api/v1/auth/logout")).status_code == 204
     replay = make_client()
-    replay.cookies.set("sra_session", token)
+    replay.cookies.set("rehabmind_session", token)
     assert (await replay.get(ME)).status_code == 401
 
 
@@ -61,10 +61,10 @@ async def test_logout_all_revokes_every_device():
 async def test_relogin_discards_previous_session(client):
     await create_user("p@x.test", Role.PATIENT)
     await login(client, "p@x.test")
-    old = client.cookies["sra_session"]
+    old = client.cookies["rehabmind_session"]
     await login(client, "p@x.test")
     replay = make_client()
-    replay.cookies.set("sra_session", old)
+    replay.cookies.set("rehabmind_session", old)
     assert (await replay.get(ME)).status_code == 401
 
 

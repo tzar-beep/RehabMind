@@ -38,10 +38,8 @@ class S3ObjectStore:
             "s3",
             endpoint_url=s.s3_endpoint_url,
             region_name=s.s3_region,
-            aws_access_key_id=s.minio_root_user,
-            aws_secret_access_key=s.minio_root_password.get_secret_value()
-            if s.minio_root_password
-            else None,
+            aws_access_key_id=s.s3_access_key,
+            aws_secret_access_key=s.s3_secret_key.get_secret_value(),
             config=Config(connect_timeout=3, read_timeout=10, retries={"max_attempts": 2}),
         )
 

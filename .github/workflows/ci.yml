@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Local environment (random dev secrets, never real ones)
+        run: |
+          python3 - <<'EOF'
+          import re, secrets, base64
+          s = open(".env.example").read()
+          s = s.replace("AUDIO_ENCRYPTION_KEY=change-me-generate-32-bytes-base64",
+                        "AUDIO_ENCRYPTION_KEY=" + base64.b64encode(secrets.token_bytes(32)).decode())
+          s = re.sub(r"=change-me[\w-]*", lambda m: "=" + secrets.token_urlsafe(24), s)
+          open(".env", "w").write(s)
+          EOF
+
+      - name: Infrastructure
+        run: docker compose up -d --wait
+
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Backend lint + tests
+        working-directory: backend
+        run: |
+          uv sync --frozen
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run python -m app.scripts.provision_storage
+          uv run alembic upgrade head
+          uv run pytest -q
+
+      - name: Frontend typecheck, lint, unit tests
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run typecheck
+          npm run lint
+          npm test
+
+      - name: Dependency audit
+        run: |
+          (cd frontend && npm audit --omit=dev --audit-level=high)
+          (cd backend && uv export --frozen --no-dev --format requirements-txt > /tmp/req.txt && uvx pip-audit -r /tmp/req.txt)
+
+      - name: End-to-end (API, worker with Whisper, UI)
+        working-directory: frontend
+        run: |
+          (cd ../backend && uv run python -m app.scripts.seed_dev)
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: frontend/test-results

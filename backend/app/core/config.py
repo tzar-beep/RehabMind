@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     postgres_host: str = "127.0.0.1"
     postgres_port: int = 5433
-    postgres_db: str = "stroke_recovery"
+    postgres_db: str = "rehabmind"
     postgres_app_password: SecretStr
     postgres_migrator_password: SecretStr
 
@@ -28,8 +28,9 @@ class Settings(BaseSettings):
     s3_endpoint_url: str | None = None
     s3_region: str = "us-east-1"
     s3_bucket_audio: str = "ephemeral-audio"
-    minio_root_user: str | None = None
-    minio_root_password: SecretStr | None = None
+    # Least-privilege application credentials (never the storage root account).
+    s3_access_key: str
+    s3_secret_key: SecretStr
 
     seed_dev_password: SecretStr | None = None
 
@@ -60,6 +61,24 @@ class Settings(BaseSettings):
                 raise ValueError("production origins must be https")
             if "*" in self.frontend_origins:
                 raise ValueError("wildcard origin is not allowed")
+            secrets = {
+                "POSTGRES_APP_PASSWORD": self.postgres_app_password,
+                "POSTGRES_MIGRATOR_PASSWORD": self.postgres_migrator_password,
+                "REDIS_PASSWORD": self.redis_password,
+                "S3_SECRET_KEY": self.s3_secret_key,
+                "AUDIO_ENCRYPTION_KEY": self.audio_encryption_key,
+            }
+            weak = [
+                name
+                for name, value in secrets.items()
+                if "change-me" in value.get_secret_value() or len(value.get_secret_value()) < 16
+            ]
+            if weak:
+                raise ValueError(f"weak or placeholder secrets in production: {', '.join(weak)}")
+            if self.ai_fake_fault_rate:
+                raise ValueError("AI_FAKE_FAULT_RATE is a demo setting and must be 0 in production")
+            if self.seed_dev_password is not None:
+                raise ValueError("SEED_DEV_PASSWORD must not be set in production")
         return self
 
     @property
@@ -69,7 +88,7 @@ class Settings(BaseSettings):
     @property
     def session_cookie_name(self) -> str:
         # __Host- prefix requires Secure; locally we run over http.
-        return "__Host-sra_session" if self.is_production else "sra_session"
+        return "__Host-rehabmind_session" if self.is_production else "rehabmind_session"
 
     def _db_url(self, user: str, password: SecretStr) -> str:
         pw = quote(password.get_secret_value(), safe="")
@@ -80,11 +99,11 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        return self._db_url("sra_app", self.postgres_app_password)
+        return self._db_url("rehabmind_app", self.postgres_app_password)
 
     @property
     def migration_database_url(self) -> str:
-        return self._db_url("sra_migrator", self.postgres_migrator_password)
+        return self._db_url("rehabmind_migrator", self.postgres_migrator_password)
 
 
 @lru_cache

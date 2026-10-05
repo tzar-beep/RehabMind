@@ -1,4 +1,4 @@
-# Stroke Recovery AI
+# RehabMind
 
 Personalized aphasia rehabilitation platform. Patients practise language exercises;
 generative AI personalizes the next exercise **within clinician-defined constraints**;
@@ -18,7 +18,7 @@ See [docs/development.md](docs/development.md).
 ```bash
 cp .env.example .env
 docker compose up -d --wait
-uv run scripts/bootstrap_storage.py
+(cd backend && uv run python -m app.scripts.provision_storage)
 ```
 
 ## Documentation
@@ -30,7 +30,9 @@ uv run scripts/bootstrap_storage.py
 - [Privacy & audio lifecycle](docs/privacy.md)
 - [AI pipeline](docs/ai-pipeline.md)
 - [Clinician workflow](docs/clinician-workflow.md)
+- [Deployment](docs/deployment.md)
+- [Accessibility](docs/accessibility.md)
 
 ## Status
 
-Phase 5 complete: clinician platform (dashboard, patient profile, sessions, versioned practice limits, AI audit log). Academic prototype; not clinically validated.
+All six phases complete: patient practice (typing and speech), clinician platform, AI personalization with validation and audit, and a self-hosted production-like deployment. Academic prototype; not clinically validated.

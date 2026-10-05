@@ -11,7 +11,7 @@
 ```bash
 cp .env.example .env          # then replace every change-me value
 docker compose up -d --wait   # PostgreSQL :5433, Redis :6379, MinIO :9000 (127.0.0.1 only)
-uv run scripts/bootstrap_storage.py
+(cd backend && uv run python -m app.scripts.provision_storage)
 cd backend && uv run alembic upgrade head && uv run python -m app.scripts.seed_dev && cd ..
 cd frontend && npm install && npm run copy-stimuli && cd ..
 ```
@@ -32,7 +32,7 @@ Dev accounts: `patient@`, `clinician@`, `admin@recovery.local`; password is `SEE
 ## Tests
 
 ```bash
-cd backend && uv run pytest            # uses stroke_recovery_test DB + Redis DB 15
+cd backend && uv run pytest            # uses rehabmind_test DB + Redis DB 15
 cd backend && uv run ruff check .
 cd frontend && npm run typecheck && npm run lint && npm test
 cd frontend && npx playwright install chromium && npm run test:e2e   # starts API, worker, UI
@@ -43,12 +43,12 @@ cd frontend && npx playwright install chromium && npm run test:e2e   # starts AP
 
 | Service | Host port | Notes |
 |---|---|---|
-| PostgreSQL 18 | 5433 | 5432 avoided to coexist with a native Windows install. DBs: `stroke_recovery`, `stroke_recovery_test` |
+| PostgreSQL 18 | 5433 | 5432 avoided to coexist with a native Windows install. DBs: `rehabmind`, `rehabmind_test` |
 | Redis 8 | 6379 | Password required |
 | MinIO | 9000 | S3 API only (no console). Bucket `ephemeral-audio`: private, unversioned, 1-day expiry |
 
 Database roles are created on first volume init by `docker/postgres/initdb/`:
-`sra_migrator` (migrations) and `sra_app` (runtime, DML only).
+`rehabmind_migrator` (migrations) and `rehabmind_app` (runtime, DML only).
 To re-run init scripts, reset the volume: `docker compose down -v` (destroys local data).
 
 ## Rules
@@ -59,6 +59,8 @@ To re-run init scripts, reset the volume: `docker compose down -v` (destroys loc
 
 ## Windows notes
 
+- The repository is under OneDrive, which does not support hard links: if `uv` fails with
+  "incompatible hardlinks", set `UV_LINK_MODE=copy`.
 - Local services use `127.0.0.1`, not `localhost`: Windows resolves `localhost` to IPv6 first,
   Docker publishes IPv4 only, and the fallback costs ~1 s per connection.
 - First worker start downloads the Whisper `small.en` model (~480 MB) to the Hugging Face cache.

@@ -149,7 +149,7 @@ def upgrade() -> None:
     )
     # ### end Alembic commands ###
     # Audit log is append-only for the runtime role.
-    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON audit_logs FROM sra_app")
+    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON audit_logs FROM rehabmind_app")
 
 
 def downgrade() -> None:

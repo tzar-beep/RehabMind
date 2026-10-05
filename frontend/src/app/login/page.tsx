@@ -22,7 +22,7 @@ export default async function LoginPage() {
           <span aria-hidden="true" className="mr-2 text-accent">
             ●
           </span>
-          Stroke Recovery AI
+          RehabMind
         </p>
         <div className="rounded-card border border-line bg-surface p-8 shadow-sm">
           <h1 className="mb-2 text-3xl font-bold">Sign in</h1>
