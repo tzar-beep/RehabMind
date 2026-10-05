@@ -85,7 +85,7 @@ def upgrade() -> None:
     )
     # ### end Alembic commands ###
     # AI audit trail is append-only for the runtime role.
-    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON ai_generations FROM sra_app")
+    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON ai_generations FROM rehabmind_app")
 
 
 def downgrade() -> None:

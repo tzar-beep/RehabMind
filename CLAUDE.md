@@ -19,8 +19,8 @@ Aphasia rehabilitation platform. Read `docs/architecture.md` before structural c
 
 ## Conventions
 
-- Backend: `uv`, FastAPI, Pydantic v2, SQLAlchemy 2 async, Alembic. Runtime DB role `sra_app`
-  is DML-only; migrations run as `sra_migrator`.
+- Backend: `uv`, FastAPI, Pydantic v2, SQLAlchemy 2 async, Alembic. Runtime DB role `rehabmind_app`
+  is DML-only; migrations run as `rehabmind_migrator`.
 - Frontend: Next.js App Router, TypeScript strict, Tailwind with design tokens, Zod.
 - Accessibility: WCAG 2.1 AA; patient UI = one task, one question, one primary action; 48px targets.
 - English only in V1; keep user-facing strings out of business logic.

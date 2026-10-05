@@ -32,8 +32,8 @@ CORS lists explicit origins only — never `*` with credentials (enforced at sta
 | Role | Rights |
 |---|---|
 | `postgres` | Container admin only; never used by the app |
-| `sra_migrator` | Owns schema; runs Alembic |
-| `sra_app` | Runtime: DML only; cannot create/alter tables or disable triggers; INSERT/SELECT only on `audit_logs` |
+| `rehabmind_migrator` | Owns schema; runs Alembic |
+| `rehabmind_app` | Runtime: DML only; cannot create/alter tables or disable triggers; INSERT/SELECT only on `audit_logs` |
 
 ## Audit
 

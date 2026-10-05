@@ -1,6 +1,6 @@
 # Local development infrastructure. Not a production deployment.
 # All ports bind to 127.0.0.1 only. Images are pinned by digest.
-name: stroke-recovery-ai
+name: rehabmind
 
 services:
   postgres:

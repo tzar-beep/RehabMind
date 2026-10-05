@@ -1,4 +1,4 @@
-# Stroke Recovery AI
+# RehabMind
 
 Personalized aphasia rehabilitation platform. Patients practise language exercises;
 generative AI personalizes the next exercise **within clinician-defined constraints**;

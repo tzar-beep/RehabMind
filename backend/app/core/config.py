@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     postgres_host: str = "127.0.0.1"
     postgres_port: int = 5433
-    postgres_db: str = "stroke_recovery"
+    postgres_db: str = "rehabmind"
     postgres_app_password: SecretStr
     postgres_migrator_password: SecretStr
 
@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     @property
     def session_cookie_name(self) -> str:
         # __Host- prefix requires Secure; locally we run over http.
-        return "__Host-sra_session" if self.is_production else "sra_session"
+        return "__Host-rehabmind_session" if self.is_production else "rehabmind_session"
 
     def _db_url(self, user: str, password: SecretStr) -> str:
         pw = quote(password.get_secret_value(), safe="")
@@ -80,11 +80,11 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        return self._db_url("sra_app", self.postgres_app_password)
+        return self._db_url("rehabmind_app", self.postgres_app_password)
 
     @property
     def migration_database_url(self) -> str:
-        return self._db_url("sra_migrator", self.postgres_migrator_password)
+        return self._db_url("rehabmind_migrator", self.postgres_migrator_password)
 
 
 @lru_cache

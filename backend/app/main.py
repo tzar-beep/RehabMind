@@ -26,7 +26,7 @@ settings = get_settings()
 log = logging.getLogger("app")
 
 app = FastAPI(
-    title="Stroke Recovery AI",
+    title="RehabMind",
     docs_url=None if settings.is_production else "/api/docs",
     redoc_url=None,
     openapi_url=None if settings.is_production else "/api/openapi.json",

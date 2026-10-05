@@ -32,7 +32,7 @@ Dev accounts: `patient@`, `clinician@`, `admin@recovery.local`; password is `SEE
 ## Tests
 
 ```bash
-cd backend && uv run pytest            # uses stroke_recovery_test DB + Redis DB 15
+cd backend && uv run pytest            # uses rehabmind_test DB + Redis DB 15
 cd backend && uv run ruff check .
 cd frontend && npm run typecheck && npm run lint && npm test
 cd frontend && npx playwright install chromium && npm run test:e2e   # starts API, worker, UI
@@ -43,12 +43,12 @@ cd frontend && npx playwright install chromium && npm run test:e2e   # starts AP
 
 | Service | Host port | Notes |
 |---|---|---|
-| PostgreSQL 18 | 5433 | 5432 avoided to coexist with a native Windows install. DBs: `stroke_recovery`, `stroke_recovery_test` |
+| PostgreSQL 18 | 5433 | 5432 avoided to coexist with a native Windows install. DBs: `rehabmind`, `rehabmind_test` |
 | Redis 8 | 6379 | Password required |
 | MinIO | 9000 | S3 API only (no console). Bucket `ephemeral-audio`: private, unversioned, 1-day expiry |
 
 Database roles are created on first volume init by `docker/postgres/initdb/`:
-`sra_migrator` (migrations) and `sra_app` (runtime, DML only).
+`rehabmind_migrator` (migrations) and `rehabmind_app` (runtime, DML only).
 To re-run init scripts, reset the volume: `docker compose down -v` (destroys local data).
 
 ## Rules

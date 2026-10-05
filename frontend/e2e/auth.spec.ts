@@ -53,7 +53,7 @@ test("patient signs in, sees their home, and signs out", async ({
   await expectNoA11yViolations(page);
 
   const session = (await context.cookies()).find(
-    (c) => c.name === "sra_session",
+    (c) => c.name === "rehabmind_session",
   );
   expect(session?.httpOnly).toBe(true);
   expect(session?.sameSite).toBe("Lax");
