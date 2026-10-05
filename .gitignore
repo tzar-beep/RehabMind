@@ -1,0 +1,60 @@
+# ---- Secrets / environment ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# ---- Patient data & audio: never commit ----
+*.wav
+*.webm
+*.mp3
+*.m4a
+*.ogg
+*.oga
+*.opus
+*.flac
+*.aac
+*.aiff
+recordings/
+patient-data/
+*.dump
+*.sql.gz
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.egg-info/
+
+# ---- Node / Next.js ----
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+playwright-report/
+test-results/
+blob-report/
+
+# ---- ML model caches (faster-whisper weights) ----
+models/
+.cache/
+
+# ---- OS / editors ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
