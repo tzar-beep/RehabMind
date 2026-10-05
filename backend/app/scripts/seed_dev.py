@@ -91,8 +91,8 @@ def main() -> None:
         sys.exit(str(e))
     secret = settings.seed_dev_password
     password = secret.get_secret_value() if secret else ""
-    if len(password) < 12:
-        sys.exit("SEED_DEV_PASSWORD must be set (>= 12 chars) in .env")
+    if len(password) < 8:
+        sys.exit("SEED_DEV_PASSWORD must be set (>= 8 chars) in .env")
     asyncio.run(seed(password))
     print("seeded:", ", ".join(e for e, _, _ in ACCOUNTS))
 
