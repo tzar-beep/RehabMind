@@ -1,0 +1,460 @@
+{
+  "version": 1,
+  "source": {
+    "name": "Lucide (lucide-static)",
+    "license": "ISC",
+    "url": "https://lucide.dev"
+  },
+  "stimuli": [
+    {
+      "slug": "key",
+      "source_icon": "key",
+      "difficulty": 1,
+      "category": "household",
+      "target": "key",
+      "accepted_answers": [
+        "key"
+      ]
+    },
+    {
+      "slug": "sun",
+      "source_icon": "sun",
+      "difficulty": 1,
+      "category": "nature",
+      "target": "sun",
+      "accepted_answers": [
+        "sun"
+      ]
+    },
+    {
+      "slug": "car",
+      "source_icon": "car",
+      "difficulty": 1,
+      "category": "transport",
+      "target": "car",
+      "accepted_answers": [
+        "car",
+        "automobile"
+      ]
+    },
+    {
+      "slug": "dog",
+      "source_icon": "dog",
+      "difficulty": 1,
+      "category": "animals",
+      "target": "dog",
+      "accepted_answers": [
+        "dog",
+        "puppy"
+      ]
+    },
+    {
+      "slug": "cat",
+      "source_icon": "cat",
+      "difficulty": 1,
+      "category": "animals",
+      "target": "cat",
+      "accepted_answers": [
+        "cat",
+        "kitten"
+      ]
+    },
+    {
+      "slug": "book",
+      "source_icon": "book",
+      "difficulty": 1,
+      "category": "household",
+      "target": "book",
+      "accepted_answers": [
+        "book"
+      ]
+    },
+    {
+      "slug": "bed",
+      "source_icon": "bed",
+      "difficulty": 1,
+      "category": "household",
+      "target": "bed",
+      "accepted_answers": [
+        "bed"
+      ]
+    },
+    {
+      "slug": "fish",
+      "source_icon": "fish",
+      "difficulty": 1,
+      "category": "animals",
+      "target": "fish",
+      "accepted_answers": [
+        "fish"
+      ]
+    },
+    {
+      "slug": "apple",
+      "source_icon": "apple",
+      "difficulty": 2,
+      "category": "food",
+      "target": "apple",
+      "accepted_answers": [
+        "apple"
+      ]
+    },
+    {
+      "slug": "clock",
+      "source_icon": "clock",
+      "difficulty": 2,
+      "category": "household",
+      "target": "clock",
+      "accepted_answers": [
+        "clock",
+        "watch"
+      ]
+    },
+    {
+      "slug": "house",
+      "source_icon": "house",
+      "difficulty": 2,
+      "category": "household",
+      "target": "house",
+      "accepted_answers": [
+        "house",
+        "home"
+      ]
+    },
+    {
+      "slug": "phone",
+      "source_icon": "smartphone",
+      "difficulty": 2,
+      "category": "personal",
+      "target": "phone",
+      "accepted_answers": [
+        "phone",
+        "mobile",
+        "cellphone",
+        "mobile phone",
+        "cell phone",
+        "smartphone",
+        "telephone"
+      ]
+    },
+    {
+      "slug": "tree",
+      "source_icon": "tree-pine",
+      "difficulty": 2,
+      "category": "nature",
+      "target": "tree",
+      "accepted_answers": [
+        "tree",
+        "pine tree",
+        "pine",
+        "fir tree",
+        "christmas tree"
+      ]
+    },
+    {
+      "slug": "bird",
+      "source_icon": "bird",
+      "difficulty": 2,
+      "category": "animals",
+      "target": "bird",
+      "accepted_answers": [
+        "bird"
+      ]
+    },
+    {
+      "slug": "cup",
+      "source_icon": "coffee",
+      "difficulty": 2,
+      "category": "food",
+      "target": "cup",
+      "accepted_answers": [
+        "cup",
+        "mug",
+        "coffee cup",
+        "coffee",
+        "coffee mug",
+        "tea cup"
+      ]
+    },
+    {
+      "slug": "bus",
+      "source_icon": "bus",
+      "difficulty": 2,
+      "category": "transport",
+      "target": "bus",
+      "accepted_answers": [
+        "bus"
+      ]
+    },
+    {
+      "slug": "egg",
+      "source_icon": "egg",
+      "difficulty": 2,
+      "category": "food",
+      "target": "egg",
+      "accepted_answers": [
+        "egg"
+      ]
+    },
+    {
+      "slug": "umbrella",
+      "source_icon": "umbrella",
+      "difficulty": 3,
+      "category": "personal",
+      "target": "umbrella",
+      "accepted_answers": [
+        "umbrella"
+      ]
+    },
+    {
+      "slug": "scissors",
+      "source_icon": "scissors",
+      "difficulty": 3,
+      "category": "household",
+      "target": "scissors",
+      "accepted_answers": [
+        "scissors"
+      ]
+    },
+    {
+      "slug": "glasses",
+      "source_icon": "glasses",
+      "difficulty": 3,
+      "category": "personal",
+      "target": "glasses",
+      "accepted_answers": [
+        "glasses",
+        "spectacles",
+        "eyeglasses"
+      ]
+    },
+    {
+      "slug": "camera",
+      "source_icon": "camera",
+      "difficulty": 3,
+      "category": "personal",
+      "target": "camera",
+      "accepted_answers": [
+        "camera"
+      ]
+    },
+    {
+      "slug": "guitar",
+      "source_icon": "guitar",
+      "difficulty": 3,
+      "category": "music",
+      "target": "guitar",
+      "accepted_answers": [
+        "guitar"
+      ]
+    },
+    {
+      "slug": "banana",
+      "source_icon": "banana",
+      "difficulty": 3,
+      "category": "food",
+      "target": "banana",
+      "accepted_answers": [
+        "banana"
+      ]
+    },
+    {
+      "slug": "carrot",
+      "source_icon": "carrot",
+      "difficulty": 3,
+      "category": "food",
+      "target": "carrot",
+      "accepted_answers": [
+        "carrot"
+      ]
+    },
+    {
+      "slug": "lamp",
+      "source_icon": "lamp",
+      "difficulty": 3,
+      "category": "household",
+      "target": "lamp",
+      "accepted_answers": [
+        "lamp"
+      ]
+    },
+    {
+      "slug": "piano",
+      "source_icon": "piano",
+      "difficulty": 3,
+      "category": "music",
+      "target": "piano",
+      "accepted_answers": [
+        "piano",
+        "keyboard"
+      ]
+    },
+    {
+      "slug": "hammer",
+      "source_icon": "hammer",
+      "difficulty": 4,
+      "category": "tools",
+      "target": "hammer",
+      "accepted_answers": [
+        "hammer"
+      ]
+    },
+    {
+      "slug": "bicycle",
+      "source_icon": "bike",
+      "difficulty": 4,
+      "category": "transport",
+      "target": "bicycle",
+      "accepted_answers": [
+        "bicycle",
+        "bike",
+        "cycle"
+      ]
+    },
+    {
+      "slug": "airplane",
+      "source_icon": "plane",
+      "difficulty": 4,
+      "category": "transport",
+      "target": "airplane",
+      "accepted_answers": [
+        "airplane",
+        "plane",
+        "aeroplane",
+        "jet",
+        "aircraft"
+      ]
+    },
+    {
+      "slug": "pencil",
+      "source_icon": "pencil",
+      "difficulty": 4,
+      "category": "household",
+      "target": "pencil",
+      "accepted_answers": [
+        "pencil"
+      ]
+    },
+    {
+      "slug": "anchor",
+      "source_icon": "anchor",
+      "difficulty": 4,
+      "category": "transport",
+      "target": "anchor",
+      "accepted_answers": [
+        "anchor"
+      ]
+    },
+    {
+      "slug": "sofa",
+      "source_icon": "sofa",
+      "difficulty": 4,
+      "category": "household",
+      "target": "sofa",
+      "accepted_answers": [
+        "sofa",
+        "couch",
+        "settee"
+      ]
+    },
+    {
+      "slug": "headphones",
+      "source_icon": "headphones",
+      "difficulty": 4,
+      "category": "music",
+      "target": "headphones",
+      "accepted_answers": [
+        "headphones",
+        "headset",
+        "earphones"
+      ]
+    },
+    {
+      "slug": "toothbrush",
+      "source_icon": "toothbrush",
+      "difficulty": 4,
+      "category": "personal",
+      "target": "toothbrush",
+      "accepted_answers": [
+        "toothbrush"
+      ]
+    },
+    {
+      "slug": "microscope",
+      "source_icon": "microscope",
+      "difficulty": 5,
+      "category": "tools",
+      "target": "microscope",
+      "accepted_answers": [
+        "microscope"
+      ]
+    },
+    {
+      "slug": "telescope",
+      "source_icon": "telescope",
+      "difficulty": 5,
+      "category": "tools",
+      "target": "telescope",
+      "accepted_answers": [
+        "telescope"
+      ]
+    },
+    {
+      "slug": "wrench",
+      "source_icon": "wrench",
+      "difficulty": 5,
+      "category": "tools",
+      "target": "wrench",
+      "accepted_answers": [
+        "wrench",
+        "spanner"
+      ]
+    },
+    {
+      "slug": "refrigerator",
+      "source_icon": "refrigerator",
+      "difficulty": 5,
+      "category": "household",
+      "target": "refrigerator",
+      "accepted_answers": [
+        "refrigerator",
+        "fridge"
+      ]
+    },
+    {
+      "slug": "microwave",
+      "source_icon": "microwave",
+      "difficulty": 5,
+      "category": "household",
+      "target": "microwave",
+      "accepted_answers": [
+        "microwave",
+        "microwave oven"
+      ]
+    },
+    {
+      "slug": "dumbbell",
+      "source_icon": "dumbbell",
+      "difficulty": 5,
+      "category": "personal",
+      "target": "dumbbell",
+      "accepted_answers": [
+        "dumbbell",
+        "weight",
+        "weights"
+      ]
+    },
+    {
+      "slug": "lightbulb",
+      "source_icon": "lightbulb",
+      "difficulty": 5,
+      "category": "household",
+      "target": "light bulb",
+      "accepted_answers": [
+        "light bulb",
+        "lightbulb",
+        "bulb"
+      ]
+    }
+  ]
+}

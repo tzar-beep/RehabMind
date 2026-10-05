@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
-import { requireRole } from "@/lib/api/server";
+import Link from "next/link";
+
+import { buttonClasses } from "@/components/ui/Button";
+import { PracticeStatusSchema } from "@/lib/api/schemas";
+import { backendGet, requireRole } from "@/lib/api/server";
 
 export const metadata: Metadata = { title: "Home" };
 
@@ -8,6 +12,7 @@ const JOURNEY = ["Words", "Sentences", "Conversation"];
 
 export default async function PatientHome() {
   const me = await requireRole("patient");
+  const status = await backendGet("/practice/status", PracticeStatusSchema);
 
   return (
     <div className="flex flex-col gap-10">
@@ -20,9 +25,22 @@ export default async function PatientHome() {
         <h2 id="today-heading" className="mb-3 text-2xl font-bold">
           Today&rsquo;s practice
         </h2>
-        <p className="text-xl text-ink-muted">
-          Your care team is preparing your practice plan. It will appear here.
-        </p>
+        {status?.has_plan ? (
+          <>
+            <p className="mb-6 text-xl text-ink-muted">
+              {status.has_active_session
+                ? "Pick up where you left off."
+                : "A few pictures to name. Go at your own pace."}
+            </p>
+            <Link href="/patient/practice" className={buttonClasses("primary", "lg")}>
+              {status.has_active_session ? "Continue practice" : "Start practice"}
+            </Link>
+          </>
+        ) : (
+          <p className="text-xl text-ink-muted">
+            Your care team is preparing your practice plan. It will appear here.
+          </p>
+        )}
       </section>
 
       <section aria-labelledby="journey-heading">

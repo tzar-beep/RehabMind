@@ -65,7 +65,7 @@ services, never through each other's tables. Modules are added only when a phase
 
 0. Repository, docs, local infrastructure ✅
 1. Foundation: backend/frontend skeletons, auth, RBAC, patient isolation, design tokens ✅
-2. Core loop with text input and deterministic exercises (constraint engine before AI)
+2. Core loop with text input and deterministic exercises (constraint engine before AI) ✅ — see [clinical-constraints.md](clinical-constraints.md)
 3. Speech input + STT + scoring + performance profile
 4. AI personalization + validation pipeline + fallback + audit
 5. Clinician platform

@@ -20,6 +20,7 @@ from app.core.config import get_settings  # noqa: E402
 from app.core.db import SessionLocal  # noqa: E402
 from app.core.passwords import hash_password  # noqa: E402
 from app.core.redis import redis_client  # noqa: E402
+from app.exercises.catalog import sync_stimuli  # noqa: E402
 from app.main import app  # noqa: E402
 from app.patients.models import Patient  # noqa: E402
 from app.users.models import Role, User  # noqa: E402
@@ -35,13 +36,23 @@ def migrate() -> None:
     command.upgrade(cfg, "head")
 
 
+@pytest.fixture(scope="session", autouse=True)
+async def stimuli(migrate: None) -> None:
+    async with SessionLocal() as db:
+        await sync_stimuli(db)
+
+
 @pytest.fixture(autouse=True)
 async def clean_state() -> AsyncIterator[None]:
     # Cleanup runs as the schema owner: the runtime role cannot truncate audit_logs.
     engine = create_async_engine(get_settings().migration_database_url)
     async with engine.begin() as conn:
         await conn.execute(
-            text("TRUNCATE patient_clinicians, patients, clinicians, users, audit_logs CASCADE")
+            text(
+                "TRUNCATE exercise_responses, exercises, practice_sessions, performance_profiles,"
+                " clinical_constraint_sets, patient_clinicians, patients, clinicians, users,"
+                " audit_logs CASCADE"
+            )
         )
     await engine.dispose()
     await redis_client.flushdb()

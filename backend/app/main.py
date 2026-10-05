@@ -9,11 +9,13 @@ from fastapi.responses import JSONResponse
 
 from app.admin.router import router as admin_router
 from app.auth.router import router as auth_router
+from app.clinical.router import router as clinical_router
 from app.clinicians.router import router as clinicians_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging, request_id_var
 from app.health.router import router as health_router
 from app.patients.router import router as patients_router
+from app.sessions.router import router as practice_router
 
 configure_logging()
 settings = get_settings()
@@ -27,7 +29,14 @@ app = FastAPI(
 )
 
 api = APIRouter(prefix="/api/v1")
-for r in (auth_router, patients_router, clinicians_router, admin_router):
+for r in (
+    auth_router,
+    clinical_router,
+    patients_router,
+    clinicians_router,
+    practice_router,
+    admin_router,
+):
     api.include_router(r)
 app.include_router(api)
 app.include_router(health_router, prefix="/api")

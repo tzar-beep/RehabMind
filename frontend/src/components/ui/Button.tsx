@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ComponentPropsWithRef } from "react";
 
 type Variant = "primary" | "secondary" | "quiet";
 type Size = "md" | "lg";
@@ -18,7 +18,12 @@ const sizes: Record<Size, string> = {
   lg: "min-h-16 px-8 text-xl",
 };
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+/** Button styling for links that act as primary navigation (e.g. "Start practice"). */
+export function buttonClasses(variant: Variant = "primary", size: Size = "md"): string {
+  return `${base} ${variants[variant]} ${sizes[size]}`;
+}
+
+export interface ButtonProps extends ComponentPropsWithRef<"button"> {
   variant?: Variant;
   size?: Size;
   busy?: boolean;

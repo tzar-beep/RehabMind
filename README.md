@@ -26,7 +26,8 @@ uv run scripts/bootstrap_storage.py
 - [Architecture](docs/architecture.md)
 - [Development](docs/development.md)
 - [Security](docs/security.md)
+- [Clinical constraints & practice loop](docs/clinical-constraints.md)
 
 ## Status
 
-Phase 1 complete: authentication, RBAC, patient isolation, audit, design system foundation.
+Phase 2 complete: clinician constraint engine, picture-naming practice loop (text), deterministic scoring and progression.
