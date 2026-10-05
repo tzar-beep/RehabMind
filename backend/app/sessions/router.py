@@ -26,6 +26,8 @@ class ExerciseOut(BaseModel):
     instructions: str
     image_url: str | None
     response_modes: list[str]
+    # Progressive hints, revealed one at a time on request (meaning, then first sound).
+    cues: list[str]
 
 
 class Summary(BaseModel):
@@ -45,6 +47,7 @@ class SessionState(BaseModel):
 class ResponseIn(BaseModel):
     text: str | None = Field(default=None, max_length=200)
     skipped: bool = False
+    hints_used: int = Field(default=0, ge=0, le=2)
     latency_ms: int | None = Field(default=None, ge=0, le=3_600_000)
 
 
@@ -95,6 +98,7 @@ async def _state(db: DbDep, session: PracticeSession) -> SessionState:
             instructions=exercise.content["instructions"],
             image_url=exercise.content.get("image_url"),
             response_modes=exercise.response_modes,
+            cues=exercise.content.get("cues", []),
         )
         if exercise
         else None,
@@ -145,7 +149,12 @@ async def respond(
     patient = await _me(user, db)
     try:
         exercise, result, session = await service.submit_response(
-            db, patient.id, exercise_id, None if body.skipped else body.text, body.latency_ms
+            db,
+            patient.id,
+            exercise_id,
+            None if body.skipped else body.text,
+            body.latency_ms,
+            hints_used=body.hints_used,
         )
     except LookupError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found.") from None

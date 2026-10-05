@@ -91,6 +91,7 @@ async def test_exercise_payload_never_reveals_the_answer(care):
         "instructions",
         "image_url",
         "response_modes",
+        "cues",
     }
     target = await target_of(ex["id"])
     assert target not in r.text.replace(ex["image_url"], "")

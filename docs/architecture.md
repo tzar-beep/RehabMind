@@ -46,7 +46,7 @@ exercise ─▶ response (text | speech)
 | Constraint versions | Immutable, append-only constraint sets | Every exercise records the exact version it was validated against |
 | Audio | App-level AES-GCM before upload; delete after processing; 1-day bucket expiry backstop; versioning off | Encryption independent of provider; deletion is real |
 | STT | `SpeechProvider` → `FasterWhisperProvider`, CPU int8 default, GPU optional | Self-hosted; no audio leaves our infrastructure |
-| AI | `AIProvider` → `OpenAIProvider`, structured outputs, no chain-of-thought | Provider-independent; auditable via reason codes |
+| AI | `AIProvider` → `FakeAIProvider` (offline, $0); real/local providers (e.g. Ollama) pluggable; structured outputs, no chain-of-thought | Provider-independent; auditable via reason codes |
 | Picture stimuli | Curated, licensed image bank; AI selects/phrases, never invents images | Clinically reviewable content |
 | Scoring | Deterministic first (normalized/synonym/phonological match), AI as secondary signal | Cheap, testable, explainable |
 | API contract | TS types generated from FastAPI OpenAPI; Zod at UI boundaries | No hand-maintained drift |
@@ -67,6 +67,6 @@ services, never through each other's tables. Modules are added only when a phase
 1. Foundation: backend/frontend skeletons, auth, RBAC, patient isolation, design tokens ✅
 2. Core loop with text input and deterministic exercises (constraint engine before AI) ✅ — see [clinical-constraints.md](clinical-constraints.md)
 3. Speech input + STT + scoring + performance profile ✅ — see [privacy.md](privacy.md)
-4. AI personalization + validation pipeline + fallback + audit
+4. AI personalization + validation pipeline + fallback + audit ✅ — see [ai-pipeline.md](ai-pipeline.md)
 5. Clinician platform
 6. Production hardening

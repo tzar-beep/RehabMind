@@ -23,13 +23,16 @@ class FakeProvider:
     def __init__(self) -> None:
         self.text: str | None = ""
         self.no_speech_prob = 0.01
+        self.logprob = -0.2
         self.fail = False
 
     def transcribe(self, audio: bytes, language: str) -> Transcript:
         assert audio == AUDIO and language == "en"  # decrypted correctly
         if self.fail:
             raise RuntimeError("decoder error")
-        return Transcript(self.text or "", "fake", "fake-1", 1.2, self.no_speech_prob, -0.2, [])
+        return Transcript(
+            self.text or "", "fake", "fake-1", 1.2, self.no_speech_prob, self.logprob, []
+        )
 
 
 class InlineQueue:
@@ -207,3 +210,25 @@ async def test_recordings_are_patient_isolated(care, stt):  # noqa: F811
     assert (await other.get(f"/api/v1/practice/speech/{rec}")).status_code == 404
     state = (await patient.get("/api/v1/practice/sessions/current")).json()
     assert (await upload(other, state["exercise"]["id"])).status_code == 404
+
+
+@pytest.mark.parametrize(
+    ("text", "no_speech", "logprob", "reason"),
+    [
+        ("Thanks for watching!", 0.775, -0.85, "no_speech"),
+        ("Thanks for watching!", 0.1, -0.3, "known_hallucination"),
+        ("you", 0.1, -0.3, "known_hallucination"),
+        ("cup", 0.1, -1.4, "low_confidence"),
+        ("  ", 0.1, -0.3, "empty"),
+    ],
+)
+async def test_unreliable_transcripts_are_never_scored(care, stt, text, no_speech, logprob, reason):  # noqa: F811
+    patient, ex = await speech_plan(care)
+    stt.text, stt.no_speech_prob = text, no_speech
+    stt.logprob = logprob
+    rec = (await upload(patient, ex["id"])).json()["recording_id"]
+    asset = await asset_row(rec)
+    assert (asset.status, asset.failure_reason) == ("no_speech", reason)
+    async with SessionLocal() as db:
+        assert (await db.get(Exercise, uuid.UUID(ex["id"]))).status == "pending"
+        assert (await db.execute(select(ExerciseResponse))).first() is None

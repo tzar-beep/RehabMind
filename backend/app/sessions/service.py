@@ -7,6 +7,8 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai import personalization
+from app.ai.provider import get_ai_provider
 from app.analysis.scoring import ScoreResult, score_naming
 from app.audit import service as audit
 from app.clinical.service import latest_constraints
@@ -60,6 +62,27 @@ async def issue_next(db: AsyncSession, session: PracticeSession) -> Exercise | N
         return None
 
     profile = await get_profile(db, session.patient_id, ExerciseType.PICTURE_NAMING, cs)
+
+    if (provider := get_ai_provider()) is not None:
+        try:
+            proposal, ai_row = await personalization.propose(db, provider, session, cs, profile)
+        except NoSafeExercise:
+            proposal, ai_row = None, None
+        if proposal is not None and ai_row is not None:
+            try:
+                exercise = await issue(db, session, cs, proposal, position)
+                ai_row.exercise_id = exercise.id
+                db.add(ai_row)
+                return exercise
+            except ConstraintViolation as e:  # issuer caught what validation missed
+                ai_row.status, ai_row.failed_stage, ai_row.reason_codes = (
+                    "rejected",
+                    "issuer",
+                    e.reasons,
+                )
+                db.add(ai_row)
+
+    # Deterministic path: rule-based proposal, then the most conservative fallback.
     try:
         proposal = await generator.propose_next(
             db, session.patient_id, session.id, cs, profile.target_difficulty
@@ -122,6 +145,7 @@ async def submit_response(
     text: str | None,
     latency_ms: int | None,
     *,
+    hints_used: int = 0,
     mode: ResponseMode = ResponseMode.TEXT,
     extra_analysis: dict[str, object] | None = None,
 ) -> tuple[Exercise, ScoreResult, PracticeSession]:
@@ -154,6 +178,7 @@ async def submit_response(
                 "match_type": result.match_type,
                 "matched": result.matched,
                 "similarity": result.similarity,
+                "hints_used": hints_used,
                 **(extra_analysis or {}),
             },
             latency_ms=latency_ms,
@@ -164,7 +189,11 @@ async def submit_response(
     if cs is None:
         raise NoPlan
     profile = await get_profile(db, patient_id, exercise.exercise_type, cs)
-    apply_outcome(profile, result.outcome, cs)
+    # A cued success is real progress but not independent naming: it holds the level.
+    progression_outcome = (
+        "near_miss" if result.outcome == "correct" and hints_used else result.outcome
+    )
+    apply_outcome(profile, progression_outcome, cs)
     await issue_next(db, session)
     await db.commit()
     return exercise, result, session

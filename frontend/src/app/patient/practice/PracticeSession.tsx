@@ -40,6 +40,11 @@ export function PracticeSession() {
   const [busy, setBusy] = useState(false);
   const [answerError, setAnswerError] = useState<string | null>(null);
   const [typing, setTyping] = useState(false);
+  // Hints revealed for the current exercise (keyed so a new exercise starts at zero).
+  const [hintState, setHintState] = useState({ exerciseId: "", count: 0 });
+  const currentId =
+    view.kind === "answering" ? view.state.exercise?.id : undefined;
+  const hints = hintState.exerciseId === currentId ? hintState.count : 0;
   const [micNotice, setMicNotice] = useState<string | null>(null);
   const shownAt = useRef(0);
   const nextButton = useRef<HTMLButtonElement>(null);
@@ -84,6 +89,7 @@ export function PracticeSession() {
           method: "POST",
           json: {
             ...body,
+            hints_used: hints,
             latency_ms: Math.round(performance.now() - shownAt.current),
           },
         },
@@ -253,6 +259,33 @@ export function PracticeSession() {
         </h1>
       </section>
 
+      {ex.cues.length > 0 && (
+        <div className="flex flex-col items-center gap-3">
+          {hints > 0 && (
+            <div
+              role="status"
+              className="w-full rounded-card bg-accent-soft px-6 py-4"
+            >
+              <ul className="flex flex-col gap-2 text-xl">
+                {ex.cues.slice(0, hints).map((cue) => (
+                  <li key={cue}>{cue}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {hints < ex.cues.length && (
+            <Button
+              variant="quiet"
+              onClick={() =>
+                setHintState({ exerciseId: ex.id, count: hints + 1 })
+              }
+            >
+              {hints === 0 ? "Show a hint" : "Show another hint"}
+            </Button>
+          )}
+        </div>
+      )}
+
       {micNotice && <Alert tone="info">{micNotice}</Alert>}
 
       {useSpeech ? (
@@ -263,6 +296,7 @@ export function PracticeSession() {
           <SpeechRecorder
             key={ex.id}
             exerciseId={ex.id}
+            hintsUsed={hints}
             latencyMs={() => performance.now() - shownAt.current}
             onResult={(result) => showFeedback(ex, result)}
             onUnavailable={(message) => {
