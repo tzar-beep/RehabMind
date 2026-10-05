@@ -209,13 +209,20 @@ async def test_allowed_categories_are_respected(care):
         assert set(cats) == {"animals"}
 
 
-async def test_unimplemented_types_or_modes_issue_nothing(care):
+async def test_unimplemented_types_issue_nothing(care):
     patient, clinician, pid = care
     await set_plan(clinician, pid, allowed_exercise_types=["sentence_completion"])
     assert (await patient.post(START)).status_code == 409
-    await set_plan(clinician, pid, allowed_response_modes=["speech"])
-    assert (await patient.post(START)).status_code == 409
     assert await issued(pid) == []
+
+
+async def test_speech_only_plan_issues_speech_only_exercises(care):
+    patient, clinician, pid = care
+    await set_plan(clinician, pid, allowed_response_modes=["speech"])
+    ex = (await patient.post(START)).json()["exercise"]
+    assert ex["response_modes"] == ["speech"]
+    r = await patient.post(f"/api/v1/practice/exercises/{ex['id']}/responses", json={"text": "x"})
+    assert r.status_code == 409  # typed answers refused when the clinician allows speech only
 
 
 async def test_issuer_rejects_out_of_range_proposal():

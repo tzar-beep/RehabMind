@@ -20,6 +20,7 @@ cd frontend && npm install && npm run copy-stimuli && cd ..
 
 ```bash
 cd backend && uv run fastapi dev app/main.py     # API on :8000 (docs: /api/docs)
+cd backend && uv run python -m app.workers.main  # speech worker (loads Whisper small.en)
 cd frontend && npm run dev                       # UI on :3000, proxies /api to :8000
 ```
 
@@ -34,7 +35,8 @@ Dev accounts: `patient@`, `clinician@`, `admin@recovery.local`; password is `SEE
 cd backend && uv run pytest            # uses stroke_recovery_test DB + Redis DB 15
 cd backend && uv run ruff check .
 cd frontend && npm run typecheck && npm run lint && npm test
-cd frontend && npx playwright install chromium && npm run test:e2e   # starts both servers
+cd frontend && npx playwright install chromium && npm run test:e2e   # starts API, worker, UI
+# Real-speech e2e: set E2E_FAKE_AUDIO to a synthetic speech .wav (default fake mic = tone)
 ```
 
 ## Local infrastructure
@@ -56,6 +58,10 @@ To re-run init scripts, reset the volume: `docker compose down -v` (destroys loc
 - Branch per feature (`feature/<name>`), focused commits, merge to `main`.
 
 ## Windows notes
+
+- Local services use `127.0.0.1`, not `localhost`: Windows resolves `localhost` to IPv6 first,
+  Docker publishes IPv4 only, and the fallback costs ~1 s per connection.
+- First worker start downloads the Whisper `small.en` model (~480 MB) to the Hugging Face cache.
 
 - If `docker` is not found in an already-open terminal after installing Docker Desktop,
   restart the terminal (the installer updates the user PATH).

@@ -16,6 +16,7 @@ from app.core.logging import configure_logging, request_id_var
 from app.health.router import router as health_router
 from app.patients.router import router as patients_router
 from app.sessions.router import router as practice_router
+from app.speech.router import router as speech_router
 
 configure_logging()
 settings = get_settings()
@@ -35,6 +36,7 @@ for r in (
     patients_router,
     clinicians_router,
     practice_router,
+    speech_router,
     admin_router,
 ):
     api.include_router(r)

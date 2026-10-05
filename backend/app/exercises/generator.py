@@ -15,7 +15,7 @@ from app.exercises.types import IMPLEMENTED_TYPES, ExerciseType, ResponseMode
 from app.performance.progression import clamp
 
 GENERATOR_VERSION = "rules-v1"
-SUPPORTED_MODES = frozenset({ResponseMode.TEXT})  # speech arrives in Phase 3
+SUPPORTED_MODES = frozenset({ResponseMode.TEXT, ResponseMode.SPEECH})
 RECENT_EXCLUDE = 30
 
 
@@ -50,7 +50,9 @@ def _picture_naming(stim: Stimulus, modes: list[str], source: str) -> Proposal:
         stimulus=stim,
         content={
             "prompt": "What is this?",
-            "instructions": "Type the word for this picture.",
+            "instructions": "Say the word for this picture."
+            if ResponseMode.SPEECH in modes
+            else "Type the word for this picture.",
             "image_url": stim.image_path,
         },
         expected={"target": stim.target, "accepted_answers": stim.accepted_answers},

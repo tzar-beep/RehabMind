@@ -27,7 +27,8 @@ uv run scripts/bootstrap_storage.py
 - [Development](docs/development.md)
 - [Security](docs/security.md)
 - [Clinical constraints & practice loop](docs/clinical-constraints.md)
+- [Privacy & audio lifecycle](docs/privacy.md)
 
 ## Status
 
-Phase 2 complete: clinician constraint engine, picture-naming practice loop (text), deterministic scoring and progression.
+Phase 3 complete: speech answers via self-hosted faster-whisper with encrypted, ephemeral audio.

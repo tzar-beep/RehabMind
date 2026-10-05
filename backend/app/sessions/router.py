@@ -51,6 +51,7 @@ class ResponseIn(BaseModel):
 class ResponseResult(BaseModel):
     outcome: Literal["correct", "near_miss", "incorrect", "skipped"]
     target: str
+    heard: str | None = None  # transcript, for speech responses
     state: SessionState
 
 

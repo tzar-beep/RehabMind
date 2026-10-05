@@ -121,6 +121,9 @@ async def submit_response(
     exercise_id: uuid.UUID,
     text: str | None,
     latency_ms: int | None,
+    *,
+    mode: ResponseMode = ResponseMode.TEXT,
+    extra_analysis: dict[str, object] | None = None,
 ) -> tuple[Exercise, ScoreResult, PracticeSession]:
     stmt = (
         select(Exercise)
@@ -133,8 +136,8 @@ async def submit_response(
     session = await db.get(PracticeSession, exercise.session_id)
     if exercise.status != "pending" or session is None or session.status != "active":
         raise PracticeConflict("exercise already answered or session not active")
-    if ResponseMode.TEXT not in exercise.response_modes:
-        raise PracticeConflict("text responses not allowed for this exercise")
+    if mode not in exercise.response_modes:
+        raise PracticeConflict(f"{mode} responses not allowed for this exercise")
 
     result = score_naming(text, exercise.expected["target"], exercise.expected["accepted_answers"])
     exercise.status = "skipped" if result.outcome == "skipped" else "answered"
@@ -142,8 +145,8 @@ async def submit_response(
         ExerciseResponse(
             exercise_id=exercise.id,
             patient_id=patient_id,
-            mode=ResponseMode.TEXT,
-            text=(text or "")[:200] or None,
+            mode=mode,
+            text=(text or "").strip()[:200] or None,
             outcome=result.outcome,
             score=result.score,
             analysis={
@@ -151,6 +154,7 @@ async def submit_response(
                 "match_type": result.match_type,
                 "matched": result.matched,
                 "similarity": result.similarity,
+                **(extra_analysis or {}),
             },
             latency_ms=latency_ms,
         )
