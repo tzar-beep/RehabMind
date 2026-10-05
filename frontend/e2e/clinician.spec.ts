@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Browser, type Page } from "@playwright/test";
 import { config } from "dotenv";
 import path from "node:path";
 
@@ -44,9 +44,32 @@ async function openAlex(page: Page): Promise<string> {
   return href;
 }
 
+/** Record one real practice answer as the patient, so session views have data. */
+async function patientAnswersOnce(browser: Browser) {
+  const ctx = await browser.newContext({
+    baseURL: "http://localhost:3000",
+    extraHTTPHeaders: { Origin: "http://localhost:3000" },
+  });
+  const login = await ctx.request.post("/api/v1/auth/login", {
+    data: { email: "patient@recovery.local", password: PASSWORD },
+  });
+  expect(login.ok()).toBe(true);
+  const state = await (
+    await ctx.request.post("/api/v1/practice/sessions")
+  ).json();
+  await ctx.request.post(
+    `/api/v1/practice/exercises/${state.exercise.id}/responses`,
+    { data: { skipped: true } },
+  );
+  await ctx.request.post("/api/v1/practice/sessions/current/end");
+  await ctx.close();
+}
+
 test("dashboard → patient overview → sessions → session detail", async ({
   page,
+  browser,
 }) => {
+  await patientAnswersOnce(browser);
   await signIn(page, "clinician@recovery.local");
   await expect(
     page.getByRole("heading", { name: "Your patients" }),

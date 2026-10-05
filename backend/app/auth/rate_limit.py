@@ -35,3 +35,12 @@ class LoginRateLimiter:
 
     async def reset(self, email: str) -> None:
         await self.redis.delete(f"rl:login:acct:{_h(email)}")
+
+
+async def within_limit(redis: Redis, key: str, limit: int, window_s: int) -> bool:
+    """Fixed-window counter. Returns False once `limit` hits occur within the window."""
+    async with redis.pipeline(transaction=True) as p:
+        p.incr(f"rl:{key}")
+        p.expire(f"rl:{key}", window_s, nx=True)
+        count, _ = await p.execute()
+    return int(count) <= limit

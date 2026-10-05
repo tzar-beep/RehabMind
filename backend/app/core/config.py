@@ -28,8 +28,9 @@ class Settings(BaseSettings):
     s3_endpoint_url: str | None = None
     s3_region: str = "us-east-1"
     s3_bucket_audio: str = "ephemeral-audio"
-    minio_root_user: str | None = None
-    minio_root_password: SecretStr | None = None
+    # Least-privilege application credentials (never the storage root account).
+    s3_access_key: str
+    s3_secret_key: SecretStr
 
     seed_dev_password: SecretStr | None = None
 
@@ -60,6 +61,24 @@ class Settings(BaseSettings):
                 raise ValueError("production origins must be https")
             if "*" in self.frontend_origins:
                 raise ValueError("wildcard origin is not allowed")
+            secrets = {
+                "POSTGRES_APP_PASSWORD": self.postgres_app_password,
+                "POSTGRES_MIGRATOR_PASSWORD": self.postgres_migrator_password,
+                "REDIS_PASSWORD": self.redis_password,
+                "S3_SECRET_KEY": self.s3_secret_key,
+                "AUDIO_ENCRYPTION_KEY": self.audio_encryption_key,
+            }
+            weak = [
+                name
+                for name, value in secrets.items()
+                if "change-me" in value.get_secret_value() or len(value.get_secret_value()) < 16
+            ]
+            if weak:
+                raise ValueError(f"weak or placeholder secrets in production: {', '.join(weak)}")
+            if self.ai_fake_fault_rate:
+                raise ValueError("AI_FAKE_FAULT_RATE is a demo setting and must be 0 in production")
+            if self.seed_dev_password is not None:
+                raise ValueError("SEED_DEV_PASSWORD must not be set in production")
         return self
 
     @property

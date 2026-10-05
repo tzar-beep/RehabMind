@@ -1,4 +1,5 @@
 import logging
+import time
 import uuid
 from collections.abc import Awaitable, Callable
 from urllib.parse import urlparse
@@ -24,6 +25,7 @@ from app.speech.router import router as speech_router
 configure_logging()
 settings = get_settings()
 log = logging.getLogger("app")
+access_log = logging.getLogger("app.access")
 
 app = FastAPI(
     title="RehabMind",
@@ -68,6 +70,7 @@ async def security_middleware(
 ) -> Response:
     rid = uuid.uuid4().hex
     request_id_var.set(rid)
+    started = time.perf_counter()
     if request.method in UNSAFE_METHODS and not _origin_allowed(request):
         response: Response = JSONResponse({"detail": "Request origin not allowed."}, 403)
     else:
@@ -76,6 +79,21 @@ async def security_middleware(
         except Exception:
             log.exception("unhandled error")
             response = JSONResponse({"detail": "Something went wrong."}, 500)
+    # Route template only (e.g. /api/v1/patients/{patient_id}): no IDs, no query strings.
+    route = request.url.path
+    for name, value in request.path_params.items():
+        route = route.replace(str(value), "{" + name + "}")
+    access_log.info(
+        "request",
+        extra={
+            "data": {
+                "method": request.method,
+                "route": route if "route" in request.scope else "unmatched",
+                "status": response.status_code,
+                "duration_ms": round((time.perf_counter() - started) * 1000, 1),
+            }
+        },
+    )
     response.headers["X-Request-ID"] = rid
     response.headers["Cache-Control"] = "no-store"
     response.headers["X-Content-Type-Options"] = "nosniff"

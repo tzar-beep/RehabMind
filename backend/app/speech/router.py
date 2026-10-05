@@ -3,8 +3,11 @@ from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel
+from redis.asyncio import Redis
 
 from app.auth.deps import DbDep, PatientUser, SettingsDep
+from app.auth.rate_limit import within_limit
+from app.core.redis import get_redis
 from app.exercises.models import Exercise
 from app.sessions import service as practice
 from app.sessions.models import ExerciseResponse, PracticeSession
@@ -15,6 +18,9 @@ from app.storage.audio import EphemeralAudioStore, get_audio_store
 from app.workers.queue import JobQueue, get_job_queue
 
 router = APIRouter(prefix="/practice", tags=["speech"])
+
+# Generous for real use (≈ one attempt every 2 s), but bounds storage/STT abuse.
+UPLOADS_PER_MINUTE = 30
 
 
 class SpeechAccepted(BaseModel):
@@ -39,6 +45,7 @@ async def upload_speech(
     settings: SettingsDep,
     store: Annotated[EphemeralAudioStore, Depends(get_audio_store)],
     queue: Annotated[JobQueue, Depends(get_job_queue)],
+    redis: Annotated[Redis, Depends(get_redis)],
     latency_ms: Annotated[int | None, Form(ge=0, le=3_600_000)] = None,
     hints_used: Annotated[int, Form(ge=0, le=2)] = 0,
 ) -> SpeechAccepted:
@@ -52,6 +59,10 @@ async def upload_speech(
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Recording is too short.")
 
     patient = await _me(user, db)
+    if not await within_limit(redis, f"speech:{patient.id}", UPLOADS_PER_MINUTE, 60):
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS, "Too many recordings. Please wait a moment."
+        )
     try:
         asset = await speech.accept_upload(
             db, patient.id, exercise_id, data, content_type, latency_ms, store, queue, hints_used
