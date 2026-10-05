@@ -37,7 +37,7 @@ exercise ─▶ response (text | speech)
 |---|---|---|
 | Shape | Modular monolith + ARQ worker | Simple to run; module boundaries allow later extraction |
 | Worker | ARQ (Redis) over Celery | Async-native, reuses Redis; Celery prefork is unsupported on Windows |
-| Auth | Server-side sessions in Redis, opaque HttpOnly cookie | Revocable, no tokens in JS |
+| Auth | Server-side sessions in Redis, opaque HttpOnly cookie | Revocable, no tokens in JS; see [security.md](security.md) |
 | Same origin | Next.js rewrites `/api/*` to FastAPI | First-party `SameSite=Lax` cookie, no credentialed CORS |
 | CSRF | SameSite=Lax + Origin check on unsafe methods | Defence in depth without token plumbing |
 | Passwords | Argon2id | Current OWASP recommendation |
@@ -64,7 +64,7 @@ services, never through each other's tables. Modules are added only when a phase
 ## Phases
 
 0. Repository, docs, local infrastructure ✅
-1. Foundation: backend/frontend skeletons, auth, RBAC, patient isolation, design tokens
+1. Foundation: backend/frontend skeletons, auth, RBAC, patient isolation, design tokens ✅
 2. Core loop with text input and deterministic exercises (constraint engine before AI)
 3. Speech input + STT + scoring + performance profile
 4. AI personalization + validation pipeline + fallback + audit

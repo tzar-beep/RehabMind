@@ -25,7 +25,8 @@ uv run scripts/bootstrap_storage.py
 
 - [Architecture](docs/architecture.md)
 - [Development](docs/development.md)
+- [Security](docs/security.md)
 
 ## Status
 
-Phase 0 complete (repository, architecture, local infrastructure). Phase 1 pending approval.
+Phase 1 complete: authentication, RBAC, patient isolation, audit, design system foundation.

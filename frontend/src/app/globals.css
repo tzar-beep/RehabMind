@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Calm, warm-neutral base with a deep teal accent.
+ * All text/background pairs meet WCAG 2.1 AA (most meet AAA).
+ */
+@theme {
+  --font-sans: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
+
+  --color-canvas: #f7f5f2;
+  --color-surface: #ffffff;
+  --color-ink: #1c2430;
+  --color-ink-muted: #4a5565;
+  --color-line: #d9d4cc;
+  --color-line-strong: #8a8378;
+
+  --color-accent: #0f6e6e;
+  --color-accent-hover: #0b5858;
+  --color-accent-soft: #e3f0ee;
+  --color-focus: #1d4ed8;
+
+  --color-success: #2e6b3f;
+  --color-success-soft: #e6f2e9;
+  --color-warning: #7a5000;
+  --color-warning-soft: #fbf1dc;
+  --color-danger: #a12a2a;
+  --color-danger-soft: #fbeaea;
+
+  --radius-control: 0.75rem;
+  --radius-card: 1.25rem;
+
+  /* Minimum interactive target (WCAG 2.5.5 enhanced). */
+  --spacing-target: 3rem;
+}
+
+html {
+  font-size: 112.5%; /* 18px base: comfortable reading for all roles */
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+/* A single, highly visible focus style everywhere. */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
