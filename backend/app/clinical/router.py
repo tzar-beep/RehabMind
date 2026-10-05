@@ -1,16 +1,20 @@
 import uuid
 
 from fastapi import APIRouter, HTTPException, status
+from sqlalchemy import select
 
 from app.audit import service as audit
 from app.auth.deps import ClinicianUser, DbDep
+from app.clinical.models import ConstraintSet
 from app.clinical.service import (
     ConstraintSetIn,
     ConstraintSetOut,
     create_version,
     latest_constraints,
 )
+from app.clinicians.schemas import ConstraintVersion
 from app.patients.access import get_accessible_patient
+from app.users.models import User
 
 router = APIRouter(prefix="/patients/{patient_id}/constraints", tags=["clinical"])
 
@@ -55,3 +59,27 @@ async def set_constraints(
     )
     await db.commit()
     return ConstraintSetOut.of(cs)
+
+
+@router.get("/versions", response_model=list[ConstraintVersion])
+async def constraint_history(patient_id: uuid.UUID, user: ClinicianUser, db: DbDep):
+    """Every version, newest first. History is read-only; versions are never edited."""
+    if await get_accessible_patient(db, user, patient_id) is None:
+        raise _NOT_FOUND
+    rows = (
+        await db.execute(
+            select(ConstraintSet, User.display_name)
+            .join(User, User.id == ConstraintSet.created_by_user_id)
+            .where(ConstraintSet.patient_id == patient_id)
+            .order_by(ConstraintSet.version.desc())
+        )
+    ).all()
+    return [
+        ConstraintVersion(
+            **ConstraintSetOut.of(cs).model_dump(mode="json"),
+            is_active=i == 0,
+            created_at=cs.created_at,
+            created_by=author,
+        )
+        for i, (cs, author) in enumerate(rows)
+    ]

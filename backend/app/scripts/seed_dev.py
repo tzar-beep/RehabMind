@@ -21,10 +21,16 @@ from app.patients.models import Patient
 from app.users.models import Role, User
 
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
+# Two separate care teams, so clinician data isolation can be demonstrated.
+CARE_TEAMS = [
+    ("patient@recovery.local", "Alex", "clinician@recovery.local", "Dr. Morgan Lee"),
+    ("patient2@recovery.local", "Sam", "clinician2@recovery.local", "Dr. Priya Shah"),
+]
+ADMIN = ("admin@recovery.local", "Site Admin")
 ACCOUNTS = [
-    ("patient@recovery.local", Role.PATIENT, "Alex"),
-    ("clinician@recovery.local", Role.CLINICIAN, "Dr. Morgan Lee"),
-    ("admin@recovery.local", Role.ADMIN, "Site Admin"),
+    *[(e, Role.PATIENT, n) for e, n, _, _ in CARE_TEAMS],
+    *[(e, Role.CLINICIAN, n) for _, _, e, n in CARE_TEAMS],
+    (ADMIN[0], Role.ADMIN, ADMIN[1]),
 ]
 
 DEV_CONSTRAINTS = ConstraintSetIn(
@@ -53,24 +59,26 @@ async def _upsert_user(db: AsyncSession, email: str, role: Role, name: str, pw: 
     return user
 
 
+async def _care_team(db: AsyncSession, patient_user: User, clinician_user: User) -> None:
+    patient = (
+        await db.execute(select(Patient).where(Patient.user_id == patient_user.id))
+    ).scalar_one_or_none() or Patient(user_id=patient_user.id)
+    clinician = (
+        await db.execute(select(Clinician).where(Clinician.user_id == clinician_user.id))
+    ).scalar_one_or_none() or Clinician(user_id=clinician_user.id)
+    db.add_all([patient, clinician])
+    await db.flush()
+    if await db.get(PatientClinician, (patient.id, clinician.id)) is None:
+        db.add(PatientClinician(patient_id=patient.id, clinician_id=clinician.id))
+    if await latest_constraints(db, patient.id) is None:
+        await create_version(db, patient.id, DEV_CONSTRAINTS, clinician_user.id)
+
+
 async def seed(password: str) -> None:
     async with SessionLocal() as db:
-        users = {r: await _upsert_user(db, e, r, n, password) for e, r, n in ACCOUNTS}
-        patient = (
-            await db.execute(select(Patient).where(Patient.user_id == users[Role.PATIENT].id))
-        ).scalar_one_or_none() or Patient(user_id=users[Role.PATIENT].id)
-        clinician = (
-            await db.execute(select(Clinician).where(Clinician.user_id == users[Role.CLINICIAN].id))
-        ).scalar_one_or_none() or Clinician(user_id=users[Role.CLINICIAN].id)
-        db.add_all([patient, clinician])
-        await db.flush()
-        if await db.get(PatientClinician, (patient.id, clinician.id)) is None:
-            db.add(PatientClinician(patient_id=patient.id, clinician_id=clinician.id))
-        current = await latest_constraints(db, patient.id)
-        if current is None or set(current.allowed_response_modes) != {
-            m.value for m in DEV_CONSTRAINTS.allowed_response_modes
-        }:
-            await create_version(db, patient.id, DEV_CONSTRAINTS, users[Role.CLINICIAN].id)
+        users = {e: await _upsert_user(db, e, r, n, password) for e, r, n in ACCOUNTS}
+        for patient_email, _, clinician_email, _ in CARE_TEAMS:
+            await _care_team(db, users[patient_email], users[clinician_email])
         await db.commit()
         await sync_stimuli(db)
 

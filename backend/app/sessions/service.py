@@ -65,7 +65,9 @@ async def issue_next(db: AsyncSession, session: PracticeSession) -> Exercise | N
 
     if (provider := get_ai_provider()) is not None:
         try:
-            proposal, ai_row = await personalization.propose(db, provider, session, cs, profile)
+            proposal, ai_row = await personalization.propose(
+                db, provider, session, cs, profile, position
+            )
         except NoSafeExercise:
             proposal, ai_row = None, None
         if proposal is not None and ai_row is not None:
