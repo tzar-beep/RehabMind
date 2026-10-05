@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import quote
 
-from pydantic import SecretStr, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
@@ -35,6 +35,10 @@ class Settings(BaseSettings):
 
     audio_encryption_key: SecretStr
     audio_max_bytes: int = 2_000_000
+    # AI personalization. "fake" is offline and deterministic ($0); "none" disables AI.
+    ai_provider: Literal["none", "fake"] = "fake"
+    # Share of deliberately faulty fake outputs, to exercise validation/fallback in demos.
+    ai_fake_fault_rate: float = Field(default=0.2, ge=0, le=1)
     whisper_model: str = "small.en"
     whisper_device: str = "cpu"
     whisper_compute_type: str = "int8"

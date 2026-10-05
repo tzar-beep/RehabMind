@@ -59,11 +59,13 @@ function MicIcon() {
  */
 export function SpeechRecorder({
   exerciseId,
+  hintsUsed,
   latencyMs,
   onResult,
   onUnavailable,
 }: {
   exerciseId: string;
+  hintsUsed: number;
   latencyMs: () => number;
   onResult: (result: ResponseResult) => void;
   onUnavailable: (message: string) => void;
@@ -128,6 +130,7 @@ export function SpeechRecorder({
     const form = new FormData();
     form.append("audio", blob, "answer");
     form.append("latency_ms", String(Math.round(latency.current)));
+    form.append("hints_used", String(hintsUsed));
     try {
       const accepted = await apiFetch(
         `/practice/exercises/${exerciseId}/speech`,

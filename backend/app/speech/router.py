@@ -40,6 +40,7 @@ async def upload_speech(
     store: Annotated[EphemeralAudioStore, Depends(get_audio_store)],
     queue: Annotated[JobQueue, Depends(get_job_queue)],
     latency_ms: Annotated[int | None, Form(ge=0, le=3_600_000)] = None,
+    hints_used: Annotated[int, Form(ge=0, le=2)] = 0,
 ) -> SpeechAccepted:
     content_type = speech.base_content_type(audio.content_type)
     if content_type not in speech.ALLOWED_CONTENT_TYPES:
@@ -53,7 +54,7 @@ async def upload_speech(
     patient = await _me(user, db)
     try:
         asset = await speech.accept_upload(
-            db, patient.id, exercise_id, data, content_type, latency_ms, store, queue
+            db, patient.id, exercise_id, data, content_type, latency_ms, store, queue, hints_used
         )
     except LookupError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found.") from None

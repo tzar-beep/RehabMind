@@ -35,6 +35,7 @@ class AudioAsset(Base):
     content_type: Mapped[str] = mapped_column(String(60))
     size_bytes: Mapped[int] = mapped_column(Integer)
     latency_ms: Mapped[int | None] = mapped_column(Integer)
+    hints_used: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     failure_reason: Mapped[str | None] = mapped_column(String(40))
     response_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("exercise_responses.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

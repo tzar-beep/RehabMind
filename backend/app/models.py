@@ -1,5 +1,6 @@
 """Imports every model so Base.metadata is complete (Alembic, tests)."""
 
+from app.ai.models import AIGeneration
 from app.audit.models import AuditLog
 from app.clinical.models import ConstraintSet
 from app.clinicians.models import Clinician, PatientClinician
@@ -12,6 +13,7 @@ from app.speech.models import AudioAsset
 from app.users.models import User
 
 __all__ = [
+    "AIGeneration",
     "AudioAsset",
     "AuditLog",
     "Base",

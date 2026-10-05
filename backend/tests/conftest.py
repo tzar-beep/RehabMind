@@ -4,6 +4,9 @@ import os
 os.environ["APP_ENV"] = "test"
 os.environ["POSTGRES_DB"] = "stroke_recovery_test"
 os.environ["REDIS_URL"] = "redis://127.0.0.1:6379/15"
+# Faulty AI outputs on: every test also proves validation and fallback hold.
+os.environ["AI_PROVIDER"] = "fake"
+os.environ["AI_FAKE_FAULT_RATE"] = "0.3"
 
 from collections.abc import AsyncIterator  # noqa: E402
 from pathlib import Path  # noqa: E402
@@ -49,9 +52,9 @@ async def clean_state() -> AsyncIterator[None]:
     async with engine.begin() as conn:
         await conn.execute(
             text(
-                "TRUNCATE audio_assets, exercise_responses, exercises, practice_sessions,"
-                " performance_profiles,"
-                " clinical_constraint_sets, patient_clinicians, patients, clinicians, users,"
+                "TRUNCATE ai_generations, audio_assets, exercise_responses, exercises,"
+                " practice_sessions, performance_profiles, clinical_constraint_sets,"
+                " patient_clinicians, patients, clinicians, users,"
                 " audit_logs CASCADE"
             )
         )

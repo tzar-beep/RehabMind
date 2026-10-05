@@ -43,6 +43,7 @@ export const ExerciseSchema = z.object({
   instructions: z.string(),
   image_url: z.string().nullable(),
   response_modes: z.array(z.string()),
+  cues: z.array(z.string()),
 });
 export type Exercise = z.infer<typeof ExerciseSchema>;
 

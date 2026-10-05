@@ -10,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clinical.models import ConstraintSet
+from app.exercises.cues import rule_cues
 from app.exercises.models import Exercise, Stimulus
 from app.exercises.types import IMPLEMENTED_TYPES, ExerciseType, ResponseMode
 from app.performance.progression import clamp
@@ -35,7 +36,7 @@ class Proposal:
     generator_version: str = GENERATOR_VERSION
 
 
-def _modes(cs: ConstraintSet) -> list[str]:
+def allowed_modes(cs: ConstraintSet) -> list[str]:
     modes = [m for m in cs.allowed_response_modes if m in SUPPORTED_MODES]
     if not modes:
         raise NoSafeExercise("no supported response mode allowed")
@@ -54,13 +55,14 @@ def _picture_naming(stim: Stimulus, modes: list[str], source: str) -> Proposal:
             if ResponseMode.SPEECH in modes
             else "Type the word for this picture.",
             "image_url": stim.image_path,
+            "cues": rule_cues(stim.category, stim.target),
         },
         expected={"target": stim.target, "accepted_answers": stim.accepted_answers},
         source=source,
     )
 
 
-async def _candidates(
+async def candidates_at(
     db: AsyncSession, cs: ConstraintSet, difficulty: int, exclude: set[uuid.UUID]
 ) -> list[Stimulus]:
     stmt = select(Stimulus).where(Stimulus.is_active, Stimulus.difficulty == difficulty)
@@ -69,15 +71,15 @@ async def _candidates(
     return [s for s in (await db.execute(stmt)).scalars() if s.id not in exclude]
 
 
-async def _session_used(db: AsyncSession, session_id: uuid.UUID) -> set[uuid.UUID]:
+async def session_stimuli(db: AsyncSession, session_id: uuid.UUID) -> set[uuid.UUID]:
     rows = await db.execute(select(Exercise.stimulus_id).where(Exercise.session_id == session_id))
     return {r for r in rows.scalars() if r}
 
 
-async def _used(
+async def used_stimuli(
     db: AsyncSession, patient_id: uuid.UUID, session_id: uuid.UUID
 ) -> tuple[set[uuid.UUID], set[uuid.UUID]]:
-    in_session = await _session_used(db, session_id)
+    in_session = await session_stimuli(db, session_id)
     recent_rows = await db.execute(
         select(Exercise.stimulus_id)
         .where(Exercise.patient_id == patient_id)
@@ -98,15 +100,15 @@ async def propose_next(
         IMPLEMENTED_TYPES & set(cs.allowed_exercise_types)
     ):
         raise NoSafeExercise("no implemented exercise type allowed")
-    modes = _modes(cs)
-    in_session, recent = await _used(db, patient_id, session_id)
+    modes = allowed_modes(cs)
+    in_session, recent = await used_stimuli(db, patient_id, session_id)
 
     wanted = clamp(target_difficulty, cs)
     # Nearest difficulty first, staying inside the clinician's range.
     levels = sorted(range(cs.min_difficulty, cs.max_difficulty + 1), key=lambda d: abs(d - wanted))
     for exclude in (recent, in_session):
         for level in levels:
-            if pool := await _candidates(db, cs, level, exclude):
+            if pool := await candidates_at(db, cs, level, exclude):
                 return _picture_naming(secrets.choice(pool), modes, "rule")
     raise NoSafeExercise("stimulus library exhausted")
 
@@ -115,9 +117,9 @@ async def fallback(db: AsyncSession, session_id: uuid.UUID, cs: ConstraintSet) -
     """Most conservative option: the clinician's minimum difficulty, nothing clever."""
     if ExerciseType.PICTURE_NAMING not in cs.allowed_exercise_types:
         raise NoSafeExercise("no implemented exercise type allowed")
-    modes = _modes(cs)
-    in_session = await _session_used(db, session_id)
+    modes = allowed_modes(cs)
+    in_session = await session_stimuli(db, session_id)
     for exclude in (in_session, set()):
-        if pool := await _candidates(db, cs, cs.min_difficulty, exclude):
+        if pool := await candidates_at(db, cs, cs.min_difficulty, exclude):
             return _picture_naming(sorted(pool, key=lambda s: s.slug)[0], modes, "fallback")
     raise NoSafeExercise("no stimulus at minimum difficulty")

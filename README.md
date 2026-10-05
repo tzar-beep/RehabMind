@@ -9,7 +9,7 @@ Not a diagnostic tool and not an autonomous system. The clinician is the authori
 ## Stack
 
 Next.js · TypeScript · Tailwind — FastAPI · SQLAlchemy 2 · Alembic — PostgreSQL ·
-Redis (sessions, ARQ jobs) · S3-compatible storage (MinIO locally) · faster-whisper · OpenAI (via provider abstraction)
+Redis (sessions, ARQ jobs) · S3-compatible storage (MinIO locally) · faster-whisper · pluggable AI provider (offline fake by default, no paid APIs)
 
 ## Quick start
 
@@ -28,7 +28,8 @@ uv run scripts/bootstrap_storage.py
 - [Security](docs/security.md)
 - [Clinical constraints & practice loop](docs/clinical-constraints.md)
 - [Privacy & audio lifecycle](docs/privacy.md)
+- [AI pipeline](docs/ai-pipeline.md)
 
 ## Status
 
-Phase 3 complete: speech answers via self-hosted faster-whisper with encrypted, ephemeral audio.
+Phase 4 complete: AI personalization (offline fake provider, $0) with schema, clinical and safety validation, retry, fallback and audit.

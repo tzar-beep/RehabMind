@@ -50,6 +50,7 @@ async def accept_upload(
     latency_ms: int | None,
     store: EphemeralAudioStore,
     queue: JobQueue,
+    hints_used: int = 0,
 ) -> AudioAsset:
     exercise = (
         await db.execute(
@@ -71,6 +72,7 @@ async def accept_upload(
         content_type=content_type,
         size_bytes=len(audio),
         latency_ms=latency_ms,
+        hints_used=hints_used,
         status="pending",
     )
     db.add(asset)
@@ -142,6 +144,7 @@ async def process(
                 asset.exercise_id,
                 transcript.text,
                 asset.latency_ms,
+                hints_used=asset.hints_used,
                 mode=ResponseMode.SPEECH,
                 extra_analysis={"stt": stt_metadata(transcript)},
             )
