@@ -21,26 +21,40 @@ async function expectNoA11yViolations(page: Page) {
 }
 
 test.beforeAll(() => {
-  expect(PASSWORD, "SEED_DEV_PASSWORD missing; run the dev seed first").not.toBe("");
+  expect(
+    PASSWORD,
+    "SEED_DEV_PASSWORD missing; run the dev seed first",
+  ).not.toBe("");
 });
 
-test("login page is accessible and shows a clear error for bad credentials", async ({ page }) => {
+test("login page is accessible and shows a clear error for bad credentials", async ({
+  page,
+}) => {
   await page.goto("/login");
   await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
   await expectNoA11yViolations(page);
 
   await signIn(page, "nobody@recovery.local", "wrong-password");
-  await expect(page.getByText("Email or password is incorrect.")).toHaveAttribute("role", "alert");
+  await expect(
+    page.getByText("Email or password is incorrect."),
+  ).toHaveAttribute("role", "alert");
   await expect(page).toHaveURL(/\/login$/);
 });
 
-test("patient signs in, sees their home, and signs out", async ({ page, context }) => {
+test("patient signs in, sees their home, and signs out", async ({
+  page,
+  context,
+}) => {
   await signIn(page, "patient@recovery.local");
   await expect(page).toHaveURL(/\/patient$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Hello, Alex");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Hello, Alex",
+  );
   await expectNoA11yViolations(page);
 
-  const session = (await context.cookies()).find((c) => c.name === "sra_session");
+  const session = (await context.cookies()).find(
+    (c) => c.name === "sra_session",
+  );
   expect(session?.httpOnly).toBe(true);
   expect(session?.sameSite).toBe("Lax");
 

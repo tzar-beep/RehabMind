@@ -32,6 +32,7 @@ Aphasia rehabilitation platform. Read `docs/architecture.md` before structural c
 docker compose up -d --wait
 uv run scripts/bootstrap_storage.py
 cd backend && uv run pytest && uv run ruff check .
+cd backend && uv run python -m app.workers.main   # speech worker
 cd frontend && npm run typecheck && npm run lint && npm test && npm run test:e2e
 ```
 

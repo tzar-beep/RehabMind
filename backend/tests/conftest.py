@@ -3,7 +3,7 @@ import os
 # Must be set before any app import: tests use an isolated database and Redis DB.
 os.environ["APP_ENV"] = "test"
 os.environ["POSTGRES_DB"] = "stroke_recovery_test"
-os.environ["REDIS_URL"] = "redis://localhost:6379/15"
+os.environ["REDIS_URL"] = "redis://127.0.0.1:6379/15"
 
 from collections.abc import AsyncIterator  # noqa: E402
 from pathlib import Path  # noqa: E402
@@ -49,7 +49,8 @@ async def clean_state() -> AsyncIterator[None]:
     async with engine.begin() as conn:
         await conn.execute(
             text(
-                "TRUNCATE exercise_responses, exercises, practice_sessions, performance_profiles,"
+                "TRUNCATE audio_assets, exercise_responses, exercises, practice_sessions,"
+                " performance_profiles,"
                 " clinical_constraint_sets, patient_clinicians, patients, clinicians, users,"
                 " audit_logs CASCADE"
             )

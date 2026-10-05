@@ -29,7 +29,7 @@ ACCOUNTS = [
 
 DEV_CONSTRAINTS = ConstraintSetIn(
     allowed_exercise_types=[ExerciseType.PICTURE_NAMING],
-    allowed_response_modes=[ResponseMode.TEXT],
+    allowed_response_modes=[ResponseMode.TEXT, ResponseMode.SPEECH],
     min_difficulty=1,
     max_difficulty=3,
     max_exercises_per_session=8,
@@ -66,7 +66,10 @@ async def seed(password: str) -> None:
         await db.flush()
         if await db.get(PatientClinician, (patient.id, clinician.id)) is None:
             db.add(PatientClinician(patient_id=patient.id, clinician_id=clinician.id))
-        if await latest_constraints(db, patient.id) is None:
+        current = await latest_constraints(db, patient.id)
+        if current is None or set(current.allowed_response_modes) != {
+            m.value for m in DEV_CONSTRAINTS.allowed_response_modes
+        }:
             await create_version(db, patient.id, DEV_CONSTRAINTS, users[Role.CLINICIAN].id)
         await db.commit()
         await sync_stimuli(db)

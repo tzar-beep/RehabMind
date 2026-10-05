@@ -63,6 +63,14 @@ export type Outcome = z.infer<typeof OutcomeSchema>;
 export const ResponseResultSchema = z.object({
   outcome: OutcomeSchema,
   target: z.string(),
+  heard: z.string().nullable().optional(),
   state: SessionStateSchema,
 });
 export type ResponseResult = z.infer<typeof ResponseResultSchema>;
+
+export const SpeechAcceptedSchema = z.object({ recording_id: z.string() });
+
+export const SpeechStatusSchema = z.object({
+  status: z.enum(["pending", "processing", "done", "no_speech", "failed"]),
+  result: z.lazy(() => ResponseResultSchema).nullable(),
+});

@@ -8,9 +8,11 @@ from app.exercises.models import Exercise, Stimulus
 from app.patients.models import Patient
 from app.performance.models import PerformanceProfile
 from app.sessions.models import ExerciseResponse, PracticeSession
+from app.speech.models import AudioAsset
 from app.users.models import User
 
 __all__ = [
+    "AudioAsset",
     "AuditLog",
     "Base",
     "Clinician",

@@ -13,10 +13,12 @@ import {
   SessionStateSchema,
   type Exercise,
   type Outcome,
+  type ResponseResult,
   type SessionState,
 } from "@/lib/api/schemas";
 
 import { FEEDBACK } from "./messages";
+import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
 
 type View =
   | { kind: "loading" }
@@ -26,6 +28,7 @@ type View =
       kind: "feedback";
       outcome: Outcome;
       target: string;
+      heard: string | null;
       imageUrl: string | null;
       next: SessionState;
     };
@@ -36,6 +39,8 @@ export function PracticeSession() {
   const [view, setView] = useState<View>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [answerError, setAnswerError] = useState<string | null>(null);
+  const [typing, setTyping] = useState(false);
+  const [micNotice, setMicNotice] = useState<string | null>(null);
   const shownAt = useRef(0);
   const nextButton = useRef<HTMLButtonElement>(null);
 
@@ -43,7 +48,10 @@ export function PracticeSession() {
     apiFetch("/practice/sessions", { method: "POST" }, SessionStateSchema)
       .then((state) => setView({ kind: "answering", state: state! }))
       .catch((e) =>
-        setView({ kind: "error", message: e instanceof ApiError ? e.message : String(e) }),
+        setView({
+          kind: "error",
+          message: e instanceof ApiError ? e.message : String(e),
+        }),
       );
   }, []);
 
@@ -52,7 +60,21 @@ export function PracticeSession() {
     if (view.kind === "feedback") nextButton.current?.focus();
   }, [view]);
 
-  async function submit(exercise: Exercise, body: { text?: string; skipped?: boolean }) {
+  function showFeedback(exercise: Exercise, result: ResponseResult) {
+    setView({
+      kind: "feedback",
+      outcome: result.outcome,
+      target: result.target,
+      heard: result.heard ?? null,
+      imageUrl: exercise.image_url,
+      next: result.state,
+    });
+  }
+
+  async function submit(
+    exercise: Exercise,
+    body: { text?: string; skipped?: boolean },
+  ) {
     setBusy(true);
     setAnswerError(null);
     try {
@@ -60,32 +82,39 @@ export function PracticeSession() {
         `/practice/exercises/${exercise.id}/responses`,
         {
           method: "POST",
-          json: { ...body, latency_ms: Math.round(performance.now() - shownAt.current) },
+          json: {
+            ...body,
+            latency_ms: Math.round(performance.now() - shownAt.current),
+          },
         },
         ResponseResultSchema,
       );
-      setView({
-        kind: "feedback",
-        outcome: result!.outcome,
-        target: result!.target,
-        imageUrl: exercise.image_url,
-        next: result!.state,
-      });
+      showFeedback(exercise, result!);
     } catch (e) {
-      setAnswerError(e instanceof ApiError ? e.message : "Something went wrong. Please try again.");
+      setAnswerError(
+        e instanceof ApiError
+          ? e.message
+          : "Something went wrong. Please try again.",
+      );
     } finally {
       setBusy(false);
     }
   }
 
   async function stopForToday() {
-    await apiFetch("/practice/sessions/current/end", { method: "POST" }).catch(() => undefined);
+    await apiFetch("/practice/sessions/current/end", { method: "POST" }).catch(
+      () => undefined,
+    );
     router.replace("/patient");
     router.refresh();
   }
 
   if (view.kind === "loading") {
-    return <p className="text-xl text-ink-muted" role="status">Getting your practice ready…</p>;
+    return (
+      <p className="text-xl text-ink-muted" role="status">
+        Getting your practice ready…
+      </p>
+    );
   }
 
   if (view.kind === "error") {
@@ -118,6 +147,11 @@ export function PracticeSession() {
           )}
           <p className="text-xl text-ink-muted">{fb.lead}</p>
           <p className="text-5xl font-bold text-accent">{view.target}</p>
+          {view.heard && view.outcome !== "correct" && (
+            <p className="text-lg text-ink-muted">
+              We heard &ldquo;{view.heard}&rdquo;.
+            </p>
+          )}
         </div>
         <Button
           ref={nextButton}
@@ -139,11 +173,14 @@ export function PracticeSession() {
         <h1 className="text-4xl font-bold">Practice complete</h1>
         {s && (
           <p className="text-2xl">
-            You practised {s.practiced} {s.practiced === 1 ? "picture" : "pictures"}.
+            You practised {s.practiced}{" "}
+            {s.practiced === 1 ? "picture" : "pictures"}.
             {s.correct > 0 && ` You named ${s.correct} on your own.`}
           </p>
         )}
-        <p className="text-xl text-ink-muted">Well done for showing up today.</p>
+        <p className="text-xl text-ink-muted">
+          Well done for showing up today.
+        </p>
         <Link href="/patient" className={buttonClasses("primary", "lg")}>
           Back to home
         </Link>
@@ -152,10 +189,23 @@ export function PracticeSession() {
   }
 
   const ex = state.exercise;
+  const canSpeak =
+    ex.response_modes.includes("speech") && speechSupported() && !micNotice;
+  const useSpeech = canSpeak && !typing && ex.response_modes.length > 0;
+  if (!ex.response_modes.includes("text") && !canSpeak) {
+    return (
+      <Alert tone="error">
+        Speaking isn&rsquo;t available on this device. Please contact your care
+        team.
+      </Alert>
+    );
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const text = String(new FormData(event.currentTarget).get("answer") ?? "").trim();
+    const text = String(
+      new FormData(event.currentTarget).get("answer") ?? "",
+    ).trim();
     if (!text) {
       setAnswerError("Type a word, or choose “I’m not sure”.");
       return;
@@ -183,7 +233,10 @@ export function PracticeSession() {
         />
       </div>
 
-      <section aria-labelledby="prompt" className="flex flex-col items-center gap-6">
+      <section
+        aria-labelledby="prompt"
+        className="flex flex-col items-center gap-6"
+      >
         {ex.image_url && (
           // Alt text must not name the object: that would give the answer away.
           // eslint-disable-next-line @next/next/no-img-element
@@ -200,32 +253,78 @@ export function PracticeSession() {
         </h1>
       </section>
 
-      <form key={ex.id} onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
-        <TextField
-          label="Your answer"
-          hint={ex.instructions}
-          name="answer"
-          autoComplete="off"
-          autoCapitalize="none"
-          spellCheck={false}
-          autoFocus
-          error={answerError ?? undefined}
-          className="text-2xl"
-        />
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button type="submit" size="lg" busy={busy} className="sm:flex-1">
-            Check
-          </Button>
-          <Button
-            variant="secondary"
-            size="lg"
-            disabled={busy}
-            onClick={() => submit(ex, { skipped: true })}
-          >
-            I&rsquo;m not sure
-          </Button>
+      {micNotice && <Alert tone="info">{micNotice}</Alert>}
+
+      {useSpeech ? (
+        <div className="flex flex-col gap-6">
+          <p className="text-center text-lg text-ink-muted">
+            {ex.instructions}
+          </p>
+          <SpeechRecorder
+            key={ex.id}
+            exerciseId={ex.id}
+            latencyMs={() => performance.now() - shownAt.current}
+            onResult={(result) => showFeedback(ex, result)}
+            onUnavailable={(message) => {
+              setMicNotice(message);
+              setTyping(true);
+            }}
+          />
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={() => setTyping(true)}
+            >
+              Type instead
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={() => submit(ex, { skipped: true })}
+            >
+              I&rsquo;m not sure
+            </Button>
+          </div>
         </div>
-      </form>
+      ) : (
+        <form
+          key={ex.id}
+          onSubmit={onSubmit}
+          noValidate
+          className="flex flex-col gap-5"
+        >
+          <TextField
+            label="Your answer"
+            hint="Type the word for this picture."
+            name="answer"
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            autoFocus
+            error={answerError ?? undefined}
+            className="text-2xl"
+          />
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button type="submit" size="lg" busy={busy} className="sm:flex-1">
+              Check
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              disabled={busy}
+              onClick={() => submit(ex, { skipped: true })}
+            >
+              I&rsquo;m not sure
+            </Button>
+          </div>
+          {canSpeak && (
+            <Button variant="quiet" onClick={() => setTyping(false)}>
+              Speak instead
+            </Button>
+          )}
+        </form>
+      )}
     </div>
   );
 }

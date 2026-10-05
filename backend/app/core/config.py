@@ -16,13 +16,13 @@ class Settings(BaseSettings):
 
     app_env: Literal["development", "test", "production"]
 
-    postgres_host: str = "localhost"
+    postgres_host: str = "127.0.0.1"
     postgres_port: int = 5433
     postgres_db: str = "stroke_recovery"
     postgres_app_password: SecretStr
     postgres_migrator_password: SecretStr
 
-    redis_url: str = "redis://localhost:6379/0"
+    redis_url: str = "redis://127.0.0.1:6379/0"
     redis_password: SecretStr
 
     s3_endpoint_url: str | None = None
@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     minio_root_password: SecretStr | None = None
 
     seed_dev_password: SecretStr | None = None
+
+    audio_encryption_key: SecretStr
+    audio_max_bytes: int = 2_000_000
+    whisper_model: str = "small.en"
+    whisper_device: str = "cpu"
+    whisper_compute_type: str = "int8"
 
     frontend_origins: list[str] = ["http://localhost:3000"]
     # Only trust X-Forwarded-For when a known proxy (the Next.js rewrite) fronts the API.
