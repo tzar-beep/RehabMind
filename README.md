@@ -1,4 +1,4 @@
-# 🧠 RehabMind
+#  RehabMind
 
 **AI-assisted, clinician-bounded speech and language practice for people recovering from
 stroke-related aphasia.**
