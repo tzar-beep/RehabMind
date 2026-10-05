@@ -1,0 +1,19 @@
+# TLS-terminating reverse proxy. Only this container publishes ports.
+# `tls internal` uses Caddy's local CA (self-hosted demo on localhost). For a real domain,
+# set SITE_ADDRESS to it and remove `tls internal` to get a public certificate automatically.
+{
+	admin off
+}
+
+{$SITE_ADDRESS:localhost} {
+	tls internal
+	encode zstd gzip
+	header {
+		-Server
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+	}
+	request_body {
+		max_size 3MB
+	}
+	reverse_proxy web:3000
+}

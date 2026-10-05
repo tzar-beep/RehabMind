@@ -40,7 +40,7 @@ services:
     restart: unless-stopped
 
   # MinIO no longer publishes free official images; Chainguard builds it from source.
-  # Bucket policy and lifecycle are provisioned by scripts/bootstrap_storage.py.
+  # Bucket policy and lifecycle are provisioned by backend/app/scripts/provision_storage.py.
   minio:
     image: cgr.dev/chainguard/minio@sha256:4cf4831a2bbcf13ddca09c1cbcc9faff716dd3c4247e0babc32864b8ee8e0034
     command: ["server", "/data"]

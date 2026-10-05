@@ -11,7 +11,7 @@
 ```bash
 cp .env.example .env          # then replace every change-me value
 docker compose up -d --wait   # PostgreSQL :5433, Redis :6379, MinIO :9000 (127.0.0.1 only)
-uv run scripts/bootstrap_storage.py
+(cd backend && uv run python -m app.scripts.provision_storage)
 cd backend && uv run alembic upgrade head && uv run python -m app.scripts.seed_dev && cd ..
 cd frontend && npm install && npm run copy-stimuli && cd ..
 ```
@@ -59,6 +59,8 @@ To re-run init scripts, reset the volume: `docker compose down -v` (destroys loc
 
 ## Windows notes
 
+- The repository is under OneDrive, which does not support hard links: if `uv` fails with
+  "incompatible hardlinks", set `UV_LINK_MODE=copy`.
 - Local services use `127.0.0.1`, not `localhost`: Windows resolves `localhost` to IPv6 first,
   Docker publishes IPv4 only, and the fallback costs ~1 s per connection.
 - First worker start downloads the Whisper `small.en` model (~480 MB) to the Hugging Face cache.

@@ -15,7 +15,7 @@ browser MediaRecorder (≤15 s, ≤2 MB)
 - No audio in the database, logs, browser storage, or the frontend bundle.
 - `audio_assets` keeps lifecycle metadata only (status, size, timestamps, `deleted_at`).
 - Safety nets: a sweep every 5 min fails and deletes recordings stuck >10 min; the bucket
-  expires any object after 1 day; bucket versioning is refused by `bootstrap_storage.py`.
+  expires any object after 1 day; bucket versioning is refused by `provision_storage.py`.
 - Audio never leaves our infrastructure: STT runs locally, not via a cloud API.
 - Development uses synthetic speech only (e.g. Windows SAPI); `*.wav`/`*.webm` are git-ignored.
 - Future clinician-approved retention would be a policy in `app/storage/audio.py`; not in V1.
@@ -37,6 +37,18 @@ test tone as "Thanks for watching!".
 Authorized clinicians see transcripts (labelled as automatic and possibly wrong), recognition
 confidence and the lifecycle status of each recording attempt. They never see audio, storage
 keys or URLs: no clinician endpoint selects them.
+
+## Retention
+
+| Data | Retention |
+|---|---|
+| Raw audio | Deleted after processing; 1-day bucket expiry backstop |
+| Transcripts, responses, sessions | Kept with the patient record for clinician review |
+| Audit and AI logs | Append-only; kept for accountability |
+| Sessions (login) | 30 min idle / 12 h absolute in Redis |
+| Access logs | Container stdout; no IDs or bodies |
+
+No data is sent to external services: speech recognition and AI personalization run locally.
 
 ## Other data
 

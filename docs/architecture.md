@@ -69,4 +69,4 @@ services, never through each other's tables. Modules are added only when a phase
 3. Speech input + STT + scoring + performance profile ✅ — see [privacy.md](privacy.md)
 4. AI personalization + validation pipeline + fallback + audit ✅ — see [ai-pipeline.md](ai-pipeline.md)
 5. Clinician platform ✅ — see [clinician-workflow.md](clinician-workflow.md)
-6. Production hardening
+6. Production hardening ✅ — see [deployment.md](deployment.md), [security.md](security.md), [accessibility.md](accessibility.md)
