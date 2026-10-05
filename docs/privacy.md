@@ -27,6 +27,11 @@ Stored with the response for clinician review, with `low_confidence_words` and
 (no prompt, no previous-text conditioning, temperature 0). Transcripts are estimates, not
 clinical judgements.
 
+Unreliable transcripts are **never scored**; the patient is asked to try again or type:
+`no_speech_prob ≥ 0.6`, `avg_logprob < −1.0`, empty text, or a known Whisper hallucination
+("thanks for watching", "thank you", "subscribe", …). Found in e2e: Whisper transcribed a
+test tone as "Thanks for watching!".
+
 ## Other data
 
 - AI providers (Phase 4) receive pseudonymous IDs and minimal context only.

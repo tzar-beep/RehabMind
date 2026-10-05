@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.analysis.scoring import normalize
 from app.exercises.models import Exercise
 from app.exercises.types import ResponseMode
 from app.sessions import service as practice
@@ -33,7 +34,36 @@ ALLOWED_CONTENT_TYPES = {
     "audio/x-wav",
 }
 MIN_BYTES = 1_000
-NO_SPEECH_THRESHOLD = 0.8
+# A wrong transcript is worse than asking again: be strict about uncertain recognition.
+NO_SPEECH_THRESHOLD = 0.6
+MIN_AVG_LOGPROB = -1.0
+# Whisper is known to "hear" these in silence, noise or tones (training-data artefacts).
+HALLUCINATIONS = {
+    "thanks for watching",
+    "thank you for watching",
+    "thank you",
+    "please subscribe",
+    "subscribe",
+    "bye",
+    "you",
+    "music",
+    "applause",
+}
+
+
+def unreliable_reason(t: Transcript) -> str | None:
+    """Why a transcript must not be scored, or None if it is usable."""
+    if t.is_empty:
+        return "empty"
+    if t.no_speech_prob >= NO_SPEECH_THRESHOLD:
+        return "no_speech"
+    if t.avg_logprob is not None and t.avg_logprob < MIN_AVG_LOGPROB:
+        return "low_confidence"
+    if normalize(t.text) in HALLUCINATIONS:
+        return "known_hallucination"
+    return None
+
+
 STALE_AFTER = timedelta(minutes=10)
 
 
@@ -133,8 +163,9 @@ async def process(
     asset.processed_at = datetime.now(UTC)
     if transcript is None:
         asset.status = "failed"
-    elif transcript.is_empty or transcript.no_speech_prob >= NO_SPEECH_THRESHOLD:
-        asset.status = "no_speech"  # exercise stays open: the patient can try again
+    elif reason := unreliable_reason(transcript):
+        # Not scored; the exercise stays open so the patient can try again or type.
+        asset.status, asset.failure_reason = "no_speech", reason
     else:
         await db.commit()
         try:
