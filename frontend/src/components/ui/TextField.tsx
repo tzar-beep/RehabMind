@@ -7,7 +7,14 @@ export interface TextFieldProps extends ComponentPropsWithRef<"input"> {
 }
 
 /** Labelled input with hint and error text wired up for assistive technology. */
-export function TextField({ label, hint, error, id, className = "", ...props }: TextFieldProps) {
+export function TextField({
+  label,
+  hint,
+  error,
+  id,
+  className = "",
+  ...props
+}: TextFieldProps) {
   const autoId = useId();
   const inputId = id ?? autoId;
   const hintId = hint ? `${inputId}-hint` : undefined;
@@ -26,7 +33,9 @@ export function TextField({ label, hint, error, id, className = "", ...props }: 
       <input
         id={inputId}
         aria-invalid={error ? true : undefined}
-        aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
+        aria-describedby={
+          [hintId, errorId].filter(Boolean).join(" ") || undefined
+        }
         className={
           "min-h-target rounded-control border-2 bg-surface px-4 text-lg " +
           (error ? "border-danger " : "border-line-strong ") +

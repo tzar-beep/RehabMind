@@ -42,7 +42,9 @@ Per attempt: provider, model, model version, prompt version (`picture-naming-v1`
 set + version, input snapshot, raw output (truncated), parsed output, status
 (`accepted` / `rejected` / `error`), failed stage (`provider` / `schema` / `clinical` /
 `safety` / `issuer`), reason codes, latency, and the exercise it produced.
-Clinicians read it at `GET /api/v1/patients/{id}/ai-generations` (assigned only).
+Clinicians read it at `GET /api/v1/patients/{id}/ai-generations` and, grouped per exercise slot
+(result: accepted / accepted after retry / rule-based used), at `.../ai-generations/runs`,
+shown in the clinician **AI audit log** (assigned patients only).
 Chain-of-thought is neither requested nor stored.
 
 ## Providers

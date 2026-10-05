@@ -8,14 +8,24 @@ import { TextField } from "./TextField";
 
 describe("TextField", () => {
   it("associates label, hint and error with the input", () => {
-    render(<TextField label="Email" hint="Your work email" error="Email is required" />);
+    render(
+      <TextField
+        label="Email"
+        hint="Your work email"
+        error="Email is required"
+      />,
+    );
     const input = screen.getByLabelText("Email");
     expect(input).toHaveAttribute("aria-invalid", "true");
-    expect(input).toHaveAccessibleDescription("Your work email Email is required");
+    expect(input).toHaveAccessibleDescription(
+      "Your work email Email is required",
+    );
   });
 
   it("has no axe violations", async () => {
-    const { container } = render(<TextField label="Password" type="password" error="Too short" />);
+    const { container } = render(
+      <TextField label="Password" type="password" error="Too short" />,
+    );
     expect((await axe(container)).violations).toEqual([]);
   });
 });

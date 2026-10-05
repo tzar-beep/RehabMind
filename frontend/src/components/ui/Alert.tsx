@@ -10,7 +10,13 @@ const tones: Record<Tone, string> = {
 };
 
 /** Errors are announced immediately (role=alert); other tones politely (role=status). */
-export function Alert({ tone = "info", children }: { tone?: Tone; children: ReactNode }) {
+export function Alert({
+  tone = "info",
+  children,
+}: {
+  tone?: Tone;
+  children: ReactNode;
+}) {
   return (
     <div
       role={tone === "error" ? "alert" : "status"}

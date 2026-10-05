@@ -32,8 +32,13 @@ export default async function PatientHome() {
                 ? "Pick up where you left off."
                 : "A few pictures to name. Go at your own pace."}
             </p>
-            <Link href="/patient/practice" className={buttonClasses("primary", "lg")}>
-              {status.has_active_session ? "Continue practice" : "Start practice"}
+            <Link
+              href="/patient/practice"
+              className={buttonClasses("primary", "lg")}
+            >
+              {status.has_active_session
+                ? "Continue practice"
+                : "Start practice"}
             </Link>
           </>
         ) : (

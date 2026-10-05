@@ -152,6 +152,7 @@ async def propose(
     session: PracticeSession,
     cs: ConstraintSet,
     profile: PerformanceProfile,
+    position: int,
 ) -> tuple[Proposal | None, AIGeneration | None]:
     """Return an accepted proposal plus its (not yet persisted) audit row, or (None, None).
 
@@ -165,6 +166,7 @@ async def propose(
         row = AIGeneration(
             patient_id=session.patient_id,
             session_id=session.id,
+            exercise_position=position,
             task=TASK,
             attempt=attempt,
             provider=getattr(provider, "name", "unknown"),

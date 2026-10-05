@@ -18,7 +18,8 @@ export async function backendGet<T extends z.ZodType>(
     headers: cookieHeader ? { cookie: cookieHeader } : {},
     cache: "no-store",
   });
-  if (res.status === 401 || res.status === 403 || res.status === 404) return null;
+  if (res.status === 401 || res.status === 403 || res.status === 404)
+    return null;
   if (!res.ok) throw new Error(`Backend request failed: ${res.status}`);
   return schema.parse(await res.json());
 }

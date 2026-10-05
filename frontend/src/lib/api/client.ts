@@ -23,15 +23,27 @@ export async function apiFetch<T extends z.ZodType>(
     res = await fetch(`/api/v1${path}`, {
       ...rest,
       credentials: "same-origin",
-      headers: json === undefined ? rest.headers : { "Content-Type": "application/json" },
+      headers:
+        json === undefined
+          ? rest.headers
+          : { "Content-Type": "application/json" },
       body: json === undefined ? rest.body : JSON.stringify(json),
     });
   } catch {
-    throw new ApiError(0, "We couldn't reach the server. Check your connection and try again.");
+    throw new ApiError(
+      0,
+      "We couldn't reach the server. Check your connection and try again.",
+    );
   }
   if (!res.ok) {
-    const detail = await res.json().then((b) => b?.detail, () => undefined);
-    throw new ApiError(res.status, typeof detail === "string" ? detail : FALLBACK_MESSAGE);
+    const detail = await res.json().then(
+      (b) => b?.detail,
+      () => undefined,
+    );
+    throw new ApiError(
+      res.status,
+      typeof detail === "string" ? detail : FALLBACK_MESSAGE,
+    );
   }
   if (!schema || res.status === 204) return undefined;
   return schema.parse(await res.json());

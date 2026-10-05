@@ -10,7 +10,9 @@ from fastapi.responses import JSONResponse
 from app.admin.router import router as admin_router
 from app.ai.router import router as ai_router
 from app.auth.router import router as auth_router
+from app.clinical.router import options_router as clinical_options_router
 from app.clinical.router import router as clinical_router
+from app.clinicians.patient_router import router as clinician_patient_router
 from app.clinicians.router import router as clinicians_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging, request_id_var
@@ -34,9 +36,11 @@ api = APIRouter(prefix="/api/v1")
 for r in (
     auth_router,
     clinical_router,
+    clinical_options_router,
     ai_router,
     patients_router,
     clinicians_router,
+    clinician_patient_router,
     practice_router,
     speech_router,
     admin_router,

@@ -13,7 +13,10 @@ export default async function LoginPage() {
   if (me) redirect(ROLE_HOME[me.role]);
 
   return (
-    <main id="main" className="flex flex-1 items-center justify-center px-6 py-12">
+    <main
+      id="main"
+      className="flex flex-1 items-center justify-center px-6 py-12"
+    >
       <div className="w-full max-w-md">
         <p className="mb-8 text-center text-lg font-bold">
           <span aria-hidden="true" className="mr-2 text-accent">

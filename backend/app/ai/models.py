@@ -29,6 +29,9 @@ class AIGeneration(Base):
         ForeignKey("practice_sessions.id", ondelete="CASCADE"), index=True
     )
     exercise_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("exercises.id"))
+    # Session position the attempt was for. Groups retries and links a rejected run to the
+    # rule-based exercise that was issued instead (session_id + position).
+    exercise_position: Mapped[int | None] = mapped_column(SmallInteger)
     task: Mapped[str] = mapped_column(String(60))
     attempt: Mapped[int] = mapped_column(SmallInteger)
     provider: Mapped[str] = mapped_column(String(40))
