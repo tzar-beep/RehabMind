@@ -27,11 +27,19 @@ export function LoginForm() {
     setBusy(true);
     setError(null);
     try {
-      const me = await apiFetch("/auth/login", { method: "POST", json: { email, password } }, MeSchema);
+      const me = await apiFetch(
+        "/auth/login",
+        { method: "POST", json: { email, password } },
+        MeSchema,
+      );
       router.replace(ROLE_HOME[me!.role]);
       router.refresh();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Something went wrong. Please try again.");
+      setError(
+        e instanceof ApiError
+          ? e.message
+          : "Something went wrong. Please try again.",
+      );
       setBusy(false);
       emailRef.current?.focus();
     }

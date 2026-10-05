@@ -10,7 +10,10 @@ export const MeSchema = z.object({
 });
 export type Me = z.infer<typeof MeSchema>;
 
-export const PatientSchema = z.object({ id: z.string(), display_name: z.string() });
+export const PatientSchema = z.object({
+  id: z.string(),
+  display_name: z.string(),
+});
 export type Patient = z.infer<typeof PatientSchema>;
 
 export const UserSummarySchema = z.object({
@@ -53,12 +56,21 @@ export const SessionStateSchema = z.object({
   total: z.number(),
   exercise: ExerciseSchema.nullable(),
   summary: z
-    .object({ practiced: z.number(), correct: z.number(), near_miss: z.number() })
+    .object({
+      practiced: z.number(),
+      correct: z.number(),
+      near_miss: z.number(),
+    })
     .nullable(),
 });
 export type SessionState = z.infer<typeof SessionStateSchema>;
 
-export const OutcomeSchema = z.enum(["correct", "near_miss", "incorrect", "skipped"]);
+export const OutcomeSchema = z.enum([
+  "correct",
+  "near_miss",
+  "incorrect",
+  "skipped",
+]);
 export type Outcome = z.infer<typeof OutcomeSchema>;
 
 export const ResponseResultSchema = z.object({

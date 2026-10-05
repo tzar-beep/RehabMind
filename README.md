@@ -4,7 +4,7 @@ Personalized aphasia rehabilitation platform. Patients practise language exercis
 generative AI personalizes the next exercise **within clinician-defined constraints**;
 clinicians review progress, AI output and validation history.
 
-Not a diagnostic tool and not an autonomous system. The clinician is the authority.
+Academic/research prototype. Not a diagnostic tool, not clinically validated, and not an autonomous system. The clinician is the authority.
 
 ## Stack
 
@@ -29,7 +29,8 @@ uv run scripts/bootstrap_storage.py
 - [Clinical constraints & practice loop](docs/clinical-constraints.md)
 - [Privacy & audio lifecycle](docs/privacy.md)
 - [AI pipeline](docs/ai-pipeline.md)
+- [Clinician workflow](docs/clinician-workflow.md)
 
 ## Status
 
-Phase 4 complete: AI personalization (offline fake provider, $0) with schema, clinical and safety validation, retry, fallback and audit.
+Phase 5 complete: clinician platform (dashboard, patient profile, sessions, versioned practice limits, AI audit log). Academic prototype; not clinically validated.

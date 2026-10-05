@@ -132,23 +132,35 @@ async def list_runs(
             .limit(limit * 3)  # at most MAX_ATTEMPTS (+ issuer) rows per slot
         )
     ).scalars()
+    # One slot = one issue_next() call. Rows carry session + position; rows written before
+    # `exercise_position` existed are grouped by transaction instead: all attempts and the
+    # issued exercise share Postgres' transaction timestamp (created_at == issued_at).
     groups: dict[tuple, list[AIGeneration]] = {}
     for g in rows:
-        key = (g.session_id, g.exercise_position) if g.exercise_position else (g.id, None)
+        key = (
+            ("pos", g.session_id, g.exercise_position)
+            if g.exercise_position is not None
+            else ("tx", g.session_id, g.created_at)
+        )
         groups.setdefault(key, []).append(g)
     keys = list(groups)[:limit]
 
-    slots = [(sid, pos) for sid, pos in keys if pos is not None]
     finals: dict[tuple, tuple[Exercise, Stimulus | None]] = {}
-    if slots:
+    by_pos = [(sid, pos) for kind, sid, pos in keys if kind == "pos"]
+    by_tx = [(sid, ts) for kind, sid, ts in keys if kind == "tx"]
+    base = select(Exercise, Stimulus).join(
+        Stimulus, Stimulus.id == Exercise.stimulus_id, isouter=True
+    )
+    if by_pos:
         for ex, stim in (
-            await db.execute(
-                select(Exercise, Stimulus)
-                .join(Stimulus, Stimulus.id == Exercise.stimulus_id, isouter=True)
-                .where(tuple_(Exercise.session_id, Exercise.position).in_(slots))
-            )
+            await db.execute(base.where(tuple_(Exercise.session_id, Exercise.position).in_(by_pos)))
         ).all():
-            finals[(ex.session_id, ex.position)] = (ex, stim)
+            finals[("pos", ex.session_id, ex.position)] = (ex, stim)
+    if by_tx:
+        for ex, stim in (
+            await db.execute(base.where(tuple_(Exercise.session_id, Exercise.issued_at).in_(by_tx)))
+        ).all():
+            finals[("tx", ex.session_id, ex.issued_at)] = (ex, stim)
 
     runs = []
     for key in keys:
@@ -159,7 +171,7 @@ async def list_runs(
         runs.append(
             AIRun(
                 session_id=str(first.session_id),
-                position=first.exercise_position,
+                position=first.exercise_position or (final.position if final else None),
                 created_at=first.created_at,
                 result=_result(attempts, final),
                 provider=first.provider,

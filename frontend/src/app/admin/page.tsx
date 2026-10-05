@@ -7,7 +7,8 @@ import { backendGet } from "@/lib/api/server";
 export const metadata: Metadata = { title: "Accounts" };
 
 export default async function AdminHome() {
-  const users = (await backendGet("/admin/users", z.array(UserSummarySchema))) ?? [];
+  const users =
+    (await backendGet("/admin/users", z.array(UserSummarySchema))) ?? [];
 
   return (
     <div className="flex flex-col gap-6">
@@ -17,10 +18,18 @@ export default async function AdminHome() {
           <caption className="sr-only">All user accounts</caption>
           <thead className="border-b border-line text-sm text-ink-muted">
             <tr>
-              <th scope="col" className="px-6 py-3">Name</th>
-              <th scope="col" className="px-6 py-3">Email</th>
-              <th scope="col" className="px-6 py-3">Role</th>
-              <th scope="col" className="px-6 py-3">Status</th>
+              <th scope="col" className="px-6 py-3">
+                Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Email
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Role
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -29,7 +38,9 @@ export default async function AdminHome() {
                 <td className="px-6 py-3 font-bold">{u.display_name}</td>
                 <td className="px-6 py-3">{u.email}</td>
                 <td className="px-6 py-3 capitalize">{u.role}</td>
-                <td className="px-6 py-3">{u.is_active ? "Active" : "Disabled"}</td>
+                <td className="px-6 py-3">
+                  {u.is_active ? "Active" : "Disabled"}
+                </td>
               </tr>
             ))}
           </tbody>

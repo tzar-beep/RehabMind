@@ -68,5 +68,5 @@ services, never through each other's tables. Modules are added only when a phase
 2. Core loop with text input and deterministic exercises (constraint engine before AI) ✅ — see [clinical-constraints.md](clinical-constraints.md)
 3. Speech input + STT + scoring + performance profile ✅ — see [privacy.md](privacy.md)
 4. AI personalization + validation pipeline + fallback + audit ✅ — see [ai-pipeline.md](ai-pipeline.md)
-5. Clinician platform
+5. Clinician platform ✅ — see [clinician-workflow.md](clinician-workflow.md)
 6. Production hardening

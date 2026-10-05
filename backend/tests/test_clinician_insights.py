@@ -1,9 +1,11 @@
 import json
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, text
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.ai.provider import set_ai_provider
+from app.core.config import get_settings
 from app.core.db import SessionLocal
 from app.main import app
 from app.users.models import Role, User
@@ -231,3 +233,31 @@ async def test_session_detail_never_exposes_audio(care):  # noqa: F811
     assert first["transcript_quality"]["no_speech_prob"] == 0.01
     blob = json.dumps(detail).lower()
     assert "object_key" not in blob and "audio/" not in blob and "audio_url" not in blob
+
+
+async def test_constraint_options_come_from_backend_rules(care):  # noqa: F811
+    patient, clinician, _ = care
+    opts = (await clinician.get("/api/v1/clinical/constraint-options")).json()
+    types = {t["value"]: t["available"] for t in opts["exercise_types"]}
+    assert types["picture_naming"] is True and types["sentence_completion"] is False
+    assert opts["response_modes"] == ["text", "speech"]
+    assert opts["difficulty"] == [1, 5] and "animals" in opts["categories"]
+    assert (await patient.get("/api/v1/clinical/constraint-options")).status_code == 403
+
+
+async def test_ai_runs_group_rows_recorded_before_slot_tracking(care, ai):  # noqa: F811
+    """Rows without exercise_position (pre-migration) are grouped by transaction."""
+    patient, clinician, pid = care
+    ai(["answer_leak", None])
+    await set_plan(clinician, pid)
+    await patient.post(START)
+    # Simulate legacy rows (the schema owner may update; the runtime role may not).
+    engine = create_async_engine(get_settings().migration_database_url)
+    async with engine.begin() as conn:
+        await conn.execute(text("UPDATE ai_generations SET exercise_position = NULL"))
+    await engine.dispose()
+
+    [run] = (await clinician.get(f"{base(pid)}/ai-generations/runs")).json()
+    assert run["result"] == "ai_generated_after_retry"
+    assert len(run["attempts"]) == 2 and run["position"] == 1
+    assert run["final_exercise"]["source"] == "ai"

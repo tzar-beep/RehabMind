@@ -26,6 +26,10 @@
   --color-danger: #a12a2a;
   --color-danger-soft: #fbeaea;
 
+  /* Single-series chart mark (passes chroma + contrast checks); gridlines stay recessive. */
+  --color-chart: #00897b;
+  --color-grid: #e7e2da;
+
   --radius-control: 0.75rem;
   --radius-card: 1.25rem;
 

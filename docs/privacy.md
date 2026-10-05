@@ -32,6 +32,12 @@ Unreliable transcripts are **never scored**; the patient is asked to try again o
 ("thanks for watching", "thank you", "subscribe", …). Found in e2e: Whisper transcribed a
 test tone as "Thanks for watching!".
 
+## Clinician views
+
+Authorized clinicians see transcripts (labelled as automatic and possibly wrong), recognition
+confidence and the lifecycle status of each recording attempt. They never see audio, storage
+keys or URLs: no clinician endpoint selects them.
+
 ## Other data
 
 - AI providers (Phase 4) receive pseudonymous IDs and minimal context only.

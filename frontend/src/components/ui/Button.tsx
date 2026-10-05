@@ -9,7 +9,8 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary: "bg-accent text-white hover:bg-accent-hover",
-  secondary: "border-2 border-accent bg-surface text-accent hover:bg-accent-soft",
+  secondary:
+    "border-2 border-accent bg-surface text-accent hover:bg-accent-soft",
   quiet: "text-ink-muted underline-offset-4 hover:text-ink hover:underline",
 };
 
@@ -19,7 +20,10 @@ const sizes: Record<Size, string> = {
 };
 
 /** Button styling for links that act as primary navigation (e.g. "Start practice"). */
-export function buttonClasses(variant: Variant = "primary", size: Size = "md"): string {
+export function buttonClasses(
+  variant: Variant = "primary",
+  size: Size = "md",
+): string {
   return `${base} ${variants[variant]} ${sizes[size]}`;
 }
 
