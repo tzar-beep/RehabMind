@@ -10,10 +10,13 @@ import sys
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.clinical.service import ConstraintSetIn, create_version, latest_constraints
 from app.clinicians.models import Clinician, PatientClinician
 from app.core.config import Settings, get_settings
 from app.core.db import SessionLocal
 from app.core.passwords import hash_password
+from app.exercises.catalog import sync_stimuli
+from app.exercises.types import ExerciseType, ResponseMode
 from app.patients.models import Patient
 from app.users.models import Role, User
 
@@ -23,6 +26,15 @@ ACCOUNTS = [
     ("clinician@recovery.local", Role.CLINICIAN, "Dr. Morgan Lee"),
     ("admin@recovery.local", Role.ADMIN, "Site Admin"),
 ]
+
+DEV_CONSTRAINTS = ConstraintSetIn(
+    allowed_exercise_types=[ExerciseType.PICTURE_NAMING],
+    allowed_response_modes=[ResponseMode.TEXT],
+    min_difficulty=1,
+    max_difficulty=3,
+    max_exercises_per_session=8,
+    note="Development default",
+)
 
 
 def assert_seed_allowed(settings: Settings) -> None:
@@ -54,7 +66,10 @@ async def seed(password: str) -> None:
         await db.flush()
         if await db.get(PatientClinician, (patient.id, clinician.id)) is None:
             db.add(PatientClinician(patient_id=patient.id, clinician_id=clinician.id))
+        if await latest_constraints(db, patient.id) is None:
+            await create_version(db, patient.id, DEV_CONSTRAINTS, users[Role.CLINICIAN].id)
         await db.commit()
+        await sync_stimuli(db)
 
 
 def main() -> None:

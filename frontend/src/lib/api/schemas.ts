@@ -27,3 +27,42 @@ export const ROLE_HOME: Record<Role, string> = {
   clinician: "/clinician",
   admin: "/admin",
 };
+
+// ---- Practice ----
+
+export const PracticeStatusSchema = z.object({
+  has_plan: z.boolean(),
+  has_active_session: z.boolean(),
+});
+
+export const ExerciseSchema = z.object({
+  id: z.string(),
+  position: z.number(),
+  type: z.string(),
+  prompt: z.string(),
+  instructions: z.string(),
+  image_url: z.string().nullable(),
+  response_modes: z.array(z.string()),
+});
+export type Exercise = z.infer<typeof ExerciseSchema>;
+
+export const SessionStateSchema = z.object({
+  session_id: z.string(),
+  status: z.enum(["active", "completed", "ended"]),
+  total: z.number(),
+  exercise: ExerciseSchema.nullable(),
+  summary: z
+    .object({ practiced: z.number(), correct: z.number(), near_miss: z.number() })
+    .nullable(),
+});
+export type SessionState = z.infer<typeof SessionStateSchema>;
+
+export const OutcomeSchema = z.enum(["correct", "near_miss", "incorrect", "skipped"]);
+export type Outcome = z.infer<typeof OutcomeSchema>;
+
+export const ResponseResultSchema = z.object({
+  outcome: OutcomeSchema,
+  target: z.string(),
+  state: SessionStateSchema,
+});
+export type ResponseResult = z.infer<typeof ResponseResultSchema>;

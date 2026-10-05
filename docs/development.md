@@ -13,7 +13,7 @@ cp .env.example .env          # then replace every change-me value
 docker compose up -d --wait   # PostgreSQL :5433, Redis :6379, MinIO :9000 (127.0.0.1 only)
 uv run scripts/bootstrap_storage.py
 cd backend && uv run alembic upgrade head && uv run python -m app.scripts.seed_dev && cd ..
-cd frontend && npm install && cd ..
+cd frontend && npm install && npm run copy-stimuli && cd ..
 ```
 
 ## Running
@@ -22,6 +22,9 @@ cd frontend && npm install && cd ..
 cd backend && uv run fastapi dev app/main.py     # API on :8000 (docs: /api/docs)
 cd frontend && npm run dev                       # UI on :3000, proxies /api to :8000
 ```
+
+The seed also syncs the picture library and gives the dev patient a default plan
+(picture naming, difficulty 1–3, 8 per session).
 
 Dev accounts: `patient@`, `clinician@`, `admin@recovery.local`; password is `SEED_DEV_PASSWORD` in `.env`.
 
