@@ -12,6 +12,26 @@
 cp .env.example .env          # then replace every change-me value
 docker compose up -d --wait   # PostgreSQL :5433, Redis :6379, MinIO :9000 (127.0.0.1 only)
 uv run scripts/bootstrap_storage.py
+cd backend && uv run alembic upgrade head && uv run python -m app.scripts.seed_dev && cd ..
+cd frontend && npm install && cd ..
+```
+
+## Running
+
+```bash
+cd backend && uv run fastapi dev app/main.py     # API on :8000 (docs: /api/docs)
+cd frontend && npm run dev                       # UI on :3000, proxies /api to :8000
+```
+
+Dev accounts: `patient@`, `clinician@`, `admin@recovery.local`; password is `SEED_DEV_PASSWORD` in `.env`.
+
+## Tests
+
+```bash
+cd backend && uv run pytest            # uses stroke_recovery_test DB + Redis DB 15
+cd backend && uv run ruff check .
+cd frontend && npm run typecheck && npm run lint && npm test
+cd frontend && npx playwright install chromium && npm run test:e2e   # starts both servers
 ```
 
 ## Local infrastructure

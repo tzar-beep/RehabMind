@@ -31,7 +31,12 @@ Aphasia rehabilitation platform. Read `docs/architecture.md` before structural c
 ```bash
 docker compose up -d --wait
 uv run scripts/bootstrap_storage.py
+cd backend && uv run pytest && uv run ruff check .
+cd frontend && npm run typecheck && npm run lint && npm test && npm run test:e2e
 ```
+
+Patient data access goes through `backend/app/patients/access.py` only.
+Frontend uses Next.js 16 — read `frontend/node_modules/next/dist/docs/` before using unfamiliar APIs.
 
 ## Working style
 
