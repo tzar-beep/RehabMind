@@ -260,46 +260,54 @@ export function ConstraintEditor({
           Saving creates a new version. Version {current?.version ?? "—"} stays
           in the history unchanged.
         </p>
-        <table className="w-full text-left">
-          <caption className="sr-only">
-            Changes in version {nextVersion}
-          </caption>
-          <thead className="text-sm text-ink-muted">
-            <tr>
-              <th scope="col" className="py-2 pr-4">
-                Setting
-              </th>
-              {before && (
+        <div
+          tabIndex={0}
+          aria-label="Scrollable table"
+          className="overflow-x-auto"
+        >
+          <table className="w-full text-left">
+            <caption className="sr-only">
+              Changes in version {nextVersion}
+            </caption>
+            <thead className="text-sm text-ink-muted">
+              <tr>
                 <th scope="col" className="py-2 pr-4">
-                  Current (v{current!.version})
+                  Setting
                 </th>
-              )}
-              <th scope="col" className="py-2">
-                New (v{nextVersion})
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line">
-            {after.map((row, i) => {
-              const diff = before && before[i].value !== row.value;
-              return (
-                <tr
-                  key={row.label}
-                  className={diff ? "bg-accent-soft" : undefined}
-                >
-                  <th scope="row" className="py-2 pr-4 font-normal">
-                    {row.label}
-                    {diff && (
-                      <span className="ml-2 text-sm font-bold">(changed)</span>
-                    )}
+                {before && (
+                  <th scope="col" className="py-2 pr-4">
+                    Current (v{current!.version})
                   </th>
-                  {before && <td className="py-2 pr-4">{before[i].value}</td>}
-                  <td className="py-2 font-bold">{row.value}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                )}
+                <th scope="col" className="py-2">
+                  New (v{nextVersion})
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {after.map((row, i) => {
+                const diff = before && before[i].value !== row.value;
+                return (
+                  <tr
+                    key={row.label}
+                    className={diff ? "bg-accent-soft" : undefined}
+                  >
+                    <th scope="row" className="py-2 pr-4 font-normal">
+                      {row.label}
+                      {diff && (
+                        <span className="ml-2 text-sm font-bold">
+                          (changed)
+                        </span>
+                      )}
+                    </th>
+                    {before && <td className="py-2 pr-4">{before[i].value}</td>}
+                    <td className="py-2 font-bold">{row.value}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
         {v.note && <p>Note: {v.note}</p>}
         {changed && changed.length === 0 && (
           <Alert tone="warning">

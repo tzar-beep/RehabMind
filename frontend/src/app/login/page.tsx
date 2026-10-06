@@ -10,6 +10,7 @@ import {
 import { redirect } from "next/navigation";
 
 import { BrandMark } from "@/components/BrandMark";
+import { Alert } from "@/components/ui/Alert";
 import { GlyphMatrix } from "@/components/magicui/glyph-matrix";
 import { ROLE_HOME } from "@/lib/api/schemas";
 import { getCurrentUser } from "@/lib/api/server";
@@ -73,7 +74,8 @@ function ExercisePreviews() {
   );
 }
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: PageProps<"/login">) {
+  const expired = (await searchParams).expired === "1";
   const me = await getCurrentUser();
   if (me) redirect(ROLE_HOME[me.role]);
 
@@ -153,6 +155,14 @@ export default async function LoginPage() {
           <div className="animate-rise relative w-full max-w-md rounded-card border border-line bg-surface p-8 shadow-card [animation-delay:120ms] sm:p-10">
             <h1 className="mb-2 text-3xl font-bold">Sign in</h1>
             <p className="mb-8 text-ink-muted">Welcome back. Take your time.</p>
+            {expired && (
+              <div className="mb-6">
+                <Alert tone="info">
+                  You were signed out after a break, to keep your account safe.
+                  Please sign in again; your practice is saved.
+                </Alert>
+              </div>
+            )}
             <LoginForm />
             <p className="mt-8 border-t border-line pt-6 text-center text-base text-ink-muted">
               Trouble signing in? Ask your care team for help.

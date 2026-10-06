@@ -102,34 +102,40 @@ export function AnswersBySessionChart({ trend }: { trend: TrendPoint[] }) {
         .map((t) => `${t.value} ${t.label.toLowerCase()}`)
         .join(", ")}.`}
       table={
-        <table className="mt-3 w-full text-left">
-          <caption className="sr-only">Answers by session</caption>
-          <thead className="text-ink-muted">
-            <tr>
-              <th scope="col" className="py-1 pr-3">
-                Session
-              </th>
-              {OUTCOMES.map((o) => (
-                <th key={o.key} scope="col" className="py-1 pr-3">
-                  {o.label}
+        <div
+          tabIndex={0}
+          aria-label="Scrollable table"
+          className="mt-3 overflow-x-auto"
+        >
+          <table className="w-full text-left">
+            <caption className="sr-only">Answers by session</caption>
+            <thead className="text-ink-muted">
+              <tr>
+                <th scope="col" className="py-1 pr-3">
+                  Session
                 </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line tabular-nums">
-            {trend.map((t, i) => (
-              <tr key={t.session_id}>
-                <th scope="row" className="py-1 pr-3 font-normal">
-                  {sessionLabel(i)} · {formatDateTime(t.started_at)}
-                </th>
-                <td className="py-1 pr-3">{t.correct}</td>
-                <td className="py-1 pr-3">{t.near_miss}</td>
-                <td className="py-1 pr-3">{t.incorrect}</td>
-                <td className="py-1 pr-3">{t.skipped}</td>
+                {OUTCOMES.map((o) => (
+                  <th key={o.key} scope="col" className="py-1 pr-3">
+                    {o.label}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-line tabular-nums">
+              {trend.map((t, i) => (
+                <tr key={t.session_id}>
+                  <th scope="row" className="py-1 pr-3 font-normal">
+                    {sessionLabel(i)} · {formatDateTime(t.started_at)}
+                  </th>
+                  <td className="py-1 pr-3">{t.correct}</td>
+                  <td className="py-1 pr-3">{t.near_miss}</td>
+                  <td className="py-1 pr-3">{t.incorrect}</td>
+                  <td className="py-1 pr-3">{t.skipped}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       }
     >
       <BarChart
@@ -191,33 +197,41 @@ export function DifficultyBySessionChart({ trend }: { trend: TrendPoint[] }) {
         last ? `; most recent ${last.avg_difficulty.toFixed(1)}` : ""
       }.`}
       table={
-        <table className="mt-3 w-full text-left">
-          <caption className="sr-only">Exercise difficulty by session</caption>
-          <thead className="text-ink-muted">
-            <tr>
-              <th scope="col" className="py-1 pr-3">
-                Session
-              </th>
-              <th scope="col" className="py-1 pr-3">
-                Average difficulty
-              </th>
-              <th scope="col" className="py-1">
-                Answers
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line tabular-nums">
-            {trend.map((t, i) => (
-              <tr key={t.session_id}>
-                <th scope="row" className="py-1 pr-3 font-normal">
-                  {sessionLabel(i)} · {formatDateTime(t.started_at)}
+        <div
+          tabIndex={0}
+          aria-label="Scrollable table"
+          className="mt-3 overflow-x-auto"
+        >
+          <table className="w-full text-left">
+            <caption className="sr-only">
+              Exercise difficulty by session
+            </caption>
+            <thead className="text-ink-muted">
+              <tr>
+                <th scope="col" className="py-1 pr-3">
+                  Session
                 </th>
-                <td className="py-1 pr-3">{t.avg_difficulty.toFixed(1)}</td>
-                <td className="py-1">{t.attempted}</td>
+                <th scope="col" className="py-1 pr-3">
+                  Average difficulty
+                </th>
+                <th scope="col" className="py-1">
+                  Answers
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-line tabular-nums">
+              {trend.map((t, i) => (
+                <tr key={t.session_id}>
+                  <th scope="row" className="py-1 pr-3 font-normal">
+                    {sessionLabel(i)} · {formatDateTime(t.started_at)}
+                  </th>
+                  <td className="py-1 pr-3">{t.avg_difficulty.toFixed(1)}</td>
+                  <td className="py-1">{t.attempted}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       }
     >
       <LineChart

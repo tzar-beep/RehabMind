@@ -50,44 +50,50 @@ export function VersionCompare({
         {picker("cmp-a", "Compare", a, setA)}
         {picker("cmp-b", "With", b, setB)}
       </div>
-      <table className="w-full text-left">
-        <caption className="sr-only">
-          Version {a} compared with version {b}
-        </caption>
-        <thead className="text-sm text-ink-muted">
-          <tr>
-            <th scope="col" className="py-2 pr-4">
-              Setting
-            </th>
-            <th scope="col" className="py-2 pr-4">
-              Version {a}
-            </th>
-            <th scope="col" className="py-2">
-              Version {b}
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-line">
-          {ra.map((row, i) => {
-            const diff = row.value !== rb[i].value;
-            return (
-              <tr
-                key={row.label}
-                className={diff ? "bg-accent-soft" : undefined}
-              >
-                <th scope="row" className="py-2 pr-4 font-normal">
-                  {row.label}
-                  {diff && (
-                    <span className="ml-2 text-sm font-bold">(differs)</span>
-                  )}
-                </th>
-                <td className="py-2 pr-4">{row.value}</td>
-                <td className="py-2">{rb[i].value}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div
+        tabIndex={0}
+        aria-label="Scrollable table"
+        className="overflow-x-auto"
+      >
+        <table className="w-full text-left">
+          <caption className="sr-only">
+            Version {a} compared with version {b}
+          </caption>
+          <thead className="text-sm text-ink-muted">
+            <tr>
+              <th scope="col" className="py-2 pr-4">
+                Setting
+              </th>
+              <th scope="col" className="py-2 pr-4">
+                Version {a}
+              </th>
+              <th scope="col" className="py-2">
+                Version {b}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line">
+            {ra.map((row, i) => {
+              const diff = row.value !== rb[i].value;
+              return (
+                <tr
+                  key={row.label}
+                  className={diff ? "bg-accent-soft" : undefined}
+                >
+                  <th scope="row" className="py-2 pr-4 font-normal">
+                    {row.label}
+                    {diff && (
+                      <span className="ml-2 text-sm font-bold">(differs)</span>
+                    )}
+                  </th>
+                  <td className="py-2 pr-4">{row.value}</td>
+                  <td className="py-2">{rb[i].value}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
