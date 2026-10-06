@@ -155,6 +155,27 @@ async def test_patient_cannot_answer_another_patients_exercise(care):
     assert r.status_code == 404
 
 
+async def test_activity_counts_own_practice_only_and_never_scores(care):
+    patient, clinician, pid = care
+    await set_plan(clinician, pid, max_exercises_per_session=2)
+    state = (await patient.post(START)).json()
+    r1 = await answer(patient, state, correct=True)
+    await answer(patient, r1["state"], correct=False)
+
+    body = (await patient.get("/api/v1/practice/activity")).json()
+    assert body["sessions_completed"] == 1
+    assert body["pictures_practised"] == 2
+    assert [s["answered"] for s in body["recent"]] == [2]
+    # Activity only: nothing about correctness reaches the patient's home page.
+    assert "correct" not in str(body).replace("sessions_completed", "")
+
+    await create_user("other@x.test", Role.PATIENT)
+    other = (await (await as_user("other@x.test")).get("/api/v1/practice/activity")).json()
+    assert other == {"sessions_completed": 0, "pictures_practised": 0, "recent": []}
+    # Clinicians use their own views, not the patient endpoint.
+    assert (await clinician.get("/api/v1/practice/activity")).status_code == 403
+
+
 # ---------- clinical constraints: the critical invariant ----------
 
 

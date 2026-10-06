@@ -8,7 +8,11 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PracticeStatusSchema } from "@/lib/api/schemas";
+import { WeekActivity } from "@/components/patient/WeekActivity";
+import {
+  PracticeActivitySchema,
+  PracticeStatusSchema,
+} from "@/lib/api/schemas";
 import { backendGet, requireRole } from "@/lib/api/server";
 
 export const metadata: Metadata = { title: "Home" };
@@ -50,13 +54,16 @@ const today = () =>
 
 export default async function PatientHome() {
   const me = await requireRole("patient");
-  const status = await backendGet("/practice/status", PracticeStatusSchema);
+  const [status, activity] = await Promise.all([
+    backendGet("/practice/status", PracticeStatusSchema),
+    backendGet("/practice/activity", PracticeActivitySchema),
+  ]);
 
   return (
     <div className="flex flex-col gap-10">
       <section
         aria-labelledby="today-heading"
-        className="relative isolate overflow-hidden rounded-card bg-linear-to-br from-[#0d5556] via-brand-deep to-[#072b2c] p-8 text-white shadow-card sm:p-10"
+        className="animate-rise relative isolate overflow-hidden rounded-card bg-linear-to-br from-[#0d5556] via-brand-deep to-[#072b2c] p-8 text-white shadow-card sm:p-10"
       >
         {/* Soft static light shapes for depth. */}
         <div
@@ -89,7 +96,7 @@ export default async function PatientHome() {
                 </p>
                 <Link
                   href="/patient/practice"
-                  className="mt-4 inline-flex min-h-16 w-fit items-center justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold text-brand-deep shadow-lg shadow-black/20 transition-colors hover:bg-accent-soft"
+                  className="mt-4 inline-flex min-h-16 w-fit items-center whitespace-nowrap justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold text-brand-deep shadow-lg shadow-black/20 transition-colors hover:bg-accent-soft"
                 >
                   {status.has_active_session
                     ? "Continue practice"
@@ -124,6 +131,8 @@ export default async function PatientHome() {
         </div>
       </section>
 
+      {activity && <WeekActivity activity={activity} />}
+
       <section aria-labelledby="how-heading">
         <h2 id="how-heading" className="mb-4 text-2xl font-bold">
           How practice works
@@ -132,11 +141,12 @@ export default async function PatientHome() {
           {STEPS.map(({ icon: Icon, tile, title, text }, i) => (
             <li
               key={title}
-              className="relative flex gap-4 overflow-hidden rounded-card border border-line bg-surface p-6 shadow-card sm:flex-col"
+              className="animate-rise relative flex gap-4 overflow-hidden rounded-card border border-line bg-surface p-6 shadow-card sm:flex-col"
+              style={{ animationDelay: `${200 + i * 80}ms` }}
             >
               <span
                 aria-hidden="true"
-                className="absolute top-3 right-5 text-6xl leading-none font-bold text-line/70"
+                className="absolute top-3 right-5 hidden text-6xl leading-none font-bold text-line/70 sm:block"
               >
                 {i + 1}
               </span>

@@ -158,8 +158,21 @@ export default async function ClinicianDashboard() {
                       </td>
                       <td className="px-5 py-4">
                         {p.recent_responses ? (
-                          <span className="tabular-nums">
-                            {p.recent_correct} of {p.recent_responses} correct
+                          <span className="flex w-40 flex-col gap-1.5">
+                            <span className="tabular-nums">
+                              {p.recent_correct} of {p.recent_responses} correct
+                            </span>
+                            <span
+                              aria-hidden="true"
+                              className="h-2 overflow-hidden rounded-full bg-line"
+                            >
+                              <span
+                                className="block h-full rounded-full bg-chart"
+                                style={{
+                                  width: `${(p.recent_correct / p.recent_responses) * 100}%`,
+                                }}
+                              />
+                            </span>
                           </span>
                         ) : (
                           <span className="text-ink-muted">No answers yet</span>
@@ -167,8 +180,8 @@ export default async function ClinicianDashboard() {
                       </td>
                       <td className="px-5 py-4">
                         {p.constraints ? (
-                          <span className="flex flex-col">
-                            <span>
+                          <span className="flex flex-col items-start gap-1">
+                            <span className="rounded-full bg-accent-soft px-3 py-0.5 text-sm font-bold text-accent-hover">
                               Difficulty {p.constraints.min_difficulty}–
                               {p.constraints.max_difficulty}
                             </span>

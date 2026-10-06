@@ -537,7 +537,7 @@ function OutcomeIcon({ outcome }: { outcome: keyof typeof OUTCOME_ICON }) {
   return (
     <span
       aria-hidden="true"
-      className={`grid size-16 place-items-center rounded-full ${cls}`}
+      className={`animate-pop grid size-16 place-items-center rounded-full ${cls}`}
     >
       <Icon size={34} />
     </span>
