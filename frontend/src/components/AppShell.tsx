@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { BrandMark } from "@/components/BrandMark";
 import { SignOutButton } from "@/components/SignOutButton";
 import { SkipLink } from "@/components/ui/SkipLink";
 
@@ -23,15 +24,10 @@ export function AppShell({
         <div
           className={`mx-auto flex ${width} items-center justify-between gap-4 px-6 py-3`}
         >
-          <p className="text-lg font-bold">
-            <span aria-hidden="true" className="mr-2 text-accent">
-              ●
-            </span>
-            RehabMind
+          <p className="flex items-center">
+            <BrandMark />
             {roleLabel && (
-              <span className="ml-3 text-base font-normal text-ink-muted">
-                {roleLabel}
-              </span>
+              <span className="ml-3 text-base text-ink-muted">{roleLabel}</span>
             )}
           </p>
           <div className="flex items-center gap-3">
