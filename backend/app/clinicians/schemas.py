@@ -41,6 +41,12 @@ class ModeStats(BaseModel):
     correct: int
 
 
+class ResetInfo(BaseModel):
+    at: datetime
+    by: str | None
+    reason: str
+
+
 class PatientOverview(BaseModel):
     id: str
     display_name: str
@@ -57,6 +63,8 @@ class PatientOverview(BaseModel):
     hinted_responses: int
     median_latency_ms: int | None
     current_working_difficulty: int | None
+    # Figures above count only practice since this fresh start (None: never reset).
+    last_reset: ResetInfo | None = None
 
 
 class SessionSummary(BaseModel):
@@ -70,6 +78,8 @@ class SessionSummary(BaseModel):
     avg_difficulty: float | None
     modes: list[str]
     duration_s: int | None
+    # Started before the patient's latest progress reset: kept for history, not counted.
+    before_reset: bool = False
 
 
 class SessionPage(BaseModel):

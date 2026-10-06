@@ -5,18 +5,21 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
 
 from app.audit import service as audit
 from app.auth.deps import ClinicianUser, DbDep
 from app.clinicians import insights
 from app.clinicians.schemas import (
     PatientOverview,
+    ResetInfo,
     SessionDetail,
     SessionPage,
     TrendPoint,
 )
 from app.patients.access import get_accessible_patient
 from app.patients.models import Patient
+from app.sessions import resets
 
 router = APIRouter(prefix="/patients/{patient_id}", tags=["clinician-insights"])
 
@@ -68,3 +71,16 @@ async def patient_session(
     if detail is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Session not found.")
     return detail
+
+
+class ResetIn(BaseModel):
+    reason: str = Field(min_length=3, max_length=500)
+
+
+@router.post("/progress-resets", response_model=ResetInfo, status_code=status.HTTP_201_CREATED)
+async def reset_progress(
+    body: ResetIn, patient: AssignedPatient, user: ClinicianUser, db: DbDep
+) -> ResetInfo:
+    """Fresh start: earlier practice stays stored but stops counting. Assigned clinicians only."""
+    reset = await resets.reset_progress(db, patient.id, user.id, body.reason.strip())
+    return ResetInfo(at=reset.created_at, by=user.display_name, reason=reset.reason)

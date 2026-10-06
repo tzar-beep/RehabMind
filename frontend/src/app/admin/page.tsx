@@ -6,6 +6,8 @@ import { Avatar } from "@/components/ui/Avatar";
 import { UserSummarySchema } from "@/lib/api/schemas";
 import { backendGet } from "@/lib/api/server";
 
+import { AddUserForm } from "./AddUserForm";
+
 export const metadata: Metadata = { title: "Accounts" };
 
 export default async function AdminHome() {
@@ -15,6 +17,12 @@ export default async function AdminHome() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-3xl font-bold">Accounts</h1>
+      <AddUserForm
+        clinicians={users
+          .filter((u) => u.role === "clinician" && u.is_active)
+          .map((u) => ({ id: u.id, name: u.display_name }))}
+      />
+      <h2 className="mt-4 text-2xl font-bold">User list</h2>
       <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card">
         <table className="w-full text-left">
           <caption className="sr-only">All user accounts</caption>

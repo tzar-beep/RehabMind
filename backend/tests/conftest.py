@@ -53,7 +53,8 @@ async def clean_state() -> AsyncIterator[None]:
         await conn.execute(
             text(
                 "TRUNCATE ai_generations, audio_assets, exercise_responses, exercises,"
-                " practice_sessions, performance_profiles, clinical_constraint_sets,"
+                " practice_sessions, performance_profiles, progress_resets,"
+                " clinical_constraint_sets,"
                 " patient_clinicians, patients, clinicians, users,"
                 " audit_logs CASCADE"
             )

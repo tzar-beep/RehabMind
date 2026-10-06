@@ -12,7 +12,7 @@ from app.exercises.generator import NoSafeExercise
 from app.exercises.models import Exercise
 from app.patients.access import accessible_patients
 from app.patients.models import Patient
-from app.sessions import service
+from app.sessions import resets, service
 from app.sessions.models import ExerciseResponse, PracticeSession
 
 router = APIRouter(prefix="/practice", tags=["practice"])
@@ -145,17 +145,28 @@ async def practice_status(user: PatientUser, db: DbDep) -> PracticeStatus:
 @router.get("/activity", response_model=PracticeActivity)
 async def practice_activity(user: PatientUser, db: DbDep) -> PracticeActivity:
     patient = await _me(user, db)
+    reset_at = await resets.cutoff(db, patient.id)
     completed = await db.scalar(
         select(func.count())
         .select_from(PracticeSession)
-        .where(PracticeSession.patient_id == patient.id, PracticeSession.status == "completed")
+        .where(
+            PracticeSession.patient_id == patient.id,
+            PracticeSession.status == "completed",
+            resets.after(PracticeSession.started_at, reset_at),
+        )
     )
     practised = await db.scalar(
         select(func.count())
         .select_from(ExerciseResponse)
-        .where(ExerciseResponse.patient_id == patient.id)
+        .where(
+            ExerciseResponse.patient_id == patient.id,
+            resets.after(ExerciseResponse.created_at, reset_at),
+        )
     )
-    since = datetime.now(UTC) - timedelta(days=ACTIVITY_DAYS)
+    since = max(
+        datetime.now(UTC) - timedelta(days=ACTIVITY_DAYS),
+        reset_at or datetime.min.replace(tzinfo=UTC),
+    )
     answered = (
         select(func.count())
         .select_from(ExerciseResponse)

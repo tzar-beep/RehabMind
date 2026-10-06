@@ -26,8 +26,10 @@ async function layoutChecks(page: Page) {
         const style = getComputedStyle(el);
         // Inline text links inside sentences are exempt (WCAG 2.5.8 inline exception).
         const inline = el.tagName === "A" && style.display === "inline";
-        // Visually hidden until focused (skip link) is exempt while hidden.
-        const hidden = el.matches(".sr-only:not(:focus)");
+        // Visually hidden until focused (skip link) is exempt while hidden, as is anything
+        // not rendered at all (e.g. the contents of a closed dialog).
+        const hidden =
+          el.matches(".sr-only:not(:focus)") || !el.checkVisibility();
         return !hidden && !inline && (r.height < 44 || r.width < 44);
       })
       .map((el) => el.outerHTML.slice(0, 80)),

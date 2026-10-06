@@ -17,52 +17,38 @@ import sys
 from sqlalchemy import select
 
 import app.models  # noqa: F401  (registers every table)
-from app.audit import service as audit
-from app.clinicians.models import Clinician, PatientClinician
+from app.clinicians.models import Clinician
 from app.core.db import SessionLocal
-from app.core.passwords import hash_password
-from app.patients.models import Patient
 from app.users.models import Role, User
+from app.users.provisioning import AccountError, create_account
 
 MIN_PASSWORD = 12
 
 
 async def create(email: str, name: str, role: Role, password: str, assign_to: str | None) -> None:
-    email = User.normalize_email(email)
     async with SessionLocal() as db:
-        if await db.scalar(select(User).where(User.email == email)):
-            sys.exit(f"refused: {email} already exists")
-        user = User(
-            email=email, display_name=name, role=role, password_hash=hash_password(password)
-        )
-        db.add(user)
-        await db.flush()
-        if role is Role.PATIENT:
-            patient = Patient(user_id=user.id)
-            db.add(patient)
-            await db.flush()
-            if assign_to:
-                clinician = await db.scalar(
-                    select(Clinician)
-                    .join(User, User.id == Clinician.user_id)
-                    .where(User.email == User.normalize_email(assign_to))
-                )
-                if clinician is None:
-                    sys.exit(f"refused: no clinician {assign_to}")
-                db.add(PatientClinician(patient_id=patient.id, clinician_id=clinician.id))
-        elif role is Role.CLINICIAN:
-            db.add(Clinician(user_id=user.id))
-        await audit.record(
-            db,
-            "user.created",
-            "success",
-            target_type="user",
-            target_id=user.id,
-            details={"role": role.value, "via": "cli"},
-            commit=False,
-        )
-        await db.commit()
-    print(f"created {role.value} {email}")
+        clinician = None
+        if assign_to:
+            clinician = await db.scalar(
+                select(Clinician)
+                .join(User, User.id == Clinician.user_id)
+                .where(User.email == User.normalize_email(assign_to))
+            )
+            if clinician is None:
+                sys.exit(f"refused: no clinician {assign_to}")
+        try:
+            await create_account(
+                db,
+                email=email,
+                name=name,
+                role=role,
+                password=password,
+                clinician=clinician,
+                via="cli",
+            )
+        except AccountError as e:
+            sys.exit(f"refused: {e}")
+    print(f"created {role.value} {User.normalize_email(email)}")
 
 
 def main() -> None:

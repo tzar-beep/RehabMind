@@ -54,3 +54,22 @@ class ExerciseResponse(Base):
     analysis: Mapped[dict[str, Any]] = mapped_column(JSONB)
     latency_ms: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ProgressReset(Base):
+    """A clinician's "fresh start" for a patient. Append-only: nothing is deleted.
+
+    Practice before `created_at` stays stored for audit but no longer counts towards the
+    patient's home page, the difficulty level or clinician summaries.
+    """
+
+    __tablename__ = "progress_resets"
+    __table_args__ = (Index("ix_progress_resets_patient_created", "patient_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    patient_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("patients.id", ondelete="CASCADE"))
+    reset_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    reason: Mapped[str] = mapped_column(Text)
+    # Working levels per exercise type just before the reset, for the audit trail.
+    previous_levels: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -23,6 +23,7 @@ import {
 } from "@/components/clinician/TrendCharts";
 import { Facts, Section } from "@/components/clinician/Section";
 import { StatusBadge } from "@/components/clinician/StatusBadge";
+import { Alert } from "@/components/ui/Alert";
 import { buttonClasses } from "@/components/ui/Button";
 import {
   ConstraintVersionSchema,
@@ -37,6 +38,8 @@ import {
   percent,
   responseMode,
 } from "@/lib/format";
+
+import { ResetProgress } from "./ResetProgress";
 
 export const metadata: Metadata = { title: "Patient overview" };
 
@@ -63,6 +66,15 @@ export default async function PatientOverviewPage({
   return (
     <div className="flex flex-col gap-10">
       <h1 className="sr-only">{ov.display_name}: overview</h1>
+
+      {ov.last_reset && (
+        <Alert tone="info">
+          <strong>Fresh start on {formatDateTime(ov.last_reset.at)}</strong>
+          {ov.last_reset.by && <> by {ov.last_reset.by}</>}: &ldquo;
+          {ov.last_reset.reason}&rdquo;. Figures below count practice since
+          then; earlier sessions stay in the session history.
+        </Alert>
+      )}
 
       <Section
         id="limits"
@@ -194,6 +206,14 @@ export default async function PatientOverviewPage({
             </div>
           </>
         )}
+      </Section>
+
+      <Section
+        id="fresh-start"
+        title="Fresh start"
+        description="Reset progress when starting a new therapy block. Nothing is deleted, and the reset is recorded."
+      >
+        <ResetProgress patientId={patientId} patientName={ov.display_name} />
       </Section>
     </div>
   );

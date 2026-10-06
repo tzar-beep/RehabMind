@@ -34,6 +34,17 @@ Then log in as `clinician2@recovery.local`: Alex is not listed, and Alex's URLs 
 | `POST /patients/{id}/constraints` | Existing endpoint; creates the next immutable version |
 | `GET /clinical/constraint-options` | Form choices and limits from backend rules (no duplicated constants) |
 | `GET /patients/{id}/ai-generations/runs` | AI attempts grouped per exercise slot |
+| `POST /patients/{id}/progress-resets` | "Fresh start" with a required reason (see below) |
+
+## Progress reset ("fresh start")
+
+An assigned clinician can reset a patient's progress, for example at the start of a new
+therapy block. Nothing is deleted: the reset is an append-only row in `progress_resets` (who,
+when, why, and the working levels just before). From that moment, the patient's home page,
+the clinician list, overview and trends, and the AI's category statistics count only newer
+practice. Working levels restart at the clinician's minimum; any open session is closed.
+Earlier sessions stay in the session history, labelled "Before fresh start". Admins cannot
+reset (no clinical access).
 
 ## Security decisions
 

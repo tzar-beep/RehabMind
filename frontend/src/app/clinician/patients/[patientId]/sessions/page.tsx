@@ -107,6 +107,11 @@ export default async function SessionsPage({
                       >
                         {SESSION_STATUS[s.status] ?? s.status}
                       </StatusBadge>
+                      {s.before_reset && (
+                        <span className="mt-1.5 block w-fit rounded-full bg-canvas px-3 py-0.5 text-sm font-bold text-ink-muted ring-1 ring-line">
+                          Before fresh start
+                        </span>
+                      )}
                     </td>
                     <td className="px-5 py-3 tabular-nums">
                       {s.attempted} of {s.planned}
