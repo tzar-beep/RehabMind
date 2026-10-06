@@ -86,21 +86,21 @@ const CONCEPT_LIGHT: Record<Concept, string> = {
   Rules: "bg-canvas text-ink-muted ring-1 ring-line",
 };
 
-const CONCEPT_DARK: Record<Concept, string> = {
-  ML: "bg-[#b794d6]/25 text-[#f1e6fb]",
-  DL: "bg-[#7fa8e8]/25 text-[#e3edfd]",
-  NLP: "bg-[#e3b05f]/25 text-[#fbecd2]",
-  Transformer: "bg-[#5ec4b6]/25 text-[#d9f7f2]",
-  GenAI: "bg-[#ec8fb3]/25 text-[#fde4ee]",
-  Rules: "bg-white/12 text-white",
-};
-
 const STATE: Record<State, { dot: string; beam: string; label: string }> = {
   ok: { dot: "bg-[#6ee7b7]", beam: "#5eead4", label: "passed" },
   warn: { dot: "bg-[#fbbf24]", beam: "#fbbf24", label: "retried or fell back" },
   fail: { dot: "bg-[#f87171]", beam: "#f87171", label: "failed safely" },
   skip: { dot: "bg-[#94a3b8]", beam: "#94a3b8", label: "not needed" },
   idle: { dot: "bg-[#64748b]", beam: "#64748b", label: "not reached yet" },
+};
+
+// Status dots on the light cards (the map's beams keep the brighter colours).
+const DOT_ON_LIGHT: Record<State, string> = {
+  ok: "bg-success",
+  warn: "bg-[#c27c2c]",
+  fail: "bg-danger",
+  skip: "bg-line-strong",
+  idle: "bg-line",
 };
 
 function genState(gen: PipelineGeneration | null): State {
@@ -675,13 +675,13 @@ export function PipelineMap({ data }: { data: Pipeline }) {
                             });
                           }}
                           className={cn(
-                            "relative flex h-full w-full flex-col gap-2 rounded-2xl border p-3.5 text-left backdrop-blur-sm transition-all duration-500",
-                            "border-white/15 bg-white/[0.07] hover:bg-white/[0.12]",
+                            "relative flex h-full w-full flex-col gap-2 rounded-2xl border-2 p-3.5 text-left text-ink transition-all duration-500",
+                            "border-white bg-surface shadow-[0_10px_28px_-14px_rgba(0,0,0,0.65)] hover:-translate-y-0.5",
                             active &&
-                              "-translate-y-1 border-[#5ec4b6] bg-white/[0.14] shadow-[0_0_0_3px_rgba(94,196,182,0.35),0_0_36px_-4px_rgba(94,196,182,0.8)]",
+                              "-translate-y-1 border-[#5ec4b6] shadow-[0_0_0_4px_rgba(94,196,182,0.45),0_0_40px_-2px_rgba(94,196,182,0.9)]",
                             (s.state === "skip" || s.state === "idle") &&
                               !active &&
-                              "border-dashed",
+                              "border-dashed border-[#9fb7b3] bg-[#e8f0ee]",
                           )}
                         >
                           <span className="flex items-center justify-between gap-2">
@@ -689,7 +689,7 @@ export function PipelineMap({ data }: { data: Pipeline }) {
                               aria-hidden="true"
                               className={cn(
                                 "grid size-9 place-items-center rounded-xl",
-                                CONCEPT_DARK[s.concept],
+                                CONCEPT_LIGHT[s.concept],
                               )}
                             >
                               <Icon size={18} />
@@ -697,7 +697,7 @@ export function PipelineMap({ data }: { data: Pipeline }) {
                             <span
                               className={cn(
                                 "rounded-full px-2 py-0.5 text-xs font-bold",
-                                CONCEPT_DARK[s.concept],
+                                CONCEPT_LIGHT[s.concept],
                               )}
                             >
                               {s.concept}
@@ -708,18 +708,18 @@ export function PipelineMap({ data }: { data: Pipeline }) {
                               aria-hidden="true"
                               className={cn(
                                 "size-2.5 shrink-0 rounded-full",
-                                STATE[s.state].dot,
+                                DOT_ON_LIGHT[s.state],
                               )}
                             />
                             {i + 1}. {s.title}
                           </span>
-                          <span className="line-clamp-1 text-sm text-brand-muted">
+                          <span className="line-clamp-1 text-sm text-ink-muted">
                             {s.summary}
                           </span>
                           {done && playing && (
                             <span
                               aria-hidden="true"
-                              className="absolute top-2 right-2 size-2 rounded-full bg-[#6ee7b7]"
+                              className="absolute top-2 right-2 size-2 rounded-full bg-success"
                             />
                           )}
                           <span className="sr-only">
