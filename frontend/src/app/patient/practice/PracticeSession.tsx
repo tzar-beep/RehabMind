@@ -56,7 +56,11 @@ export function PracticeSession() {
   const [view, setView] = useState<View>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [answerError, setAnswerError] = useState<string | null>(null);
-  const [typing, setTyping] = useState(false);
+  // How the patient answers: the default for the exercise type, or their explicit choice.
+  // The choice carries over to later exercises in the session.
+  const [inputMode, setInputMode] = useState<"auto" | "speech" | "manual">(
+    "auto",
+  );
   // Hints revealed for the current exercise (keyed so a new exercise starts at zero).
   const [hintState, setHintState] = useState({ exerciseId: "", count: 0 });
   const currentId =
@@ -245,9 +249,13 @@ export function PracticeSession() {
   const canSpeak =
     ex.response_modes.includes("speech") && speechSupported() && !micNotice;
   const isSentence = ex.type === "sentence_construction";
-  // Sentence building is tap-first; speech is used when typing/tapping is not allowed.
+  // Sentence building is tap-first by default; speech is used when the patient asks for
+  // it, or when typing/tapping is not allowed.
   const useSpeech =
-    canSpeak && !typing && (!isSentence || !ex.response_modes.includes("text"));
+    canSpeak &&
+    (inputMode === "speech" ||
+      (inputMode === "auto" &&
+        (!isSentence || !ex.response_modes.includes("text"))));
   const isPhoto = ex.image_kind === "photo";
   if (!ex.response_modes.includes("text") && !canSpeak) {
     return (
@@ -378,17 +386,19 @@ export function PracticeSession() {
             onResult={(result) => showFeedback(ex, result)}
             onUnavailable={(message) => {
               setMicNotice(message);
-              setTyping(true);
+              setInputMode("manual");
             }}
           />
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => setTyping(true)}
-            >
-              {isSentence ? "Tap words instead" : "Type instead"}
-            </Button>
+            {ex.response_modes.includes("text") && (
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => setInputMode("manual")}
+              >
+                {isSentence ? "Tap words instead" : "Type instead"}
+              </Button>
+            )}
             <Button
               variant="secondary"
               size="lg"
@@ -413,7 +423,7 @@ export function PracticeSession() {
             onSkip={() => submit(ex, { skipped: true })}
           />
           {canSpeak && (
-            <Button variant="quiet" onClick={() => setTyping(false)}>
+            <Button variant="quiet" onClick={() => setInputMode("speech")}>
               Speak instead
             </Button>
           )}
@@ -454,7 +464,7 @@ export function PracticeSession() {
             </Button>
           </div>
           {canSpeak && (
-            <Button variant="quiet" onClick={() => setTyping(false)}>
+            <Button variant="quiet" onClick={() => setInputMode("speech")}>
               Speak instead
             </Button>
           )}

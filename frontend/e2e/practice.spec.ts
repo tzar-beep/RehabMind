@@ -5,6 +5,14 @@ import path from "node:path";
 
 config({ path: path.resolve(__dirname, "../../.env"), quiet: true });
 
+// Each test starts a fresh session, whatever was left open in the dev database.
+async function endOpenSession(page: Page) {
+  const r = await page.request.post("/api/v1/practice/sessions/current/end", {
+    headers: { Origin: new URL(page.url()).origin },
+  });
+  expect(r.ok()).toBe(true);
+}
+
 async function a11y(page: Page) {
   const r = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -20,6 +28,8 @@ test("patient practises picture naming end to end", async ({ page }) => {
     .fill(process.env.SEED_DEV_PASSWORD ?? "");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/patient$/);
+  await endOpenSession(page);
+  await page.reload();
 
   await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -73,6 +83,9 @@ test("hints reveal meaning first, then the first sound", async ({ page }) => {
     .getByLabel("Password", { exact: true })
     .fill(process.env.SEED_DEV_PASSWORD ?? "");
   await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/patient$/);
+  await endOpenSession(page);
+  await page.reload();
   await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
   await page.getByRole("button", { name: "Show a hint" }).click();
   await expect(page.getByRole("listitem")).toHaveCount(1);
@@ -86,6 +99,49 @@ test("hints reveal meaning first, then the first sound", async ({ page }) => {
     path: "test-results/practice-hints.png",
     fullPage: true,
   });
+  await page.getByRole("button", { name: "Stop for today" }).click();
+  await expect(page).toHaveURL(/\/patient$/);
+});
+
+test("sentence building can switch to speaking and back", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel("Email").fill("patient@recovery.local");
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill(process.env.SEED_DEV_PASSWORD ?? "");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/patient$/);
+  await endOpenSession(page);
+  await page.reload();
+  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await expect(
+    page.getByRole("button", { name: "Stop for today" }),
+  ).toBeVisible();
+
+  // Exercise types rotate within a session; skip ahead to a sentence exercise.
+  const words = page.getByRole("region", { name: "Words", exact: true });
+  const speakInstead = page.getByRole("button", { name: "Speak instead" });
+  for (let i = 0; i < 8 && !(await words.isVisible()); i++) {
+    if (await speakInstead.isVisible()) await speakInstead.click();
+    await page.getByRole("button", { name: "I’m not sure" }).click();
+    await page
+      .getByRole("button", { name: /Next picture|See how you did/ })
+      .click();
+    if (
+      await page.getByRole("heading", { name: "Practice complete" }).isVisible()
+    )
+      await page.goto("/patient/practice");
+  }
+  await expect(words).toBeVisible();
+
+  await speakInstead.click();
+  await expect(
+    page.getByRole("button", { name: "Start speaking" }),
+  ).toBeVisible();
+  await expect(words).toBeHidden();
+  await page.getByRole("button", { name: "Tap words instead" }).click();
+  await expect(words).toBeVisible();
+
   await page.getByRole("button", { name: "Stop for today" }).click();
   await expect(page).toHaveURL(/\/patient$/);
 });
