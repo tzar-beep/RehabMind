@@ -67,6 +67,28 @@
     }
   }
 
+  /* Slide timer while the pipeline plays (duration set inline per slide). */
+  --animate-countdown: countdown linear forwards;
+  @keyframes countdown {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Speech waveform bars. */
+  --animate-wave: wave 0.9s ease-in-out infinite alternate;
+  @keyframes wave {
+    from {
+      transform: scaleY(0.35);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
   /* Progress ring fills once from empty (--ring-length is set inline). */
   --animate-ring-fill: ring-fill 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
   @keyframes ring-fill {
