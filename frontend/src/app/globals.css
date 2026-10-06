@@ -59,6 +59,14 @@
     }
   }
 
+  /* Data flowing along a pipeline connector (dash pattern 10 + 22 = 32). */
+  --animate-flow: flow 1.1s linear infinite;
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -32;
+    }
+  }
+
   /* Progress ring fills once from empty (--ring-length is set inline). */
   --animate-ring-fill: ring-fill 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
   @keyframes ring-fill {

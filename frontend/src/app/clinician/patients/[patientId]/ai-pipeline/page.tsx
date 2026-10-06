@@ -9,6 +9,8 @@ import { PipelineSchema, type PipelineGeneration } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import { formatDateTime } from "@/lib/format";
 
+import { PipelineMap } from "./PipelineMap";
+
 export const metadata: Metadata = { title: "AI pipeline" };
 
 const OBJECTIVE_NAMES: Record<string, string> = {
@@ -147,6 +149,14 @@ export default async function AIPipelinePage({
           )}
         </p>
       </div>
+
+      <Section
+        id="map"
+        title="Pipeline map"
+        description="The whole loop for one real exercise. Pick an exercise, click any step to see its data, or press Play to walk through it."
+      >
+        <PipelineMap data={data} />
+      </Section>
 
       <Section
         id="abilities"
