@@ -32,6 +32,7 @@ import {
 } from "react";
 
 import type { Pipeline, PipelineGeneration } from "@/lib/api/clinician";
+import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import { cn } from "@/lib/utils";
 
 import {
@@ -562,10 +563,19 @@ export function PipelineMap({ data }: { data: Pipeline }) {
         ref={container}
         className="relative isolate overflow-hidden rounded-3xl bg-[radial-gradient(900px_420px_at_12%_-12%,rgba(94,196,182,0.30),transparent_60%),radial-gradient(700px_380px_at_100%_115%,rgba(47,94,168,0.30),transparent_60%),linear-gradient(140deg,#0d5556,#0a3d3e_45%,#062627)] p-5 text-white shadow-xl shadow-ink/20 sm:p-7"
       >
+        {/* Magic UI Flickering Grid, fading out towards the bottom. */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-20 bg-[radial-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] bg-size-[22px_22px]"
-        />
+          className="absolute inset-0 -z-20 mask-[linear-gradient(to_bottom,#000_55%,transparent)]"
+        >
+          <FlickeringGrid
+            squareSize={4}
+            gridGap={6}
+            color="#5ec4b6"
+            maxOpacity={0.28}
+            flickerChance={0.12}
+          />
+        </div>
         <svg
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10 size-full overflow-visible"
