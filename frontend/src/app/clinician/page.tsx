@@ -1,4 +1,10 @@
-import { Users } from "lucide-react";
+import {
+  CalendarDays,
+  CalendarCheck,
+  CalendarX,
+  ShieldAlert,
+  Users,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { z } from "zod";
@@ -6,6 +12,7 @@ import { z } from "zod";
 import { EmptyState } from "@/components/clinician/EmptyState";
 import { Facts, Section } from "@/components/clinician/Section";
 import { StatusBadge } from "@/components/clinician/StatusBadge";
+import { Avatar } from "@/components/ui/Avatar";
 import {
   PatientListItemSchema,
   type PatientListItem,
@@ -46,9 +53,21 @@ export default async function ClinicianDashboard() {
 
   return (
     <div className="flex flex-col gap-10">
-      <div>
-        <h1 className="text-3xl font-bold">Your patients</h1>
-        <p className="text-ink-muted">
+      <div className="relative isolate overflow-hidden rounded-card bg-linear-to-br from-[#0d5556] via-brand-deep to-[#072b2c] p-8 text-white shadow-card">
+        <div
+          aria-hidden="true"
+          className="absolute -top-24 -right-10 -z-10 size-72 rounded-full bg-[#5ec4b6]/20 blur-3xl"
+        />
+        <p className="flex items-center gap-2 text-base text-brand-muted">
+          <CalendarDays aria-hidden="true" size={18} />
+          {new Intl.DateTimeFormat("en-GB", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          }).format(new Date())}
+        </p>
+        <h1 className="mt-2 text-4xl font-bold">Your patients</h1>
+        <p className="mt-2 max-w-2xl text-lg text-brand-muted">
           Welcome, {me.display_name}. Practice activity below is recorded data,
           not a clinical assessment.
         </p>
@@ -63,16 +82,23 @@ export default async function ClinicianDashboard() {
         <>
           <Facts
             items={[
-              { label: "Assigned patients", value: patients.length },
               {
+                icon: Users,
+                label: "Assigned patients",
+                value: patients.length,
+              },
+              {
+                icon: CalendarCheck,
                 label: `Practised in the last ${RECENT_DAYS} days`,
                 value: recent.length,
               },
               {
+                icon: CalendarX,
                 label: `No practice in the last ${RECENT_DAYS} days`,
                 value: patients.length - recent.length,
               },
               {
+                icon: ShieldAlert,
                 label: "Without practice limits",
                 value: patients.filter((p) => !p.constraints).length,
                 hint: "Practice cannot start until limits are set",
@@ -111,14 +137,20 @@ export default async function ClinicianDashboard() {
                 </thead>
                 <tbody className="divide-y divide-line">
                   {patients.map((p) => (
-                    <tr key={p.id} className="align-top">
+                    <tr
+                      key={p.id}
+                      className="align-top transition-colors hover:bg-canvas/60"
+                    >
                       <th scope="row" className="px-5 py-4">
-                        <Link
-                          href={`/clinician/patients/${p.id}`}
-                          className="text-lg font-bold text-accent underline-offset-4 hover:underline"
-                        >
-                          {p.display_name}
-                        </Link>
+                        <span className="flex items-center gap-3">
+                          <Avatar name={p.display_name} />
+                          <Link
+                            href={`/clinician/patients/${p.id}`}
+                            className="inline-flex min-h-target min-w-target items-center text-lg font-bold text-accent underline-offset-4 hover:underline"
+                          >
+                            {p.display_name}
+                          </Link>
+                        </span>
                       </th>
                       <td className="px-5 py-4">{lastPractice(p)}</td>
                       <td className="px-5 py-4 tabular-nums">

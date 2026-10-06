@@ -68,7 +68,15 @@ html {
 }
 
 body {
-  background: var(--color-canvas);
+  /* A soft, static teal glow at the top of every page for depth. */
+  background:
+    radial-gradient(
+        1100px 420px at 50% -160px,
+        rgb(15 110 110 / 0.1),
+        transparent 70%
+      )
+      no-repeat,
+    var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
   line-height: 1.6;
