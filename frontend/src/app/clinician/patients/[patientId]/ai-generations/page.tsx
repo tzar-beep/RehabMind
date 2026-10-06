@@ -111,59 +111,65 @@ function Run({ run }: { run: AIRun }) {
             </div>
           </dl>
 
-          <table className="w-full text-left text-sm">
-            <caption className="mb-2 text-left font-bold">
-              Attempts and validation
-            </caption>
-            <thead className="text-ink-muted">
-              <tr>
-                <th scope="col" className="py-1 pr-4">
-                  Attempt
-                </th>
-                <th scope="col" className="py-1 pr-4">
-                  Result
-                </th>
-                <th scope="col" className="py-1 pr-4">
-                  Stopped at
-                </th>
-                <th scope="col" className="py-1 pr-4">
-                  Reasons
-                </th>
-                <th scope="col" className="py-1">
-                  Time
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line">
-              {run.attempts.map((a) => (
-                <tr key={a.attempt} className="align-top">
-                  <th scope="row" className="py-2 pr-4 font-normal">
-                    {a.attempt}
+          <div
+            tabIndex={0}
+            aria-label="Scrollable table"
+            className="overflow-x-auto"
+          >
+            <table className="w-full text-left text-sm">
+              <caption className="mb-2 text-left font-bold">
+                Attempts and validation
+              </caption>
+              <thead className="text-ink-muted">
+                <tr>
+                  <th scope="col" className="py-1 pr-4">
+                    Attempt
                   </th>
-                  <td className="py-2 pr-4">
-                    {a.status === "accepted"
-                      ? "Passed all checks"
-                      : a.status === "error"
-                        ? "No usable response"
-                        : "Rejected by validation"}
-                  </td>
-                  <td className="py-2 pr-4">
-                    {a.failed_stage
-                      ? (STAGE[a.failed_stage] ?? a.failed_stage)
-                      : "—"}
-                  </td>
-                  <td className="py-2 pr-4">
-                    {a.reason_codes.length
-                      ? a.reason_codes.map(reasonLabel).join("; ")
-                      : "—"}
-                  </td>
-                  <td className="py-2 tabular-nums">
-                    {formatMs(a.latency_ms)}
-                  </td>
+                  <th scope="col" className="py-1 pr-4">
+                    Result
+                  </th>
+                  <th scope="col" className="py-1 pr-4">
+                    Stopped at
+                  </th>
+                  <th scope="col" className="py-1 pr-4">
+                    Reasons
+                  </th>
+                  <th scope="col" className="py-1">
+                    Time
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {run.attempts.map((a) => (
+                  <tr key={a.attempt} className="align-top">
+                    <th scope="row" className="py-2 pr-4 font-normal">
+                      {a.attempt}
+                    </th>
+                    <td className="py-2 pr-4">
+                      {a.status === "accepted"
+                        ? "Passed all checks"
+                        : a.status === "error"
+                          ? "No usable response"
+                          : "Rejected by validation"}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {a.failed_stage
+                        ? (STAGE[a.failed_stage] ?? a.failed_stage)
+                        : "—"}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {a.reason_codes.length
+                        ? a.reason_codes.map(reasonLabel).join("; ")
+                        : "—"}
+                    </td>
+                    <td className="py-2 tabular-nums">
+                      {formatMs(a.latency_ms)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </details>
     </li>

@@ -258,8 +258,14 @@ async def ai_feedback_for(exercise_id: uuid.UUID, user: PatientUser, db: DbDep) 
     """GenAI use case 2. Called after the standard feedback is on screen, so a slow or failed
     model never delays the patient. The deterministic score is never changed."""
     patient = await _me(user, db)
-    exercise = await db.get(Exercise, exercise_id)
-    if exercise is None or exercise.patient_id != patient.id:
+    # Row lock: simultaneous requests for the same answer (e.g. a double render) wait for
+    # the first one, then reuse its result instead of calling the model again.
+    exercise = await db.scalar(
+        select(Exercise)
+        .where(Exercise.id == exercise_id, Exercise.patient_id == patient.id)
+        .with_for_update()
+    )
+    if exercise is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found.")
     response = await db.scalar(
         select(ExerciseResponse).where(ExerciseResponse.exercise_id == exercise.id)

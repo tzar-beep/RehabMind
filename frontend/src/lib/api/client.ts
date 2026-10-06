@@ -35,6 +35,12 @@ export async function apiFetch<T extends z.ZodType>(
       "We couldn't reach the server. Check your connection and try again.",
     );
   }
+  if (res.status === 401 && path !== "/auth/login") {
+    // Session expired (30 min idle or 12 h): back to sign-in, with an explanation.
+    // A full page load on purpose: it drops all in-memory state of the expired session.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign("/login?expired=1");
+  }
   if (!res.ok) {
     const detail = await res.json().then(
       (b) => b?.detail,

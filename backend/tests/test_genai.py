@@ -663,3 +663,33 @@ def test_low_accuracy_objective_cannot_be_called_a_strength():
         inp,
     )
     assert ok.ok
+
+
+@pytest.mark.parametrize(
+    "text, outcome, ok",
+    [
+        ("Close to the correct answer, keep trying!", "near_miss", True),
+        ("You found the right first sounds.", "near_miss", True),
+        ("That's correct, well done!", "near_miss", False),
+        ("Correct! Great work.", "incorrect", False),
+        ("You got it this time.", "near_miss", False),
+    ],
+)
+def test_feedback_mentions_versus_claims_of_correctness(text, outcome, ok):
+    verdict, _ = check_feedback(json.dumps({"feedback": text}), outcome)
+    assert verdict.ok is ok, verdict.reasons
+
+
+async def test_concurrent_feedback_requests_call_the_model_once(care, ai):  # noqa: F811
+    import asyncio
+
+    patient, clinician, pid = care
+    provider = ai(fault_rate=0.0)
+    await set_plan(clinician, pid)
+    state = (await patient.post(START)).json()
+    await _answered(patient, state, correct=False)
+    calls = provider.calls
+    url = f"/api/v1/practice/exercises/{state['exercise']['id']}/feedback"
+    a, b = await asyncio.gather(patient.post(url), patient.post(url))
+    assert a.json() == b.json() and a.json()["feedback"]
+    assert provider.calls == calls + 1

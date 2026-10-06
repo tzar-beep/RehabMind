@@ -76,3 +76,50 @@ test("AI pipeline demo view renders without errors when enabled", async ({
   await a11y(page);
   expect(errors).toEqual([]);
 });
+
+test("unknown pages show a friendly 404 with a way home", async ({ page }) => {
+  await page.goto("/this-page-does-not-exist");
+  await expect(
+    page.getByRole("heading", { name: "This page does not exist" }),
+  ).toBeVisible();
+  await a11y(page);
+  await page.getByRole("link", { name: "Go to my home page" }).click();
+  await expect(page).toHaveURL(/\/login$/);
+});
+
+test("admin account actions ask for confirmation and can be cancelled", async ({
+  page,
+}) => {
+  await signIn(page, "admin@recovery.local");
+  await expect(page).toHaveURL(/\/admin$/);
+  const row = page.getByRole("row", { name: /patient2@recovery\.local/ });
+  await row.getByRole("button", { name: "Reset password" }).click();
+  await expect(row.getByText(/Reset Sam's password\?/)).toBeVisible();
+  await a11y(page);
+  await row.getByRole("button", { name: "Cancel" }).click();
+  await row.getByRole("button", { name: "Disable" }).click();
+  await expect(row.getByText(/Disable Sam\?/)).toBeVisible();
+  await row.getByRole("button", { name: "Cancel" }).click();
+  await expect(row.getByRole("button", { name: "Disable" })).toBeVisible();
+  // The signed-in admin cannot disable their own account.
+  const self = page.getByRole("row", { name: /admin@recovery\.local/ });
+  await expect(self.getByRole("button", { name: "Disable" })).toHaveCount(0);
+});
+
+test("an expired sign-in returns to the sign-in page with an explanation", async ({
+  page,
+  context,
+}) => {
+  await signIn(page, "patient@recovery.local");
+  await expect(page).toHaveURL(/\/patient$/);
+  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await expect(
+    page.getByRole("button", { name: "Stop for today" }),
+  ).toBeVisible();
+  await context.clearCookies(); // as if the session timed out
+  await page.getByRole("button", { name: "I’m not sure" }).click();
+  await expect(page).toHaveURL(/\/login\?expired=1$/);
+  await expect(
+    page.getByText("You were signed out after a break"),
+  ).toBeVisible();
+});

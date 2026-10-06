@@ -22,6 +22,7 @@ export const UserSummarySchema = z.object({
   role: RoleSchema,
   display_name: z.string(),
   is_active: z.boolean(),
+  care_team: z.array(z.string()).default([]),
 });
 export type UserSummary = z.infer<typeof UserSummarySchema>;
 

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Breadcrumbs } from "@/components/clinician/Breadcrumbs";
 import { PatientNav } from "@/components/clinician/PatientNav";
 import { Avatar } from "@/components/ui/Avatar";
 import { AIStatusSchema, PatientOverviewSchema } from "@/lib/api/clinician";
@@ -22,22 +22,7 @@ export default async function PatientLayout({
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        <nav aria-label="Breadcrumb">
-          <ol className="flex gap-2 text-sm text-ink-muted">
-            <li>
-              <Link
-                href="/clinician"
-                className="underline-offset-4 hover:underline"
-              >
-                Patients
-              </Link>
-              <span aria-hidden="true"> /</span>
-            </li>
-            <li aria-current="page" className="font-bold text-ink">
-              {patient.display_name}
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs patientId={patientId} patientName={patient.display_name} />
         <div className="flex items-center gap-5 rounded-card border border-line bg-surface p-6 shadow-card">
           <Avatar name={patient.display_name} size="lg" />
           <div>

@@ -49,7 +49,14 @@ export default async function SessionsPage({
       </div>
 
       {data.total === 0 ? (
-        <EmptyState icon={CalendarX} title="No sessions yet">
+        <EmptyState
+          icon={CalendarX}
+          title="No sessions yet"
+          action={{
+            href: `/clinician/patients/${patientId}/constraints`,
+            label: "Review practice limits",
+          }}
+        >
           Sessions appear here once the patient starts practising.
         </EmptyState>
       ) : (
