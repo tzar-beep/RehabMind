@@ -30,6 +30,7 @@ import {
   type SessionState,
 } from "@/lib/api/schemas";
 
+import { AiTip } from "./AiTip";
 import { EMPTY_ANSWER, IMAGE_ALT, TYPE_HINT, feedbackFor } from "./messages";
 import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
 import { WordBank } from "./WordBank";
@@ -40,6 +41,7 @@ type View =
   | { kind: "answering"; state: SessionState }
   | {
       kind: "feedback";
+      exerciseId: string;
       exerciseType: string;
       matched: string[];
       missing: string[];
@@ -89,6 +91,7 @@ export function PracticeSession() {
   function showFeedback(exercise: Exercise, result: ResponseResult) {
     setView({
       kind: "feedback",
+      exerciseId: exercise.id,
       exerciseType: exercise.type,
       matched: result.concepts_matched ?? [],
       missing: result.concepts_missing ?? [],
@@ -201,6 +204,7 @@ export function PracticeSession() {
             </p>
           )}
         </div>
+        <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
         <Button
           ref={nextButton}
           size="lg"

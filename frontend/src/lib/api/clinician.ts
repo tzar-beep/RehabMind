@@ -204,3 +204,99 @@ export const AIRunSchema = z.object({
     .nullable(),
 });
 export type AIRun = z.infer<typeof AIRunSchema>;
+
+/** Which AI provider is configured (real local LLM via Ollama, offline fake, or none). */
+export const AIStatusSchema = z.object({
+  provider: z.string(),
+  model: z.string().nullable(),
+  generative: z.boolean(),
+  reachable: z.boolean(),
+  model_available: z.boolean(),
+  demo_view: z.boolean(),
+});
+export type AIStatus = z.infer<typeof AIStatusSchema>;
+
+/** GenAI use case 3: clinician-facing progress summary (AI draft or rule-based fallback). */
+export const ProgressSummarySchema = z.object({
+  summary: z.string(),
+  strengths: z.array(z.string()),
+  focus_areas: z.array(z.string()),
+  source: z.enum(["ai", "rules"]),
+  provider: z.string().nullable(),
+  model: z.string().nullable(),
+  prompt_version: z.string().nullable(),
+  created_at: dt.nullable(),
+  figures: z.record(z.string(), z.unknown()),
+});
+export type ProgressSummary = z.infer<typeof ProgressSummarySchema>;
+
+const PipelineGenerationSchema = z.object({
+  task: z.string(),
+  prompt_version: z.string(),
+  context: z.record(z.string(), z.unknown()),
+  system_prompt: z.string().nullable(),
+  user_prompt: z.string().nullable(),
+  attempts: z.array(
+    z.object({
+      attempt: z.number(),
+      status: z.string(),
+      failed_stage: z.string().nullable(),
+      reason_codes: z.array(z.string()),
+      latency_ms: z.number(),
+      provider: z.string(),
+      model: z.string(),
+      raw_output: z.string().nullable(),
+      usage: z.record(z.string(), z.number()).nullable(),
+    }),
+  ),
+  output: z.record(z.string(), z.unknown()).nullable(),
+});
+export type PipelineGeneration = z.infer<typeof PipelineGenerationSchema>;
+
+export const PipelineSchema = z.object({
+  status: AIStatusSchema,
+  abilities: z.record(
+    z.string(),
+    z.object({
+      objective: z.string(),
+      attempts: z.number(),
+      ability: z.number(),
+      recent_accuracy: z.number().nullable(),
+      trend: z.string(),
+      status: z.string(),
+    }),
+  ),
+  traces: z.array(
+    z.object({
+      position: z.number(),
+      issued_at: dt,
+      objective: z.string(),
+      objective_label: z.string(),
+      exercise_type: z.string(),
+      difficulty: z.number(),
+      source: z.string(),
+      picture: z.string().nullable(),
+      image_url: z.string().nullable(),
+      shown: z.object({
+        prompt: z.string().nullable(),
+        cues: z.array(z.string()),
+        words: z.array(z.string()).nullable(),
+      }),
+      generation: PipelineGenerationSchema.nullable(),
+      response: z
+        .object({
+          text: z.string().nullable(),
+          mode: z.string(),
+          outcome: z.string(),
+          score: z.number(),
+          match_type: z.string().nullable(),
+          concepts_matched: z.array(z.string()).nullable(),
+          concepts_missing: z.array(z.string()).nullable(),
+          hints_used: z.number().nullable(),
+        })
+        .nullable(),
+      feedback: PipelineGenerationSchema.nullable(),
+    }),
+  ),
+});
+export type Pipeline = z.infer<typeof PipelineSchema>;

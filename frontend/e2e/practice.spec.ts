@@ -56,6 +56,11 @@ test("patient practises picture naming end to end", async ({ page }) => {
     name: /Next picture|See how you did/,
   });
   await expect(next).toBeFocused();
+  // The AI tip loads after the standard feedback; it may or may not appear (validation
+  // can reject it), but the screen must settle and stay accessible either way.
+  await expect(page.getByText("Preparing a tip for you…")).toBeHidden({
+    timeout: 60_000,
+  });
   await a11y(page);
   await page.screenshot({
     path: "test-results/practice-feedback.png",

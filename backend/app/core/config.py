@@ -36,10 +36,17 @@ class Settings(BaseSettings):
 
     audio_encryption_key: SecretStr
     audio_max_bytes: int = 2_000_000
-    # AI personalization. "fake" is offline and deterministic ($0); "none" disables AI.
-    ai_provider: Literal["none", "fake"] = "fake"
+    # Generative AI. "ollama" = a real local transformer LLM via Ollama ($0, on-device);
+    # "fake" = offline deterministic stand-in for tests; "none" disables AI.
+    ai_provider: Literal["none", "fake", "ollama"] = "fake"
     # Share of deliberately faulty fake outputs, to exercise validation/fallback in demos.
     ai_fake_fault_rate: float = Field(default=0.2, ge=0, le=1)
+    # Seconds per LLM call before the attempt counts as failed (then retry / fallback).
+    ai_timeout_s: float = Field(default=20, gt=0, le=120)
+    ollama_base_url: str = "http://127.0.0.1:11434"
+    ollama_model: str = "qwen2.5:3b"
+    # Development-only "AI pipeline" view for demonstrations (refused in production).
+    ai_demo_view: bool = False
     whisper_model: str = "small.en"
     whisper_device: str = "cpu"
     whisper_compute_type: str = "int8"
@@ -77,6 +84,8 @@ class Settings(BaseSettings):
                 raise ValueError(f"weak or placeholder secrets in production: {', '.join(weak)}")
             if self.ai_fake_fault_rate:
                 raise ValueError("AI_FAKE_FAULT_RATE is a demo setting and must be 0 in production")
+            if self.ai_demo_view:
+                raise ValueError("AI_DEMO_VIEW is a development setting")
             if self.seed_dev_password is not None:
                 raise ValueError("SEED_DEV_PASSWORD must not be set in production")
         return self

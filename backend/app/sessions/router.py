@@ -6,6 +6,8 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 
+from app.ai import feedback as ai_feedback
+from app.ai.provider import get_ai_provider
 from app.auth.deps import DbDep, PatientUser
 from app.clinical.service import latest_constraints
 from app.exercises.generator import NoSafeExercise
@@ -241,4 +243,33 @@ async def respond(
         concepts_matched=result.details.get("concepts_matched"),
         concepts_missing=result.details.get("concepts_missing"),
         state=await _state(db, session),
+    )
+
+
+class AIFeedbackOut(BaseModel):
+    """A short supportive tip about an answer that is already scored, or nothing."""
+
+    feedback: str | None
+    hint: str | None
+
+
+@router.post("/exercises/{exercise_id}/feedback", response_model=AIFeedbackOut)
+async def ai_feedback_for(exercise_id: uuid.UUID, user: PatientUser, db: DbDep) -> AIFeedbackOut:
+    """GenAI use case 2. Called after the standard feedback is on screen, so a slow or failed
+    model never delays the patient. The deterministic score is never changed."""
+    patient = await _me(user, db)
+    exercise = await db.get(Exercise, exercise_id)
+    if exercise is None or exercise.patient_id != patient.id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found.")
+    response = await db.scalar(
+        select(ExerciseResponse).where(ExerciseResponse.exercise_id == exercise.id)
+    )
+    if response is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "This exercise has no answer yet.")
+    provider = get_ai_provider()
+    out = None
+    if provider is not None:
+        out = await ai_feedback.feedback_for(db, provider, exercise, response)
+    return AIFeedbackOut(
+        feedback=out.feedback if out else None, hint=out.optional_hint if out else None
     )

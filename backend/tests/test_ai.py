@@ -267,12 +267,25 @@ async def test_ai_input_is_minimized(care, ai):  # noqa: F811
     [gen] = await generations(pid)
     snapshot = json.dumps(gen.input_snapshot)
     assert pid not in snapshot and "p@x.test" not in snapshot and '"p"' not in snapshot
+    # Structured rehabilitation context only: objective, constraints, performance and the
+    # learned ability estimate. No names, emails, IDs or free text from the patient.
     assert set(gen.input_snapshot) == {
+        "objective",
+        "objective_label",
+        "target_skill",
         "exercise_type",
         "target_difficulty",
         "min_difficulty",
         "max_difficulty",
+        "allowed_categories",
         "recent_outcomes",
+        "recent_answers",
+        "recent_accuracy",
+        "trend",
+        "status",
+        "ability",
+        "predicted_success",
+        "weakness",
         "category_accuracy",
         "category_counts",
         "candidates",

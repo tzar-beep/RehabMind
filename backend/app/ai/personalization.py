@@ -1,9 +1,12 @@
-"""AI-personalized exercises: a fixed, bounded pipeline (not an agent).
+"""AI-personalized exercises (GenAI use case 1): a fixed, bounded pipeline (not an agent).
 
-The application chooses the exercise type (deterministic rotation); the model only picks
-one approved catalogue stimulus for it and words the prompt.
+The application chooses the exercise type (deterministic rotation) and the difficulty
+(progression rule, clamped to the clinician's range). The model only picks one approved
+catalogue stimulus for it and writes the wording (prompt and hints).
 
-    build minimal input → provider.generate → schema → clinical → safety
+    structured patient context (performance, learned ability estimate, trend, weakness)
+        → versioned prompt → provider.generate (real LLM via Ollama, or the offline fake)
+        → schema → clinical → safety
         ├─ accept → Proposal(source="ai") → ExerciseIssuer (validates again) → DB trigger
         └─ reject → retry (max MAX_ATTEMPTS) → None → caller falls back to rules/fallback
 
@@ -11,7 +14,6 @@ Every attempt is written to `ai_generations`.
 """
 
 import asyncio
-import json
 import time
 import uuid
 from collections import Counter
@@ -21,14 +23,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.models import AIGeneration
+from app.ai.prompts import EXERCISE_PROMPT_VERSION as PROMPT_VERSION
+from app.ai.prompts import exercise_prompts, inline_schema
 from app.ai.provider import AIProvider, AIProviderError, GenerationRequest
-from app.ai.schemas import (
-    PROMPT_VERSION,
-    SYSTEM_PROMPT,
-    USER_PROMPT_TEMPLATE,
-    ExerciseOutput,
-)
+from app.ai.schemas import ExerciseOutput
 from app.clinical.models import ConstraintSet
+from app.core.config import get_settings
 from app.exercises.cues import phonemic_cue
 from app.exercises.generator import (
     NoSafeExercise,
@@ -40,7 +40,8 @@ from app.exercises.generator import (
     used_stimuli,
 )
 from app.exercises.models import Exercise, Stimulus
-from app.exercises.types import ExerciseType
+from app.exercises.types import OBJECTIVE_LABELS, OBJECTIVES, TARGET_SKILLS, ExerciseType
+from app.performance import ability
 from app.performance.models import PerformanceProfile
 from app.performance.progression import clamp
 from app.sessions import resets
@@ -49,7 +50,6 @@ from app.validation.exercise import check_clinical, check_safety, check_schema
 
 TASK = "exercise.personalize"
 MAX_ATTEMPTS = 2
-TIMEOUT_S = 10
 MAX_CANDIDATES = 12
 RAW_OUTPUT_LIMIT = 4000
 
@@ -98,12 +98,29 @@ async def build_input(
     pool = sorted(prefer_photos(pool), key=lambda s: (s.id in recent, s.slug))
     pool = pool[:MAX_CANDIDATES]
     accuracy, counts = await _category_stats(db, session.patient_id)
+    objective = OBJECTIVES[exercise_type]
+    est = (await ability.estimates(db, session.patient_id))[objective.value]
+    weak = sorted(
+        (c for c in accuracy if counts.get(c, 0) >= 2 and accuracy[c] < 0.6),
+        key=lambda c: accuracy[c],
+    )
     return {
+        "objective": objective.value,
+        "objective_label": OBJECTIVE_LABELS[objective],
+        "target_skill": TARGET_SKILLS[objective],
         "exercise_type": str(exercise_type),
         "target_difficulty": target,
         "min_difficulty": cs.min_difficulty,
         "max_difficulty": cs.max_difficulty,
+        "allowed_categories": list(cs.allowed_categories or []),
         "recent_outcomes": list(profile.recent_outcomes[-10:]),
+        "recent_answers": est.attempts,
+        "recent_accuracy": est.recent_accuracy,
+        "trend": est.trend,
+        "status": est.status,
+        "ability": est.ability,
+        "predicted_success": est.predicted_success(target) if est.attempts else None,
+        "weakness": f"lower accuracy in category {weak[0]}" if weak else "none identified",
         "category_accuracy": accuracy,
         "category_counts": counts,
         "candidates": [
@@ -120,32 +137,26 @@ async def build_input(
     }, {s.slug: s for s in pool}
 
 
-def _request(inp: dict[str, Any]) -> GenerationRequest:
+def build_request(inp: dict[str, Any]) -> GenerationRequest:
+    system, user = exercise_prompts(inp)
     return GenerationRequest(
         task=TASK,
         prompt_version=PROMPT_VERSION,
-        system_prompt=SYSTEM_PROMPT,
-        user_prompt=USER_PROMPT_TEMPLATE.format(
-            exercise_type=inp["exercise_type"],
-            target_difficulty=inp["target_difficulty"],
-            min_difficulty=inp["min_difficulty"],
-            max_difficulty=inp["max_difficulty"],
-            recent_outcomes=inp["recent_outcomes"],
-            category_accuracy=json.dumps(inp["category_accuracy"]),
-            candidates=json.dumps(inp["candidates"]),
-        ),
+        system_prompt=system,
+        user_prompt=user,
         input=inp,
-        output_schema=ExerciseOutput.model_json_schema(),
+        output_schema=inline_schema(ExerciseOutput.model_json_schema()),
     )
 
 
 def _proposal(
     out: ExerciseOutput, stim: Stimulus, cs: ConstraintSet, model: str, exercise_type: str
 ) -> Proposal:
-    cues = None
     if exercise_type == ExerciseType.PICTURE_NAMING:
         # Cueing hierarchy: meaning first, then first sound.
         cues = [out.semantic_cue or "", phonemic_cue(out.phonemic_cue or "")]
+    else:
+        cues = [out.hint] if out.hint else []
     return build(
         exercise_type,
         stim,
@@ -172,7 +183,8 @@ async def propose(
     only after the issuer has created the exercise, so it can reference the exercise.
     """
     inp, candidates = await build_input(db, session, cs, profile, exercise_type)
-    request = _request(inp)
+    request = build_request(inp)
+    timeout = get_settings().ai_timeout_s
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
         row = AIGeneration(
@@ -191,7 +203,7 @@ async def propose(
         )
         started = time.perf_counter()
         try:
-            result = await asyncio.wait_for(provider.generate(request), TIMEOUT_S)
+            result = await asyncio.wait_for(provider.generate(request), timeout)
         except (AIProviderError, TimeoutError) as e:
             row.latency_ms = int((time.perf_counter() - started) * 1000)
             row.status, row.failed_stage = "error", "provider"
@@ -204,6 +216,7 @@ async def propose(
             result.model,
             result.model_version,
         )
+        row.usage = result.usage or None
         row.raw_output = result.raw_output[:RAW_OUTPUT_LIMIT]
 
         verdict = check_schema(result.raw_output)

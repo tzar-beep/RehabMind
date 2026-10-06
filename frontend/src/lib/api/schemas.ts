@@ -98,3 +98,9 @@ export const SpeechStatusSchema = z.object({
   status: z.enum(["pending", "processing", "done", "no_speech", "failed"]),
   result: z.lazy(() => ResponseResultSchema).nullable(),
 });
+
+/** GenAI use case 2: a short supportive tip about an already-scored answer (or nothing). */
+export const AIFeedbackSchema = z.object({
+  feedback: z.string().nullable(),
+  hint: z.string().nullable(),
+});

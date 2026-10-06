@@ -51,10 +51,17 @@ def get_ai_provider() -> AIProvider | None:
     if kind == "none":
         return None
     if _provider is None:
+        settings = get_settings()
         if kind == "fake":
             from app.ai.fake import FakeAIProvider
 
-            _provider = FakeAIProvider(fault_rate=get_settings().ai_fake_fault_rate)
+            _provider = FakeAIProvider(fault_rate=settings.ai_fake_fault_rate)
+        elif kind == "ollama":
+            from app.ai.ollama import OllamaAIProvider
+
+            _provider = OllamaAIProvider(
+                settings.ollama_base_url, settings.ollama_model, timeout_s=settings.ai_timeout_s
+            )
         else:  # pragma: no cover - guarded by settings validation
             raise ValueError(f"unknown AI provider {kind}")
     return _provider

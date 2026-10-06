@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { PatientNav } from "@/components/clinician/PatientNav";
 import { Avatar } from "@/components/ui/Avatar";
-import { PatientOverviewSchema } from "@/lib/api/clinician";
+import { AIStatusSchema, PatientOverviewSchema } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import { formatDate } from "@/lib/format";
 
@@ -13,10 +13,10 @@ export default async function PatientLayout({
 }: LayoutProps<"/clinician/patients/[patientId]">) {
   const { patientId } = await params;
   // The backend returns 404 unless this clinician is assigned to the patient.
-  const patient = await backendGet(
-    `/patients/${patientId}/overview`,
-    PatientOverviewSchema,
-  );
+  const [patient, aiStatus] = await Promise.all([
+    backendGet(`/patients/${patientId}/overview`, PatientOverviewSchema),
+    backendGet("/ai/status", AIStatusSchema),
+  ]);
   if (!patient) notFound();
 
   return (
@@ -48,7 +48,10 @@ export default async function PatientLayout({
             </p>
           </div>
         </div>
-        <PatientNav patientId={patientId} />
+        <PatientNav
+          patientId={patientId}
+          showPipeline={aiStatus?.demo_view ?? false}
+        />
       </div>
       {children}
       <p className="border-t border-line pt-4 text-sm text-ink-muted">

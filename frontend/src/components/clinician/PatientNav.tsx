@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function PatientNav({ patientId }: { patientId: string }) {
+export function PatientNav({
+  patientId,
+  showPipeline = false,
+}: {
+  patientId: string;
+  /** Development-only AI pipeline demonstration view. */
+  showPipeline?: boolean;
+}) {
   const pathname = usePathname();
   const base = `/clinician/patients/${patientId}`;
   const tabs = [
@@ -11,6 +18,9 @@ export function PatientNav({ patientId }: { patientId: string }) {
     { href: `${base}/sessions`, label: "Sessions" },
     { href: `${base}/constraints`, label: "Practice limits" },
     { href: `${base}/ai-generations`, label: "AI audit log" },
+    ...(showPipeline
+      ? [{ href: `${base}/ai-pipeline`, label: "AI pipeline (demo)" }]
+      : []),
   ];
   return (
     <nav aria-label="Patient sections" className="border-b border-line">

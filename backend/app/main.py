@@ -9,6 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.admin.router import router as admin_router
+from app.ai.clinician_router import router as ai_clinician_router
+from app.ai.clinician_router import status_router as ai_status_router
 from app.ai.router import router as ai_router
 from app.auth.router import router as auth_router
 from app.clinical.router import options_router as clinical_options_router
@@ -40,6 +42,8 @@ for r in (
     clinical_router,
     clinical_options_router,
     ai_router,
+    ai_status_router,
+    ai_clinician_router,
     patients_router,
     clinicians_router,
     clinician_patient_router,

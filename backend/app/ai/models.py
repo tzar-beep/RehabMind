@@ -27,13 +27,15 @@ class AIGeneration(Base):
     patient_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("patients.id", ondelete="CASCADE"), index=True
     )
-    session_id: Mapped[uuid.UUID] = mapped_column(
+    # None for patient-level tasks (progress summaries).
+    session_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("practice_sessions.id", ondelete="CASCADE"), index=True
     )
     exercise_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("exercises.id"))
     # Session position the attempt was for. Groups retries and links a rejected run to the
     # rule-based exercise that was issued instead (session_id + position).
     exercise_position: Mapped[int | None] = mapped_column(SmallInteger)
+    # exercise.personalize | feedback.generate | progress.summarize
     task: Mapped[str] = mapped_column(String(60))
     attempt: Mapped[int] = mapped_column(SmallInteger)
     provider: Mapped[str] = mapped_column(String(40))
@@ -51,3 +53,5 @@ class AIGeneration(Base):
     failed_stage: Mapped[str | None] = mapped_column(String(16))
     reason_codes: Mapped[list[str]] = mapped_column(ARRAY(String(60)), default=list)
     latency_ms: Mapped[int] = mapped_column(Integer)
+    # Provider-reported token counts and timings (e.g. prompt_tokens, output_tokens).
+    usage: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
