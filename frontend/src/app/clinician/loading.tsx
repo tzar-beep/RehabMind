@@ -1,10 +1,15 @@
-export default function Loading() {
+import { LoadingRegion, Skeleton } from "@/components/ui/Skeleton";
+
+export default function ClinicianLoading() {
   return (
-    <div role="status" aria-label="Loading" className="flex flex-col gap-6">
-      <div className="h-9 w-64 animate-pulse rounded-control bg-line motion-reduce:animate-none" />
-      <div className="h-28 animate-pulse rounded-card bg-line motion-reduce:animate-none" />
-      <div className="h-64 animate-pulse rounded-card bg-line motion-reduce:animate-none" />
-      <span className="sr-only">Loading…</span>
-    </div>
+    <LoadingRegion label="Loading your patients…" className="gap-10">
+      <Skeleton className="h-56 rounded-card" />
+      <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-36 rounded-card" />
+        ))}
+      </div>
+      <Skeleton className="h-40 rounded-card" />
+    </LoadingRegion>
   );
 }

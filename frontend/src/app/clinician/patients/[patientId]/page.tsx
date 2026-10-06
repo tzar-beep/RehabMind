@@ -111,7 +111,14 @@ export default async function PatientOverviewPage({
             <ConstraintSummary constraints={active} />
           </div>
         ) : (
-          <EmptyState icon={ClipboardList} title="No practice limits set">
+          <EmptyState
+            icon={ClipboardList}
+            title="No practice limits set"
+            action={{
+              href: `${base}/constraints`,
+              label: "Set practice limits",
+            }}
+          >
             The patient cannot start practice until a clinician sets limits.
           </EmptyState>
         )}
@@ -127,7 +134,18 @@ export default async function PatientOverviewPage({
         }
       >
         {ov.sessions_total === 0 ? (
-          <EmptyState icon={ChartLine} title="No practice recorded yet">
+          <EmptyState
+            icon={ChartLine}
+            title="No practice recorded yet"
+            action={
+              active
+                ? undefined
+                : {
+                    href: `${base}/constraints`,
+                    label: "Set practice limits first",
+                  }
+            }
+          >
             Activity appears here after the patient completes their first
             exercise.
           </EmptyState>

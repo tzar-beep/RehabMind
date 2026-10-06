@@ -18,6 +18,7 @@ import {
 } from "react";
 
 import { Alert } from "@/components/ui/Alert";
+import { LoadingRegion, Skeleton } from "@/components/ui/Skeleton";
 import { Button, buttonClasses } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import { ApiError, apiFetch } from "@/lib/api/client";
@@ -143,10 +144,24 @@ export function PracticeSession() {
   }
 
   if (view.kind === "loading") {
+    // Same shape as the exercise screen, so nothing jumps when it appears.
     return (
-      <p className="text-xl text-ink-muted" role="status">
-        Getting your practice ready…
-      </p>
+      <LoadingRegion label="Getting your practice ready…" className="gap-8">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-6 w-28" />
+        </div>
+        <Skeleton className="h-3 rounded-full" />
+        <Skeleton className="mx-auto h-72 w-full max-w-md rounded-card" />
+        <Skeleton className="mx-auto h-10 w-64" />
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Skeleton className="h-16 sm:flex-1" />
+          <Skeleton className="h-16 sm:w-48" />
+        </div>
+        <p aria-hidden="true" className="text-center text-lg text-ink-muted">
+          Getting your practice ready…
+        </p>
+      </LoadingRegion>
     );
   }
 

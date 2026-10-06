@@ -50,7 +50,9 @@ async def test_admin_has_no_implicit_clinical_access(world):
     assert (await a.get("/api/v1/patients/me")).status_code == 403
     users = (await a.get("/api/v1/admin/users")).json()
     assert len(users) == 5
-    assert set(users[0]) == {"id", "email", "role", "display_name", "is_active"}
+    # Account administration only. `care_team` (assigned clinicians' names) is needed to
+    # manage assignments; no practice, limits, scores or AI data reach the admin.
+    assert set(users[0]) == {"id", "email", "role", "display_name", "is_active", "care_team"}
 
 
 @pytest.mark.parametrize(

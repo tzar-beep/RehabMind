@@ -68,7 +68,7 @@ export default async function AdminHome() {
           <tbody className="divide-y divide-line">
             {users.map((u) => (
               <tr key={u.id} className="transition-colors hover:bg-canvas/60">
-                <td className="px-6 py-3 font-bold">
+                <td className="px-6 py-3 font-bold whitespace-nowrap">
                   <span className="flex items-center gap-3">
                     <Avatar name={u.display_name} size="sm" />
                     {u.display_name}
@@ -91,7 +91,9 @@ export default async function AdminHome() {
                   {u.role !== "patient" ? (
                     <span className="text-ink-muted">—</span>
                   ) : u.care_team.length ? (
-                    u.care_team.join(", ")
+                    <span className="whitespace-nowrap">
+                      {u.care_team.join(", ")}
+                    </span>
                   ) : (
                     <StatusBadge tone="warning">Not assigned</StatusBadge>
                   )}
