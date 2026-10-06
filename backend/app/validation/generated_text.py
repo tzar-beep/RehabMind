@@ -23,9 +23,14 @@ MAX_SUMMARY_WORDS = 90
 MAX_ITEM_WORDS = 20
 LOW_ACCURACY = 50  # percent; below this an objective cannot be called a strength
 
-# Claims that the answer was right, when the deterministic outcome says otherwise.
+# Claims that the answer was right, when the deterministic outcome says otherwise. Matches
+# statements ("That's correct", "you got it", "perfect"), not mentions: "close to the correct
+# answer" is accurate for a close answer and is allowed.
 _CLAIMS_CORRECT = (
-    r"\b(correct|right answer|that'?s right|you got it|perfect|exactly right|spot on)\b"
+    r"(^|[.!?]\s*)(correct|right)\b"
+    r"|\b(that'?s|it'?s|this is|is|was|you'?re|you are|absolutely|totally|completely)"
+    r"\s+(correct|right)\b"
+    r"|\b(you got it|got it right|perfect|exactly right|spot on|well done, correct)\b"
 )
 _CLAIMS_WRONG = r"\b(wrong|incorrect|mistake|not quite|not right)\b"
 # Clinician summaries may name the condition but never diagnose, predict or prescribe.
