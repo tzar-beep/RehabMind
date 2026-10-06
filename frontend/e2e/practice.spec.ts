@@ -15,7 +15,9 @@ async function a11y(page: Page) {
 test("patient practises picture naming end to end", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill("patient@recovery.local");
-  await page.getByLabel("Password").fill(process.env.SEED_DEV_PASSWORD ?? "");
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill(process.env.SEED_DEV_PASSWORD ?? "");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/patient$/);
 
@@ -67,7 +69,9 @@ test("patient practises picture naming end to end", async ({ page }) => {
 test("hints reveal meaning first, then the first sound", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill("patient@recovery.local");
-  await page.getByLabel("Password").fill(process.env.SEED_DEV_PASSWORD ?? "");
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill(process.env.SEED_DEV_PASSWORD ?? "");
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
   await page.getByRole("button", { name: "Show a hint" }).click();

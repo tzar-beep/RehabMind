@@ -3,7 +3,6 @@ import { Images, ShieldCheck, SlidersHorizontal, Speech } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { BrandMark } from "@/components/BrandMark";
-import { BorderBeam } from "@/components/magicui/border-beam";
 import { GlyphMatrix } from "@/components/magicui/glyph-matrix";
 import { ROLE_HOME } from "@/lib/api/schemas";
 import { getCurrentUser } from "@/lib/api/server";
@@ -36,12 +35,13 @@ export default async function LoginPage() {
             cellSize={20}
             mutationRate={0.015}
             interval={160}
+            settleAfter={4000}
             fadeBottom={0.9}
           />
           <div className="absolute inset-0 bg-linear-to-r from-brand-deep via-brand-deep/60 to-transparent" />
         </div>
 
-        <BrandMark inverted className="animate-rise" />
+        <BrandMark inverted large className="animate-rise" />
 
         <div className="mt-8 max-w-lg lg:mt-auto">
           <p className="animate-rise text-3xl leading-tight font-bold text-balance [animation-delay:80ms] sm:text-4xl lg:text-5xl">
@@ -80,14 +80,7 @@ export default async function LoginPage() {
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[radial-gradient(var(--color-line-strong)_1px,transparent_1px)] opacity-40 mask-[radial-gradient(ellipse_at_center,#000_45%,transparent_90%)] bg-size-[22px_22px]"
         />
-        <div className="animate-rise relative w-full max-w-md overflow-hidden rounded-card border border-line bg-surface p-8 shadow-xl shadow-ink/5 [animation-delay:120ms] sm:p-10">
-          <BorderBeam
-            size={140}
-            duration={9}
-            borderWidth={2}
-            colorFrom="#0f6e6e"
-            colorTo="#5ec4b6"
-          />
+        <div className="animate-rise relative w-full max-w-md rounded-card border border-line bg-surface p-8 shadow-card [animation-delay:120ms] sm:p-10">
           <h1 className="mb-2 text-3xl font-bold">Sign in</h1>
           <p className="mb-8 text-ink-muted">Welcome back. Take your time.</p>
           <LoginForm />

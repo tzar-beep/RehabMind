@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import type { ComponentPropsWithRef } from "react";
 
 type Variant = "primary" | "secondary" | "quiet";
@@ -51,6 +52,12 @@ export function Button({
       aria-busy={busy || undefined}
       {...props}
     >
+      {busy && (
+        <LoaderCircle
+          aria-hidden="true"
+          className="size-5 animate-spin motion-reduce:animate-none"
+        />
+      )}
       {children}
     </button>
   );

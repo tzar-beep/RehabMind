@@ -19,9 +19,10 @@
   --color-accent-soft: #e3f0ee;
   --color-focus: #1d4ed8;
 
-  /* Brand panel (sign-in page): white text 12:1, muted text 8:1. */
+  /* Brand panel (sign-in page): white text 12:1, muted text 8:1, glow text 7:1. */
   --color-brand-deep: #0a3d3e;
   --color-brand-muted: #b8ddd8;
+  --color-brand-glow: #8fd9cf;
 
   --color-success: #2e6b3f;
   --color-success-soft: #e6f2e9;
@@ -35,7 +36,11 @@
   --color-grid: #e7e2da;
 
   --radius-control: 0.75rem;
-  --radius-card: 1.25rem;
+  --radius-card: 1rem;
+
+  /* Two depth levels: flat cards use a border only; raised cards add this soft shadow. */
+  --shadow-card:
+    0 1px 2px rgb(28 36 48 / 0.04), 0 6px 20px -8px rgb(28 36 48 / 0.12);
 
   /* Gentle entrance (blur + rise, no opacity so contrast checks see final colours). */
   --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -43,6 +48,14 @@
     from {
       transform: translateY(12px);
       filter: blur(6px);
+    }
+  }
+
+  /* Progress ring fills once from empty (--ring-length is set inline). */
+  --animate-ring-fill: ring-fill 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
+  @keyframes ring-fill {
+    from {
+      stroke-dashoffset: var(--ring-length);
     }
   }
 

@@ -39,7 +39,7 @@ export function Facts({
   items: { label: string; value: ReactNode; hint?: string }[];
 }) {
   return (
-    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line md:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line shadow-card md:grid-cols-4">
       {items.map((it) => (
         <div
           key={it.label}

@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+} from "react";
 
 import { Alert } from "@/components/ui/Alert";
 import { Button, buttonClasses } from "@/components/ui/Button";
@@ -200,6 +206,7 @@ export function PracticeSession() {
     const s = state.summary;
     return (
       <div className="flex flex-col items-center gap-6 text-center">
+        {s && <CompletionRing done={s.practiced} total={state.total} />}
         <h1 className="text-4xl font-bold">Practice complete</h1>
         {s && (
           <p className="text-2xl">
@@ -258,13 +265,27 @@ export function PracticeSession() {
         </Button>
       </div>
       <div
-        aria-hidden="true"
-        className="h-2 w-full overflow-hidden rounded-full bg-line"
+        role="progressbar"
+        aria-label="Practice progress"
+        aria-valuemin={0}
+        aria-valuemax={state.total}
+        aria-valuenow={ex.position - 1}
+        aria-valuetext={`${ex.position - 1} of ${state.total} pictures done`}
+        className="flex gap-1.5"
       >
-        <div
-          className="h-full rounded-full bg-accent"
-          style={{ width: `${((ex.position - 1) / state.total) * 100}%` }}
-        />
+        {Array.from({ length: state.total }, (_, i) => (
+          <span
+            key={i}
+            className={
+              "h-3 flex-1 rounded-full transition-colors " +
+              (i < ex.position - 1
+                ? "bg-accent"
+                : i === ex.position - 1
+                  ? "bg-accent/35"
+                  : "bg-line")
+            }
+          />
+        ))}
       </div>
 
       <section
@@ -300,7 +321,9 @@ export function PracticeSession() {
             >
               <ul className="flex flex-col gap-2 text-xl">
                 {ex.cues.slice(0, hints).map((cue) => (
-                  <li key={cue}>{cue}</li>
+                  <li key={cue}>
+                    <Cue text={cue} />
+                  </li>
                 ))}
               </ul>
             </div>
@@ -416,5 +439,65 @@ export function PracticeSession() {
         </form>
       )}
     </div>
+  );
+}
+
+/** Pictures practised out of planned. Always framed as progress, never as errors. */
+function CompletionRing({ done, total }: { done: number; total: number }) {
+  const r = 52;
+  const length = 2 * Math.PI * r;
+  const share = total > 0 ? Math.min(done / total, 1) : 0;
+  return (
+    // The sentence below the ring states the same number for assistive technology.
+    <div
+      aria-hidden="true"
+      className="relative grid size-40 place-items-center"
+    >
+      <svg viewBox="0 0 120 120" className="absolute inset-0 -rotate-90">
+        <circle
+          cx="60"
+          cy="60"
+          r={r}
+          fill="none"
+          strokeWidth="10"
+          className="stroke-accent-soft"
+        />
+        <circle
+          cx="60"
+          cy="60"
+          r={r}
+          fill="none"
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeDasharray={length}
+          strokeDashoffset={length * (1 - share)}
+          className="animate-ring-fill stroke-accent"
+          style={{ "--ring-length": length } as CSSProperties}
+        />
+      </svg>
+      <p className="flex flex-col items-center leading-tight">
+        <span className="text-4xl font-bold tabular-nums">{done}</span>
+        <span className="text-base text-ink-muted">
+          {done === 1 ? "picture" : "pictures"}
+        </span>
+      </p>
+    </div>
+  );
+}
+
+/** Hint text with the quoted first sound ("It starts with “b…”") visually emphasised. */
+function Cue({ text }: { text: string }) {
+  const match = /“([^”…]+)…”/.exec(text);
+  if (!match) return text;
+  const before = text.slice(0, match.index);
+  const after = text.slice(match.index + match[0].length);
+  return (
+    <>
+      {`${before}“`}
+      <strong className="rounded-md bg-surface px-1 text-accent-hover">
+        {match[1]}
+      </strong>
+      {`…”${after}`}
+    </>
   );
 }

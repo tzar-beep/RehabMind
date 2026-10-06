@@ -17,11 +17,14 @@ interface GlyphMatrixProps extends React.HTMLAttributes<HTMLCanvasElement> {
   fadeBottom?: number;
   /** Glyph color (any CSS color). */
   color?: string;
+  /** Stop changing after this many ms and keep the last frame (0 = never stop). */
+  settleAfter?: number;
 }
 
 /**
  * GlyphMatrix — an animated grid of subtly shifting glyphs. Decorative only.
- * With prefers-reduced-motion it draws one still frame and never animates.
+ * With prefers-reduced-motion it draws one still frame and never animates; otherwise
+ * it can settle into a still frame after `settleAfter` ms.
  */
 export function GlyphMatrix({
   glyphs = "01·•+*/\\<>=",
@@ -31,6 +34,7 @@ export function GlyphMatrix({
   className,
   fadeBottom = 0.6,
   color = "#6B7280",
+  settleAfter = 0,
   style,
   ...props
 }: GlyphMatrixProps) {
@@ -69,6 +73,7 @@ export function GlyphMatrix({
     let raf = 0;
     let last = 0;
     let stopped = false;
+    let start = -1;
 
     const pick = () => glyphs[Math.floor(Math.random() * glyphs.length)];
 
@@ -111,6 +116,8 @@ export function GlyphMatrix({
 
     const tick = (t: number) => {
       if (stopped) return;
+      if (start < 0) start = t;
+      if (settleAfter > 0 && t - start > settleAfter) return;
 
       if (t - last >= interval) {
         last = t;
@@ -145,7 +152,7 @@ export function GlyphMatrix({
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [glyphs, cellSize, mutationRate, interval, fadeBottom]);
+  }, [glyphs, cellSize, mutationRate, interval, fadeBottom, settleAfter]);
 
   return (
     <canvas
