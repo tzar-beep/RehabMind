@@ -35,8 +35,18 @@ _UNSAFE_PATTERNS = {
     "link_or_contact": r"(https?://|www\.|@[a-z]|\.com\b)",
     "digits": r"\d",
 }
+
+
+def _words(text: str) -> str:
+    """Normalized text with possessives removed ("dog's" -> "dog"), for leak checks."""
+    return re.sub(r"'s(?![a-z])", "", normalize(text))
+
+
 MAX_PROMPT_WORDS = 8
 MAX_CUE_WORDS = 12
+# A sentence hint may give a start ("Start with 'The dog...'") but not the sentence itself.
+_FUNCTION_WORDS = {"the", "a", "an", "is", "are", "was", "were", "and", "to", "of", "in", "on"}
+MAX_SENTENCE_WORDS_IN_HINT = 1
 
 
 def check_schema(raw: str) -> Verdict:
@@ -91,8 +101,10 @@ def check_safety(
     texts = [("prompt", out.prompt, MAX_PROMPT_WORDS)]
     if out.semantic_cue:
         texts.append(("semantic_cue", out.semantic_cue, MAX_CUE_WORDS))
+    if out.hint:
+        texts.append(("hint", out.hint, MAX_CUE_WORDS))
     for name, text, max_words in texts:
-        norm = f" {normalize(text)} "
+        norm = f" {_words(text)} "
         if any(f" {a} " in norm or f" {a}s " in norm for a in answers):
             reasons.append(f"answer_leak:{name}")
         if len(text.split()) > max_words:
@@ -102,6 +114,8 @@ def check_safety(
                 reasons.append(f"{code}:{name}")
     if exercise_type == "picture_naming":
         cue = (out.phonemic_cue or "").lower()
+        if out.hint:
+            reasons.append("unexpected_hint")
         if not out.semantic_cue or not cue:
             reasons.append("missing_cue")
         elif (
@@ -110,6 +124,13 @@ def check_safety(
             or len(cue) >= len(stim.target)
         ):
             reasons.append("invalid_phonemic_cue")
-    elif out.semantic_cue or out.phonemic_cue:
-        reasons.append("unexpected_cue")
+    else:
+        if out.semantic_cue or out.phonemic_cue:
+            reasons.append("unexpected_cue")
+        if out.hint and exercise_type == "sentence_construction":
+            content = set(normalize(stim.target).split()) - _FUNCTION_WORDS
+            used = content & set(_words(out.hint).split())
+            if len(used) > MAX_SENTENCE_WORDS_IN_HINT:
+                reasons.append("answer_leak:hint")
+    reasons = list(dict.fromkeys(reasons))
     return Verdict(not reasons, None if not reasons else "safety", reasons, out)

@@ -1,6 +1,14 @@
+"""The only output shapes accepted from a provider (also sent to Ollama as JSON Schemas).
+
+`extra="forbid"`: any field the application did not ask for (an image URL, free-text
+reasoning, a score) makes the whole output invalid.
+"""
+
 import enum
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from app.ai.prompts import EXERCISE_PROMPT_VERSION
 
 
 class Rationale(enum.StrEnum):
@@ -13,37 +21,40 @@ class Rationale(enum.StrEnum):
 
 
 class ExerciseOutput(BaseModel):
-    """The only shape accepted from a provider. The model picks a catalogue stimulus by slug
-    and words the prompt; image paths and answers always come from the catalogue."""
+    """Use case 1. The model picks a catalogue stimulus by slug and writes the wording;
+    image paths, answers and word banks always come from the catalogue."""
 
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     stimulus_slug: str = Field(min_length=1, max_length=64)
     difficulty: int = Field(ge=1, le=5)
     prompt: str = Field(min_length=3, max_length=60)
-    # Picture naming only (meaning hint, then first sound). Omitted for other types.
+    # Picture naming only (meaning hint, then first sound).
     semantic_cue: str | None = Field(default=None, min_length=3, max_length=80)
     phonemic_cue: str | None = Field(default=None, min_length=1, max_length=6)
+    # Sentence construction and picture description only: one supportive hint.
+    hint: str | None = Field(default=None, min_length=3, max_length=90)
     rationale: Rationale
 
 
 PictureNamingOutput = ExerciseOutput  # backwards-compatible name
+PROMPT_VERSION = EXERCISE_PROMPT_VERSION
 
 
-PROMPT_VERSION = "exercise-v2"
+class FeedbackOutput(BaseModel):
+    """Use case 2: supportive feedback on an answer that is already scored."""
 
-SYSTEM_PROMPT = """You personalize one language exercise of type EXERCISE_TYPE for an adult \
-practising after stroke. Choose exactly one stimulus from CANDIDATES (by slug; never invent \
-images or words). Write a short, plain, respectful prompt (max 8 words) that does not reveal \
-the answer. For picture_naming only, also give a semantic cue (category or use, max 12 \
-words, must not contain the target word) and a phonemic cue (the first 1-3 letters of the \
-target word); omit cues for other types. Never give medical advice, diagnoses, \
-predictions about recovery, or praise that makes clinical claims. Return only JSON matching \
-the schema, including one rationale code."""
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
-USER_PROMPT_TEMPLATE = """EXERCISE_TYPE: {exercise_type}
-TARGET_DIFFICULTY: {target_difficulty}
-ALLOWED_DIFFICULTY: {min_difficulty}-{max_difficulty}
-RECENT_OUTCOMES (oldest first): {recent_outcomes}
-CATEGORY_ACCURACY: {category_accuracy}
-CANDIDATES: {candidates}"""
+    feedback: str = Field(min_length=3, max_length=200)
+    optional_hint: str | None = Field(default=None, max_length=120)
+
+
+class SummaryOutput(BaseModel):
+    """Use case 3: a clinician-facing summary of recorded practice data."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    summary: str = Field(min_length=10, max_length=600)
+    strengths: list[str] = Field(default_factory=list, max_length=2)
+    focus_areas: list[str] = Field(default_factory=list, max_length=2)

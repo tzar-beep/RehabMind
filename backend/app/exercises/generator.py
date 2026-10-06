@@ -99,6 +99,8 @@ def build(
         expected["accepted_answers"] = stim.accepted_answers
     else:  # pragma: no cover - guarded by IMPLEMENTED_TYPES
         raise NoSafeExercise(f"{exercise_type} is not implemented")
+    if exercise_type != ExerciseType.PICTURE_NAMING and cues:
+        content["cues"] = cues  # one AI-written hint (validated before it gets here)
     return Proposal(
         exercise_type=exercise_type,
         difficulty=stim.difficulty,

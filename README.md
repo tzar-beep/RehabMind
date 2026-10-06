@@ -70,7 +70,8 @@ flowchart LR
     R --> K[ARQ worker]
     K --> S[faster-whisper<br/>local STT]
     K --> M
-    A --> AI[AI provider<br/>offline · validated]
+    A --> AI[AI provider<br/>validated · audited]
+    AI --> OL[Ollama · local LLM<br/>qwen2.5:3b transformer]
 ```
 
 Modular monolith plus a background worker. Only Caddy is exposed. The API, database, cache and
@@ -80,21 +81,29 @@ storage are internal.
 
 ```mermaid
 flowchart TD
-    E[Exercise shown] --> R{Patient answers}
-    R -- types --> SC[Deterministic scoring]
-    R -- speaks --> ENC[Encrypt audio] --> STT[Local Whisper] --> DEL[Delete audio]
+    E[Exercise shown<br/>objective → exercise type] --> R{Patient answers}
+    R -- types / taps --> NLP[NLP analysis<br/>normalise · fuzzy match · concepts · word order]
+    R -- speaks --> ENC[Encrypt audio] --> STT[DL: faster-whisper<br/>local speech-to-text] --> DEL[Delete audio]
     DEL --> REL{Transcript reliable?}
     REL -- no --> E
-    REL -- yes --> SC
-    SC --> PERF[Update performance profile]
-    PERF --> GEN[AI proposes next exercise]
-    GEN --> V{Schema · clinical · safety checks}
+    REL -- yes --> NLP
+    NLP --> SC[Deterministic score<br/>final, never changed by AI]
+    SC --> FBK[GenAI feedback<br/>prompt feedback_generation_v1]
+    SC --> PERF[Performance profile +<br/>ML ability estimate]
+    PERF --> POL[Difficulty policy<br/>clamped to clinician range]
+    POL --> CTX[Structured patient context]
+    CTX --> PR[Prompt engineering<br/>exercise_generation_v1]
+    PR --> LLM[Transformer LLM<br/>local, via Ollama]
+    LLM --> V{Validation<br/>schema · clinical · safety}
     V -- pass --> ISS[ExerciseIssuer + DB trigger]
     V -- fail --> RT[Retry] --> V2{Still failing?}
     V2 -- yes --> FB[Rule-based fallback] --> ISS
     V2 -- no --> ISS
     ISS --> E
 ```
+
+Full GenAI write-up (ML, DL, NLP, transformer, prompts, examples):
+[docs/review2-genai.md](docs/review2-genai.md).
 
 ## 🛡️ Clinical safety layers
 
@@ -119,7 +128,7 @@ versions and audit logs.
 | Backend | FastAPI · Pydantic v2 · SQLAlchemy 2 (async) · Alembic |
 | Data | PostgreSQL 18 · Redis 8 · MinIO (S3-compatible) |
 | Speech | faster-whisper `small.en` (CPU int8, self-hosted) |
-| AI | Provider interface + offline deterministic provider (pluggable, e.g. Ollama) |
+| AI | Local transformer LLM (Qwen2.5 3B via Ollama) behind a provider interface · offline fake provider for tests |
 | Ops | Docker Compose · Caddy · GitHub Actions |
 | Testing | pytest · Hypothesis · Vitest · Playwright · axe-core |
 
@@ -135,6 +144,10 @@ uv run uvicorn app.main:app --port 8000    # API
 uv run python -m app.workers.main          # speech worker (second terminal)
 cd ../frontend && npm install && npm run dev   # → http://localhost:3000
 ```
+
+Real generative AI (local, $0): install [Ollama](https://ollama.com), run
+`ollama pull qwen2.5:3b`, and set `AI_PROVIDER=ollama` in `.env` (optionally
+`AI_DEMO_VIEW=true` for the clinician's step-by-step AI pipeline view).
 
 Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.prod.yaml up -d --build`
 (see [deployment](docs/deployment.md)).

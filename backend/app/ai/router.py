@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import select, tuple_
 
 from app.ai.models import AIGeneration
+from app.ai.personalization import TASK
 from app.auth.deps import ClinicianUser, DbDep
 from app.exercises.models import Exercise, Stimulus
 from app.patients.access import get_accessible_patient
@@ -45,7 +46,7 @@ async def list_generations(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Patient not found.")
     rows = await db.execute(
         select(AIGeneration)
-        .where(AIGeneration.patient_id == patient_id)
+        .where(AIGeneration.patient_id == patient_id, AIGeneration.task == TASK)
         .order_by(AIGeneration.created_at.desc(), AIGeneration.attempt.desc())
         .limit(limit)
     )
@@ -127,7 +128,7 @@ async def list_runs(
     rows = (
         await db.execute(
             select(AIGeneration)
-            .where(AIGeneration.patient_id == patient_id)
+            .where(AIGeneration.patient_id == patient_id, AIGeneration.task == TASK)
             .order_by(AIGeneration.created_at.desc())
             .limit(limit * 3)  # at most MAX_ATTEMPTS (+ issuer) rows per slot
         )

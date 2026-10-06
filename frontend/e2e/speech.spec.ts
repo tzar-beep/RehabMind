@@ -14,6 +14,13 @@ test("patient answers by voice through the real speech pipeline", async ({
     .getByLabel("Password", { exact: true })
     .fill(process.env.SEED_DEV_PASSWORD ?? "");
   await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/patient$/);
+  // Start from a fresh session (the first exercise is picture naming).
+  const end = await page.request.post("/api/v1/practice/sessions/current/end", {
+    headers: { Origin: new URL(page.url()).origin },
+  });
+  expect(end.ok()).toBe(true);
+  await page.reload();
   await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
 
   await expect(page.getByText("Say the word for this picture.")).toBeVisible();

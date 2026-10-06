@@ -1,4 +1,7 @@
-"""Deterministic, offline AI provider for development, demos and tests ($0, no network).
+"""Deterministic, offline stand-in for the LLM, for tests and offline development.
+
+NOT generative AI: it fills templates. The real model is `OllamaAIProvider`; this provider
+keeps tests fast and reproducible and lets the app run without Ollama.
 
 Produces realistic personalization from the structured input, and — to demonstrate the
 validation pipeline — deterministically injects a share of faulty outputs of the kinds real
@@ -42,6 +45,12 @@ _PROMPTS = {
         "Put these words in order.",
         "Make a sentence from these words.",
     ),
+}
+
+
+_HINTS = {
+    "picture_description": "Think about who you see and what is happening.",
+    "sentence_construction": "Start with who is in the picture.",
 }
 
 
@@ -91,16 +100,63 @@ class FakeAIProvider:
             )
         return pool[seed % len(pool)], why
 
+    def _result(self, out: dict[str, Any]) -> GenerationResult:
+        return GenerationResult(
+            raw_output=json.dumps(out),
+            provider=self.name,
+            model=self.model,
+            model_version=self.model_version,
+        )
+
+    def _feedback(self, inp: dict[str, Any]) -> GenerationResult:
+        lead = {
+            "correct": "Well done.",
+            "near_miss": "You were very close.",
+            "incorrect": "Good effort.",
+            "skipped": "That is fine.",
+        }[inp["outcome"]]
+        tips = {
+            "word_retrieval": "Say the first sound to yourself, then the whole word.",
+            "sentence_formation": "Start with who is in the picture.",
+            "descriptive_language": "Say who you see and what they are doing.",
+        }
+        return self._result(
+            {
+                "feedback": f"{lead} You worked on {inp['target_skill']}.",
+                "optional_hint": tips[inp["objective"]],
+            }
+        )
+
+    def _summary(self, inp: dict[str, Any]) -> GenerationResult:
+        practised = [o for o in inp["objectives"] if o["answers"]]
+        text = " ".join(
+            f"{o['label']}: {o['percent_correct']}% correct over {o['answers']} answers."
+            for o in practised
+        )
+        return self._result(
+            {
+                "summary": f"Practice {inp['period']}. {text}".strip(),
+                "strengths": [f"Regular practice of {practised[0]['label'].lower()}."]
+                if practised
+                else [],
+                "focus_areas": [],
+            }
+        )
+
     async def generate(self, request: GenerationRequest) -> GenerationResult:
         self.calls += 1
         inp = request.input
+        if request.task == "feedback.generate":
+            return self._feedback(inp)
+        if request.task == "progress.summarize":
+            return self._summary(inp)
         seed = _seed(request.prompt_version, inp, self.calls)
         fault = self._fault(seed)
         if fault == "provider_error":
             raise AIProviderError("simulated provider timeout")
 
         stim, why = self._choose(inp, seed)
-        target: str = stim["target"]
+        target: str = stim.get("target", "")
         kind = inp.get("exercise_type", "picture_naming")
         prompts = _PROMPTS[kind]
         out: dict[str, Any] = {
@@ -112,6 +168,8 @@ class FakeAIProvider:
         if kind == "picture_naming":
             out["semantic_cue"] = SEMANTIC_CUES.get(stim["category"], DEFAULT_SEMANTIC_CUE)
             out["phonemic_cue"] = phonemic_prefix(target)
+        else:
+            out["hint"] = _HINTS[kind]
         if fault == "out_of_range_difficulty":
             out["difficulty"] = (
                 min(5, inp["max_difficulty"] + 1) if inp["max_difficulty"] < 5 else 0
@@ -121,7 +179,10 @@ class FakeAIProvider:
         elif fault == "unsafe_text":
             out["prompt"] = "This will help your brain heal."
         elif fault == "answer_leak":
-            out["prompt"] = f"Is this a {target}?" if kind == "picture_naming" else target[:60]
+            # Without the answer text (description), a model can still leak by guessing
+            # from the picture's name, e.g. "photo_scene_dog_running" -> "dog running".
+            guess = target or " ".join(stim["slug"].split("_")[2:])
+            out["prompt"] = f"Is this a {guess}?" if kind == "picture_naming" else guess[:60]
         elif fault == "invented_image":
             out["image_url"] = "https://example.com/made-up-picture.jpg"
         elif fault == "extra_field":

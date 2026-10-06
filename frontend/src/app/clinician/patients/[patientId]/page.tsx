@@ -26,8 +26,10 @@ import { StatusBadge } from "@/components/clinician/StatusBadge";
 import { Alert } from "@/components/ui/Alert";
 import { buttonClasses } from "@/components/ui/Button";
 import {
+  AIStatusSchema,
   ConstraintVersionSchema,
   PatientOverviewSchema,
+  ProgressSummarySchema,
   TrendPointSchema,
 } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
@@ -39,6 +41,7 @@ import {
   responseMode,
 } from "@/lib/format";
 
+import { ProgressSummaryCard } from "./ProgressSummaryCard";
 import { ResetProgress } from "./ResetProgress";
 
 export const metadata: Metadata = { title: "Patient overview" };
@@ -49,13 +52,18 @@ export default async function PatientOverviewPage({
   params,
 }: PageProps<"/clinician/patients/[patientId]">) {
   const { patientId } = await params;
-  const [ov, trend, versions] = await Promise.all([
+  const [ov, trend, versions, aiSummary, aiStatus] = await Promise.all([
     backendGet(`/patients/${patientId}/overview`, PatientOverviewSchema),
     backendGet(`/patients/${patientId}/trends`, z.array(TrendPointSchema)),
     backendGet(
       `/patients/${patientId}/constraints/versions`,
       z.array(ConstraintVersionSchema),
     ),
+    backendGet(
+      `/patients/${patientId}/progress-summary`,
+      ProgressSummarySchema.nullable(),
+    ),
+    backendGet("/ai/status", AIStatusSchema),
   ]);
   if (!ov) notFound();
   const active = versions?.[0];
@@ -206,6 +214,18 @@ export default async function PatientOverviewPage({
             </div>
           </>
         )}
+      </Section>
+
+      <Section
+        id="ai-summary"
+        title="AI progress summary"
+        description="A short written summary of the figures above, per rehabilitation objective."
+      >
+        <ProgressSummaryCard
+          patientId={patientId}
+          initial={aiSummary}
+          status={aiStatus}
+        />
       </Section>
 
       <Section
