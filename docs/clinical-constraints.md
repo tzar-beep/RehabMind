@@ -33,16 +33,30 @@ categories, trigger bypass attempts) and a Hypothesis property test on progressi
 
 ## Picture library
 
-`backend/app/exercises/stimuli_catalog.json` is the reviewed source of truth: target word,
-accepted answers, category, difficulty (1–5). Images are Lucide line drawings (ISC licence),
-copied to `frontend/public/stimuli/` by `npm run copy-stimuli`; DB sync via
-`uv run python -m app.scripts.sync_stimuli`. AI never creates images; from Phase 4 it may
-only choose from and phrase around this library. The library can be replaced (e.g. clinically
-validated photographs) without code changes.
+`backend/app/exercises/stimuli_catalog.json` is the reviewed source of truth, stored locally
+(no runtime downloads):
 
-## Scoring (rules-v1)
+| Kind | Count | Used for | Licence |
+|---|---|---|---|
+| Real-world photos (`frontend/public/stimuli/photos/`) | 61 (43 objects, 18 scenes) | picture naming; picture description and sentence construction (scenes) | CC0 / public domain / CC BY / CC BY-SA, from Wikimedia Commons; see [photo-credits.md](photo-credits.md) |
+| Lucide line drawings | 41 | picture naming (fallback) | ISC |
 
-Normalized text → `correct` (exact / accepted variant / plural / short carrier phrase
-such as "it's a cup", unless negated) → `near_miss` (edit similarity ≥ 0.75) → `incorrect`;
-empty or "I don't know" → `skipped`. These are personalization signals, **not** clinical
-assessments.
+Each entry has category, difficulty (1–5), the exercise types it supports, the canonical
+answer and accepted variants, and, for scenes, description concepts and sentence words.
+Photos are preferred whenever one exists inside the clinician's limits; drawings remain the
+fallback. The AI only picks a catalogue entry by slug: it never supplies image paths, and an
+entry without content for the exercise type is rejected.
+
+## Exercise types (implemented)
+
+The issuer rotates through the clinician-allowed types (naming → sentence → description),
+each with its own working difficulty.
+
+| Type | Patient does | Scoring (deterministic, no AI) |
+|---|---|---|
+| Picture naming | says/types the word | exact / accepted variant / plural / short phrase → correct; edit similarity ≥ 0.75 → close |
+| Sentence construction | taps scrambled words into order (or says the sentence) | normalized match against accepted variants → correct; right words, wrong order → close |
+| Picture description | says/types a description | key concepts (each with accepted terms) mentioned: all required → correct; ≥ half → close. Setting details are optional extras |
+
+Outcomes are personalization signals, **not** clinical assessments. Word repetition, word
+recognition, sentence completion and category naming remain not implemented.

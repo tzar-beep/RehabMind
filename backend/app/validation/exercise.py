@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 
 from pydantic import ValidationError
 
-from app.ai.schemas import PictureNamingOutput
+from app.ai.schemas import ExerciseOutput
 from app.analysis.scoring import normalize
 from app.clinical.models import ConstraintSet
 from app.exercises.models import Stimulus
@@ -24,7 +24,7 @@ class Verdict:
     ok: bool
     stage: str | None = None
     reasons: list[str] = field(default_factory=list)
-    output: PictureNamingOutput | None = None
+    output: ExerciseOutput | None = None
 
 
 # Medical/diagnostic/prognostic claims, pressure, and anything that is not exercise content.
@@ -47,14 +47,17 @@ def check_schema(raw: str) -> Verdict:
     if not isinstance(data, dict):
         return Verdict(False, "schema", ["not_an_object"])
     try:
-        return Verdict(True, output=PictureNamingOutput.model_validate(data))
+        return Verdict(True, output=ExerciseOutput.model_validate(data))
     except ValidationError as e:
         codes = sorted({f"{err['type']}:{'.'.join(map(str, err['loc']))}" for err in e.errors()})
         return Verdict(False, "schema", codes)
 
 
 def check_clinical(
-    out: PictureNamingOutput, cs: ConstraintSet, candidates: dict[str, Stimulus]
+    out: ExerciseOutput,
+    cs: ConstraintSet,
+    candidates: dict[str, Stimulus],
+    exercise_type: str = "picture_naming",
 ) -> Verdict:
     reasons: list[str] = []
     stim = candidates.get(out.stimulus_slug)
@@ -65,18 +68,30 @@ def check_clinical(
             reasons.append("difficulty_mismatch")
         if cs.allowed_categories and stim.category not in cs.allowed_categories:
             reasons.append("category_not_allowed")
+        if exercise_type not in stim.exercise_types:
+            reasons.append("stimulus_not_for_exercise_type")
     if not cs.min_difficulty <= out.difficulty <= cs.max_difficulty:
         reasons.append("difficulty_out_of_range")
     return Verdict(not reasons, None if not reasons else "clinical", reasons, out)
 
 
-def check_safety(out: PictureNamingOutput, stim: Stimulus) -> Verdict:
+def _leak_terms(stim: Stimulus, exercise_type: str) -> list[str]:
+    if exercise_type == "picture_description":
+        return [normalize(c["name"]) for c in stim.task["description"]["concepts"]]
+    if exercise_type == "sentence_construction":
+        return [normalize(stim.target)]
+    return [normalize(a) for a in stim.accepted_answers]
+
+
+def check_safety(
+    out: ExerciseOutput, stim: Stimulus, exercise_type: str = "picture_naming"
+) -> Verdict:
     reasons: list[str] = []
-    answers = [normalize(a) for a in stim.accepted_answers]
-    for name, text, max_words in (
-        ("prompt", out.prompt, MAX_PROMPT_WORDS),
-        ("semantic_cue", out.semantic_cue, MAX_CUE_WORDS),
-    ):
+    answers = _leak_terms(stim, exercise_type)
+    texts = [("prompt", out.prompt, MAX_PROMPT_WORDS)]
+    if out.semantic_cue:
+        texts.append(("semantic_cue", out.semantic_cue, MAX_CUE_WORDS))
+    for name, text, max_words in texts:
         norm = f" {normalize(text)} "
         if any(f" {a} " in norm or f" {a}s " in norm for a in answers):
             reasons.append(f"answer_leak:{name}")
@@ -85,11 +100,16 @@ def check_safety(out: PictureNamingOutput, stim: Stimulus) -> Verdict:
         for code, pattern in _UNSAFE_PATTERNS.items():
             if re.search(pattern, text, re.IGNORECASE):
                 reasons.append(f"{code}:{name}")
-    cue = out.phonemic_cue.lower()
-    if (
-        not cue.isalpha()
-        or not normalize(stim.target).startswith(cue)
-        or len(cue) >= len(stim.target)
-    ):
-        reasons.append("invalid_phonemic_cue")
+    if exercise_type == "picture_naming":
+        cue = (out.phonemic_cue or "").lower()
+        if not out.semantic_cue or not cue:
+            reasons.append("missing_cue")
+        elif (
+            not cue.isalpha()
+            or not normalize(stim.target).startswith(cue)
+            or len(cue) >= len(stim.target)
+        ):
+            reasons.append("invalid_phonemic_cue")
+    elif out.semantic_cue or out.phonemic_cue:
+        reasons.append("unexpected_cue")
     return Verdict(not reasons, None if not reasons else "safety", reasons, out)

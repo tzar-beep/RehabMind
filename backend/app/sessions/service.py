@@ -9,14 +9,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai import personalization
 from app.ai.provider import get_ai_provider
-from app.analysis.scoring import ScoreResult, score_naming
+from app.analysis.scoring import ScoreResult, score_exercise
 from app.audit import service as audit
+from app.clinical.models import ConstraintSet
 from app.clinical.service import latest_constraints
 from app.exercises import generator
 from app.exercises.generator import NoSafeExercise
 from app.exercises.issuer import ConstraintViolation, issue
 from app.exercises.models import Exercise
-from app.exercises.types import ExerciseType, ResponseMode
+from app.exercises.types import IMPLEMENTED_TYPES, ExerciseType, ResponseMode
 from app.performance.progression import apply_outcome, get_profile
 from app.sessions.models import ExerciseResponse, PracticeSession
 
@@ -61,50 +62,75 @@ async def issue_next(db: AsyncSession, session: PracticeSession) -> Exercise | N
         session.completed_at = datetime.now(UTC)
         return None
 
-    profile = await get_profile(db, session.patient_id, ExerciseType.PICTURE_NAMING, cs)
+    rotation = exercise_rotation(cs, position)
+    if not rotation:
+        raise NoSafeExercise("no implemented exercise type allowed")
+    provider = get_ai_provider()
 
-    if (provider := get_ai_provider()) is not None:
-        try:
-            proposal, ai_row = await personalization.propose(
-                db, provider, session, cs, profile, position
-            )
-        except NoSafeExercise:
-            proposal, ai_row = None, None
-        if proposal is not None and ai_row is not None:
+    for exercise_type in rotation:
+        profile = await get_profile(db, session.patient_id, exercise_type, cs)
+        if provider is not None:
             try:
-                exercise = await issue(db, session, cs, proposal, position)
-                ai_row.exercise_id = exercise.id
-                db.add(ai_row)
-                return exercise
-            except ConstraintViolation as e:  # issuer caught what validation missed
-                ai_row.status, ai_row.failed_stage, ai_row.reason_codes = (
-                    "rejected",
-                    "issuer",
-                    e.reasons,
+                proposal, ai_row = await personalization.propose(
+                    db, provider, session, cs, profile, position, exercise_type
                 )
-                db.add(ai_row)
+            except NoSafeExercise:
+                proposal, ai_row = None, None
+            if proposal is not None and ai_row is not None:
+                try:
+                    exercise = await issue(db, session, cs, proposal, position)
+                    ai_row.exercise_id = exercise.id
+                    db.add(ai_row)
+                    return exercise
+                except ConstraintViolation as e:  # issuer caught what validation missed
+                    ai_row.status, ai_row.failed_stage, ai_row.reason_codes = (
+                        "rejected",
+                        "issuer",
+                        e.reasons,
+                    )
+                    db.add(ai_row)
 
-    # Deterministic path: rule-based proposal, then the most conservative fallback.
-    try:
-        proposal = await generator.propose_next(
-            db, session.patient_id, session.id, cs, profile.target_difficulty
-        )
-        return await issue(db, session, cs, proposal, position)
-    except (ConstraintViolation, NoSafeExercise) as e:
-        reasons = e.reasons if isinstance(e, ConstraintViolation) else [str(e)]
-        await audit.record(
-            db,
-            "exercise.rejected",
-            "failure",
-            target_type="session",
-            target_id=session.id,
-            details={"reasons": reasons, "constraint_version": cs.version},
-            commit=False,
-        )
-    try:
-        return await issue(db, session, cs, await generator.fallback(db, session.id, cs), position)
-    except ConstraintViolation as e:
-        raise NoSafeExercise(str(e)) from e
+        # Deterministic path for this exercise type.
+        try:
+            proposal = await generator.propose_next(
+                db, session.patient_id, session.id, cs, profile.target_difficulty, exercise_type
+            )
+            return await issue(db, session, cs, proposal, position)
+        except (ConstraintViolation, NoSafeExercise) as e:
+            reasons = e.reasons if isinstance(e, ConstraintViolation) else [str(e)]
+            await audit.record(
+                db,
+                "exercise.rejected",
+                "failure",
+                target_type="session",
+                target_id=session.id,
+                details={
+                    "reasons": reasons,
+                    "exercise_type": exercise_type,
+                    "constraint_version": cs.version,
+                },
+                commit=False,
+            )
+
+    # Most conservative fallback: minimum difficulty, any allowed type.
+    for exercise_type in rotation:
+        try:
+            proposal = await generator.fallback(db, session.id, cs, exercise_type)
+            return await issue(db, session, cs, proposal, position)
+        except (ConstraintViolation, NoSafeExercise):
+            continue
+    raise NoSafeExercise("no safe exercise within the clinician's limits")
+
+
+def exercise_rotation(cs: ConstraintSet, position: int) -> list[str]:
+    """Allowed, implemented types in a fixed order, rotated so sessions alternate between
+    them (exercise 1 → first type, exercise 2 → second, …). Deterministic."""
+    types = [t.value for t in ExerciseType if t in IMPLEMENTED_TYPES]
+    types = [t for t in types if t in cs.allowed_exercise_types]
+    if not types:
+        return []
+    k = (position - 1) % len(types)
+    return types[k:] + types[:k]
 
 
 async def start_or_resume(
@@ -165,7 +191,7 @@ async def submit_response(
     if mode not in exercise.response_modes:
         raise PracticeConflict(f"{mode} responses not allowed for this exercise")
 
-    result = score_naming(text, exercise.expected["target"], exercise.expected["accepted_answers"])
+    result = score_exercise(exercise.exercise_type, text, exercise.expected)
     exercise.status = "skipped" if result.outcome == "skipped" else "answered"
     db.add(
         ExerciseResponse(
@@ -176,11 +202,12 @@ async def submit_response(
             outcome=result.outcome,
             score=result.score,
             analysis={
-                "method": "rules-v1",
+                "method": "rules-v2",
                 "match_type": result.match_type,
                 "matched": result.matched,
                 "similarity": result.similarity,
                 "hints_used": hints_used,
+                **result.details,
                 **(extra_analysis or {}),
             },
             latency_ms=latency_ms,

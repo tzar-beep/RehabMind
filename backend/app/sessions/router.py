@@ -28,6 +28,10 @@ class ExerciseOut(BaseModel):
     response_modes: list[str]
     # Progressive hints, revealed one at a time on request (meaning, then first sound).
     cues: list[str]
+    # Sentence construction: the word bank (already scrambled; never in answer order).
+    words: list[str] | None = None
+    # "photo" (real-world photograph) or "icon" (line drawing).
+    image_kind: str = "icon"
 
 
 class Summary(BaseModel):
@@ -55,6 +59,9 @@ class ResponseResult(BaseModel):
     outcome: Literal["correct", "near_miss", "incorrect", "skipped"]
     target: str
     heard: str | None = None  # transcript, for speech responses
+    # Picture description: which key ideas the answer mentioned / missed.
+    concepts_matched: list[str] | None = None
+    concepts_missing: list[str] | None = None
     state: SessionState
 
 
@@ -99,6 +106,8 @@ async def _state(db: DbDep, session: PracticeSession) -> SessionState:
             image_url=exercise.content.get("image_url"),
             response_modes=exercise.response_modes,
             cues=exercise.content.get("cues", []),
+            words=exercise.content.get("words"),
+            image_kind=exercise.content.get("image_kind", "icon"),
         )
         if exercise
         else None,
@@ -167,5 +176,7 @@ async def respond(
     return ResponseResult(
         outcome=result.outcome,
         target=exercise.expected["target"],
+        concepts_matched=result.details.get("concepts_matched"),
+        concepts_missing=result.details.get("concepts_missing"),
         state=await _state(db, session),
     )

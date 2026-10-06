@@ -21,7 +21,17 @@ class Stimulus(TimestampMixin, Base):
     category: Mapped[str] = mapped_column(String(40), index=True)
     difficulty: Mapped[int] = mapped_column(SmallInteger, index=True)
     image_path: Mapped[str] = mapped_column(String(200))
+    # "icon" (Lucide line drawing) or "photo" (real-world photograph).
+    kind: Mapped[str] = mapped_column(String(10), default="icon", server_default="icon")
+    # Exercise types this stimulus has content for.
+    exercise_types: Mapped[list[str]] = mapped_column(
+        ARRAY(String(40)), server_default="{picture_naming}"
+    )
+    # Type-specific scoring content, e.g. description concepts or sentence words.
+    task: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")
     license: Mapped[str] = mapped_column(String(40))
+    attribution: Mapped[str | None] = mapped_column(String(200))
+    source_url: Mapped[str | None] = mapped_column(String(300))
     catalog_version: Mapped[int]
     is_active: Mapped[bool] = mapped_column(default=True)
 

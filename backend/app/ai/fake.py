@@ -21,10 +21,28 @@ FAULTS = (
     "unsafe_text",
     "answer_leak",
     "extra_field",
+    "invented_image",
     "provider_error",
 )
 
-_PROMPTS = ("What is this?", "What do you call this?", "Can you name this?", "What is this called?")
+_PROMPTS = {
+    "picture_naming": (
+        "What is this?",
+        "What do you call this?",
+        "Can you name this?",
+        "What is this called?",
+    ),
+    "picture_description": (
+        "Describe what you see in the picture.",
+        "What is happening in this picture?",
+        "Tell me about this picture.",
+    ),
+    "sentence_construction": (
+        "Build a sentence using these words.",
+        "Put these words in order.",
+        "Make a sentence from these words.",
+    ),
+}
 
 
 def _seed(*parts: object) -> int:
@@ -83,14 +101,17 @@ class FakeAIProvider:
 
         stim, why = self._choose(inp, seed)
         target: str = stim["target"]
+        kind = inp.get("exercise_type", "picture_naming")
+        prompts = _PROMPTS[kind]
         out: dict[str, Any] = {
             "stimulus_slug": stim["slug"],
             "difficulty": stim["difficulty"],
-            "prompt": _PROMPTS[seed % len(_PROMPTS)],
-            "semantic_cue": SEMANTIC_CUES.get(stim["category"], DEFAULT_SEMANTIC_CUE),
-            "phonemic_cue": phonemic_prefix(target),
+            "prompt": prompts[seed % len(prompts)],
             "rationale": why.value,
         }
+        if kind == "picture_naming":
+            out["semantic_cue"] = SEMANTIC_CUES.get(stim["category"], DEFAULT_SEMANTIC_CUE)
+            out["phonemic_cue"] = phonemic_prefix(target)
         if fault == "out_of_range_difficulty":
             out["difficulty"] = (
                 min(5, inp["max_difficulty"] + 1) if inp["max_difficulty"] < 5 else 0
@@ -98,9 +119,11 @@ class FakeAIProvider:
         elif fault == "unknown_stimulus":
             out["stimulus_slug"] = "stethoscope"
         elif fault == "unsafe_text":
-            out["semantic_cue"] = "Naming this will help your brain heal faster."
+            out["prompt"] = "This will help your brain heal."
         elif fault == "answer_leak":
-            out["prompt"] = f"Is this a {target}?"
+            out["prompt"] = f"Is this a {target}?" if kind == "picture_naming" else target[:60]
+        elif fault == "invented_image":
+            out["image_url"] = "https://example.com/made-up-picture.jpg"
         elif fault == "extra_field":
             out["reasoning"] = "The patient struggles with food words, so..."
 

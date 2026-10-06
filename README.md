@@ -49,8 +49,8 @@ versioned settings, and can audit every AI decision.
 
 | 🧑‍🦽 Patients | 🩺 Clinicians | 🛡️ Safety by design |
 |---|---|---|
-| One picture, one question, one big button | Dashboard of assigned patients (real data only) | `MAX_DIFFICULTY` enforced in 4 independent layers, incl. a DB trigger |
-| Answer by **voice or typing** | Accuracy & difficulty trends, session history | Generative AI is bounded: schema → clinical → safety validation |
+| Real-world photos (61, openly licensed) plus line drawings | Dashboard of assigned patients (real data only) | `MAX_DIFFICULTY` enforced in 4 independent layers, incl. a DB trigger |
+| Answer by **voice or typing**; naming, sentence building, picture description | Accuracy & difficulty trends, session history | Generative AI is bounded: schema → clinical → safety validation |
 | Hints: meaning first, then first sound | **Versioned practice limits** (never edited, only superseded) | Retry + deterministic fallback; patients are never blocked |
 | Warm, honest feedback with the correct word | **AI audit log**: suggestion, verdict, what the patient got | Audio **encrypted → transcribed locally → deleted** |
 | Large targets, legible font, reduced motion | Transcript confidence, never raw audio | Whisper hallucinations are never scored |
@@ -155,4 +155,5 @@ Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.p
 [Privacy](docs/privacy.md) ·
 [Accessibility](docs/accessibility.md) ·
 [Deployment](docs/deployment.md) ·
-[Development](docs/development.md)
+[Development](docs/development.md) ·
+[Photo credits](docs/photo-credits.md)

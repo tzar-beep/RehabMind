@@ -33,6 +33,8 @@ def validate(p: Proposal, cs: ConstraintSet, session: PracticeSession, position:
     if p.stimulus is not None:
         if not p.stimulus.is_active:
             reasons.append("stimulus_inactive")
+        if p.exercise_type not in p.stimulus.exercise_types:
+            reasons.append("stimulus_not_for_exercise_type")
         if p.stimulus.difficulty != p.difficulty:
             reasons.append("stimulus_difficulty_mismatch")
         if cs.allowed_categories and p.stimulus.category not in cs.allowed_categories:

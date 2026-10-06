@@ -18,6 +18,12 @@ class ResponseMode(enum.StrEnum):
 
 # Types with a working generator and scorer. Clinicians may allow others in advance;
 # they are simply not issued until implemented.
-IMPLEMENTED_TYPES = frozenset({ExerciseType.PICTURE_NAMING})
+IMPLEMENTED_TYPES = frozenset(
+    {
+        ExerciseType.PICTURE_NAMING,
+        ExerciseType.PICTURE_DESCRIPTION,
+        ExerciseType.SENTENCE_CONSTRUCTION,
+    }
+)
 
 MIN_DIFFICULTY, MAX_DIFFICULTY = 1, 5

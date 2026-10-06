@@ -5,6 +5,7 @@ from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.ai.provider import set_ai_provider
+from app.ai.schemas import PROMPT_VERSION
 from app.core.config import get_settings
 from app.core.db import SessionLocal
 from app.main import app
@@ -144,7 +145,7 @@ async def test_ai_runs_explain_what_the_patient_received(care, ai, plan, result,
     assert run["result"] == result and run["position"] == 1
     assert run["final_exercise"]["source"] in sources
     assert len(run["attempts"]) == len(plan)
-    assert run["constraint_version"] == 1 and run["prompt_version"] == "picture-naming-v1"
+    assert run["constraint_version"] == 1 and run["prompt_version"] == PROMPT_VERSION
     if result != "rule_based_used":
         assert run["selection_reason"] in {
             "reinforce_recent_error",

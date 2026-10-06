@@ -17,8 +17,9 @@ import {
   type SessionState,
 } from "@/lib/api/schemas";
 
-import { FEEDBACK } from "./messages";
+import { EMPTY_ANSWER, IMAGE_ALT, TYPE_HINT, feedbackFor } from "./messages";
 import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
+import { WordBank } from "./WordBank";
 
 type View =
   | { kind: "loading" }
@@ -26,6 +27,9 @@ type View =
   | { kind: "answering"; state: SessionState }
   | {
       kind: "feedback";
+      exerciseType: string;
+      matched: string[];
+      missing: string[];
       outcome: Outcome;
       target: string;
       heard: string | null;
@@ -68,6 +72,9 @@ export function PracticeSession() {
   function showFeedback(exercise: Exercise, result: ResponseResult) {
     setView({
       kind: "feedback",
+      exerciseType: exercise.type,
+      matched: result.concepts_matched ?? [],
+      missing: result.concepts_missing ?? [],
       outcome: result.outcome,
       target: result.target,
       heard: result.heard ?? null,
@@ -135,7 +142,8 @@ export function PracticeSession() {
   }
 
   if (view.kind === "feedback") {
-    const fb = FEEDBACK[view.outcome];
+    const fb = feedbackFor(view.exerciseType, view.outcome);
+    const isWord = view.exerciseType === "picture_naming";
     const done = view.next.exercise === null;
     return (
       <div className="flex flex-col items-center gap-8 text-center">
@@ -148,11 +156,27 @@ export function PracticeSession() {
               alt=""
               width={200}
               height={200}
-              className="rounded-card border border-line bg-surface p-6"
+              className="max-h-56 w-auto rounded-card border border-line bg-surface object-contain p-2"
             />
           )}
           <p className="text-xl text-ink-muted">{fb.lead}</p>
-          <p className="text-5xl font-bold text-accent">{view.target}</p>
+          <p
+            className={`font-bold text-accent ${isWord ? "text-5xl" : "text-3xl"}`}
+          >
+            {view.target}
+          </p>
+          {view.exerciseType === "picture_description" && (
+            <div className="flex flex-col gap-1 text-lg">
+              {view.matched.length > 0 && (
+                <p>You mentioned: {view.matched.join(", ")}.</p>
+              )}
+              {view.missing.length > 0 && (
+                <p className="text-ink-muted">
+                  You could also say: {view.missing.join(", ")}.
+                </p>
+              )}
+            </div>
+          )}
           {view.heard && view.outcome !== "correct" && (
             <p className="text-lg text-ink-muted">
               We heard &ldquo;{view.heard}&rdquo;.
@@ -181,7 +205,7 @@ export function PracticeSession() {
           <p className="text-2xl">
             You practised {s.practiced}{" "}
             {s.practiced === 1 ? "picture" : "pictures"}.
-            {s.correct > 0 && ` You named ${s.correct} on your own.`}
+            {s.correct > 0 && ` You got ${s.correct} right on your own.`}
           </p>
         )}
         <p className="text-xl text-ink-muted">
@@ -197,7 +221,11 @@ export function PracticeSession() {
   const ex = state.exercise;
   const canSpeak =
     ex.response_modes.includes("speech") && speechSupported() && !micNotice;
-  const useSpeech = canSpeak && !typing && ex.response_modes.length > 0;
+  const isSentence = ex.type === "sentence_construction";
+  // Sentence building is tap-first; speech is used when typing/tapping is not allowed.
+  const useSpeech =
+    canSpeak && !typing && (!isSentence || !ex.response_modes.includes("text"));
+  const isPhoto = ex.image_kind === "photo";
   if (!ex.response_modes.includes("text") && !canSpeak) {
     return (
       <Alert tone="error">
@@ -213,7 +241,7 @@ export function PracticeSession() {
       new FormData(event.currentTarget).get("answer") ?? "",
     ).trim();
     if (!text) {
-      setAnswerError("Type a word, or choose “I’m not sure”.");
+      setAnswerError(EMPTY_ANSWER[ex.type] ?? EMPTY_ANSWER.picture_naming);
       return;
     }
     void submit(ex, { text });
@@ -248,10 +276,14 @@ export function PracticeSession() {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={ex.image_url}
-            alt="Picture to name"
-            width={240}
-            height={240}
-            className="rounded-card border border-line bg-surface p-8"
+            alt={IMAGE_ALT[ex.type] ?? IMAGE_ALT.picture_naming}
+            width={isPhoto ? 480 : 240}
+            height={isPhoto ? 360 : 240}
+            className={
+              isPhoto
+                ? "max-h-80 w-auto max-w-full rounded-card border border-line bg-surface object-contain"
+                : "rounded-card border border-line bg-surface p-8"
+            }
           />
         )}
         <h1 id="prompt" className="text-4xl font-bold">
@@ -310,7 +342,7 @@ export function PracticeSession() {
               size="lg"
               onClick={() => setTyping(true)}
             >
-              Type instead
+              {isSentence ? "Tap words instead" : "Type instead"}
             </Button>
             <Button
               variant="secondary"
@@ -321,6 +353,26 @@ export function PracticeSession() {
             </Button>
           </div>
         </div>
+      ) : isSentence && ex.words ? (
+        <>
+          <WordBank
+            key={ex.id}
+            words={ex.words}
+            busy={busy}
+            error={answerError}
+            onCheck={(sentence) =>
+              sentence
+                ? void submit(ex, { text: sentence })
+                : setAnswerError(EMPTY_ANSWER.sentence_construction)
+            }
+            onSkip={() => submit(ex, { skipped: true })}
+          />
+          {canSpeak && (
+            <Button variant="quiet" onClick={() => setTyping(false)}>
+              Speak instead
+            </Button>
+          )}
+        </>
       ) : (
         <form
           key={ex.id}
@@ -329,8 +381,12 @@ export function PracticeSession() {
           className="flex flex-col gap-5"
         >
           <TextField
-            label="Your answer"
-            hint="Type the word for this picture."
+            label={
+              ex.type === "picture_description"
+                ? "Your description"
+                : "Your answer"
+            }
+            hint={TYPE_HINT[ex.type] ?? TYPE_HINT.picture_naming}
             name="answer"
             autoComplete="off"
             autoCapitalize="none"

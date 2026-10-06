@@ -7,6 +7,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exercises.models import Stimulus
+from app.exercises.types import ExerciseType
 
 CATALOG_PATH = Path(__file__).with_name("stimuli_catalog.json")
 
@@ -20,20 +21,45 @@ async def sync_stimuli(db: AsyncSession) -> int:
     catalog = load_catalog()
     existing = {s.slug: s for s in (await db.execute(select(Stimulus))).scalars()}
     slugs = set()
-    for entry in catalog["stimuli"]:
-        slugs.add(entry["slug"])
-        values = {
-            "target": entry["target"],
-            "accepted_answers": entry["accepted_answers"],
-            "category": entry["category"],
-            "difficulty": entry["difficulty"],
-            "image_path": f"/stimuli/{entry['slug']}.svg",
+    entries = [
+        {
+            "slug": e["slug"],
+            "target": e["target"],
+            "accepted_answers": e["accepted_answers"],
+            "category": e["category"],
+            "difficulty": e["difficulty"],
+            "image_path": f"/stimuli/{e['slug']}.svg",
+            "kind": "icon",
+            "exercise_types": [ExerciseType.PICTURE_NAMING.value],
+            "task": {},
             "license": catalog["source"]["license"],
-            "catalog_version": catalog["version"],
-            "is_active": True,
+            "attribution": catalog["source"]["name"],
+            "source_url": catalog["source"]["url"],
         }
-        if (stim := existing.get(entry["slug"])) is None:
-            db.add(Stimulus(slug=entry["slug"], **values))
+        for e in catalog["stimuli"]
+    ] + [
+        {
+            "slug": p["slug"],
+            "target": p["target"],
+            "accepted_answers": p["accepted_answers"],
+            "category": p["category"],
+            "difficulty": p["difficulty"],
+            "image_path": p["image_path"],
+            "kind": "photo",
+            "exercise_types": p["exercise_types"],
+            "task": {k: p[k] for k in ("description", "sentence") if k in p},
+            "license": p["license"],
+            "attribution": p["attribution"][:200],
+            "source_url": p["source_url"],
+        }
+        for p in catalog.get("photos", [])
+    ]
+    for entry in entries:
+        slug = entry.pop("slug")
+        slugs.add(slug)
+        values = {**entry, "catalog_version": catalog["version"], "is_active": True}
+        if (stim := existing.get(slug)) is None:
+            db.add(Stimulus(slug=slug, **values))
         else:
             for k, v in values.items():
                 setattr(stim, k, v)
