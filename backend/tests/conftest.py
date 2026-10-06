@@ -7,6 +7,8 @@ os.environ["REDIS_URL"] = "redis://127.0.0.1:6379/15"
 # Faulty AI outputs on: every test also proves validation and fallback hold.
 os.environ["AI_PROVIDER"] = "fake"
 os.environ["AI_FAKE_FAULT_RATE"] = "0.3"
+# Local .env may enable the demo view; tests start from the safe default.
+os.environ["AI_DEMO_VIEW"] = "false"
 
 from collections.abc import AsyncIterator  # noqa: E402
 from pathlib import Path  # noqa: E402

@@ -135,7 +135,8 @@ def test_each_exercise_type_gets_its_own_hint_rule():
     rules = {}
     for kind in ("picture_naming", "sentence_construction", "picture_description"):
         rules[kind] = exercise_prompts({**EXERCISE_INPUT, "exercise_type": kind})[1]
-    assert "phonemic_cue" in rules["picture_naming"] and "first one to" in rules["picture_naming"]
+    naming = rules["picture_naming"]
+    assert "phonemic_cue" in naming and "first one or two" in naming
     assert "Do not name the people" in rules["picture_description"]
     assert len(set(rules.values())) == 3
 
@@ -182,7 +183,7 @@ def test_summary_prompt_contains_only_supplied_figures():
     }
     system, user = summary_prompts(inp)
     assert "Do not invent metrics" in system and "Do not diagnose" in system
-    assert "20 answers, 65% correct, recent trend improving" in user
+    assert "20 answers, 65% correct (moderate accuracy), recent trend improving" in user
     assert "Sentence formation (sentence construction): no answers yet" in user
     assert "Sessions completed: 4" in user
 
@@ -619,3 +620,46 @@ async def test_real_llm_feedback_respects_the_score():
     verdict, out = check_feedback(result.raw_output, "correct")
     assert out is not None, result.raw_output
     assert verdict.ok or verdict.reasons
+
+
+def test_possessive_forms_count_as_answer_leaks():
+    v = check_safety(gen(hint="Look at the dog's legs."), DOG_RUNNING, "picture_description")
+    assert not v.ok and "answer_leak:hint" in v.reasons
+
+
+def test_schema_sent_to_the_model_requires_the_type_specific_fields():
+    from app.ai.personalization import exercise_schema
+
+    naming = exercise_schema("picture_naming")
+    assert {"semantic_cue", "phonemic_cue"} <= set(naming["required"])
+    assert "hint" not in naming["properties"]
+    sentence = exercise_schema("sentence_construction")
+    assert "hint" in sentence["required"] and "semantic_cue" not in sentence["properties"]
+
+
+def test_description_candidates_do_not_reveal_the_scene():
+    from app.ai.personalization import build_request
+
+    inp = {**EXERCISE_INPUT, "exercise_type": "picture_description"}
+    inp["candidates"] = [{k: v for k, v in c.items() if k != "target"} for c in inp["candidates"]]
+    assert "The dog is running" not in build_request(inp).user_prompt
+
+
+def test_low_accuracy_objective_cannot_be_called_a_strength():
+    inp = {
+        "sessions_completed": 23,
+        "objectives": [
+            {"label": "Sentence formation", "answers": 46, "percent_correct": 4},
+            {"label": "Word retrieval", "answers": 20, "percent_correct": 80},
+        ],
+    }
+    bad, _ = check_summary(
+        json.dumps({"summary": "Mixed results.", "strengths": ["Sentence formation is strong."]}),
+        inp,
+    )
+    assert not bad.ok and "unsupported_strength:strengths.0" in bad.reasons
+    ok, _ = check_summary(
+        json.dumps({"summary": "Mixed results.", "strengths": ["Word retrieval is strong."]}),
+        inp,
+    )
+    assert ok.ok

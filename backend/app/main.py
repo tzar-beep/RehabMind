@@ -1,7 +1,9 @@
+import asyncio
 import logging
 import time
 import uuid
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
 from urllib.parse import urlparse
 
 from fastapi import APIRouter, FastAPI, Request, Response
@@ -11,6 +13,7 @@ from fastapi.responses import JSONResponse
 from app.admin.router import router as admin_router
 from app.ai.clinician_router import router as ai_clinician_router
 from app.ai.clinician_router import status_router as ai_status_router
+from app.ai.provider import get_ai_provider
 from app.ai.router import router as ai_router
 from app.auth.router import router as auth_router
 from app.clinical.router import options_router as clinical_options_router
@@ -29,7 +32,21 @@ settings = get_settings()
 log = logging.getLogger("app")
 access_log = logging.getLogger("app.access")
 
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    # Load the local LLM in the background; requests before it is ready fall back safely.
+    provider = get_ai_provider()
+    task = None
+    if hasattr(provider, "warm_up"):
+        task = asyncio.create_task(provider.warm_up())
+    yield
+    if task is not None and not task.done():
+        task.cancel()
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="RehabMind",
     docs_url=None if settings.is_production else "/api/docs",
     redoc_url=None,

@@ -35,6 +35,13 @@ _UNSAFE_PATTERNS = {
     "link_or_contact": r"(https?://|www\.|@[a-z]|\.com\b)",
     "digits": r"\d",
 }
+
+
+def _words(text: str) -> str:
+    """Normalized text with possessives removed ("dog's" -> "dog"), for leak checks."""
+    return re.sub(r"'s(?![a-z])", "", normalize(text))
+
+
 MAX_PROMPT_WORDS = 8
 MAX_CUE_WORDS = 12
 # A sentence hint may give a start ("Start with 'The dog...'") but not the sentence itself.
@@ -97,7 +104,7 @@ def check_safety(
     if out.hint:
         texts.append(("hint", out.hint, MAX_CUE_WORDS))
     for name, text, max_words in texts:
-        norm = f" {normalize(text)} "
+        norm = f" {_words(text)} "
         if any(f" {a} " in norm or f" {a}s " in norm for a in answers):
             reasons.append(f"answer_leak:{name}")
         if len(text.split()) > max_words:
@@ -122,7 +129,7 @@ def check_safety(
             reasons.append("unexpected_cue")
         if out.hint and exercise_type == "sentence_construction":
             content = set(normalize(stim.target).split()) - _FUNCTION_WORDS
-            used = content & set(normalize(out.hint).split())
+            used = content & set(_words(out.hint).split())
             if len(used) > MAX_SENTENCE_WORDS_IN_HINT:
                 reasons.append("answer_leak:hint")
     reasons = list(dict.fromkeys(reasons))

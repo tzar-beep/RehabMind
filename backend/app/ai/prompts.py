@@ -45,8 +45,10 @@ image paths, URLs or answers.
 _HINT_RULES = {
     "picture_naming": (
         'Write "semantic_cue": a meaning hint (what the object is or is used for), at most '
-        '12 words, without the answer word. Write "phonemic_cue": only the first one to '
-        'three letters of the answer word. Do not write "hint".'
+        "12 words. It must NOT contain the answer word or its plural. Example for the "
+        'answer "cup": "You drink tea or coffee from it." Write "phonemic_cue": only the '
+        "first one or two letters of the answer word, letters only, no hyphen. Example for "
+        '"cup": "c". Do not write "hint".'
     ),
     "sentence_construction": (
         'Write "hint": one short tip (at most 12 words) on how to start or order the '
@@ -56,7 +58,8 @@ _HINT_RULES = {
     "picture_description": (
         'Write "hint": one short tip (at most 12 words) on what to look for, such as who is '
         "there, what they are doing, or where. Do not name the people, animals, objects or "
-        'actions in the picture. Do not write "semantic_cue" or "phonemic_cue".'
+        'actions in the picture. Example: "Say who you can see and what is happening." '
+        'Do not write "semantic_cue" or "phonemic_cue".'
     ),
 }
 
@@ -129,7 +132,9 @@ FEEDBACK_SYSTEM = """ROLE: You are RehabMind's language rehabilitation feedback 
 write short, warm, encouraging feedback for an adult practising language after a stroke.
 
 The application has already scored the answer. You must not change, restate or contradict \
-the score: if the outcome is not "correct", never say the answer was correct.
+the score: if the outcome is not "correct", never say the answer was correct, and do not \
+use the words "correct", "right", "perfect", "exactly" or "got it". If the outcome is \
+"correct", do not use "wrong", "incorrect", "mistake" or "not quite".
 
 SAFETY RULES:
 - Do not diagnose, and do not mention health, the brain, recovery, therapy, treatment or \
@@ -149,7 +154,8 @@ OUTCOME (final, do not change): {outcome}
 
 TASK: Write "feedback": at most 25 words that name one specific thing the patient did well \
 or nearly did, linked to the target skill. Then write "optional_hint": at most 15 words with \
-one concrete thing to try next time, or null.
+one concrete thing to try next time, or null. If the outcome is "skipped", there was no \
+attempt to praise: gently encourage trying next time and give one easy first step.
 
 OUTPUT: one JSON object with feedback and optional_hint."""
 
@@ -219,9 +225,16 @@ SUMMARY_USER = """RECORDED PRACTICE DATA ({period}):
 
 TASK: Write "summary": a concise progress summary of at most 70 words using only these \
 figures. Then list up to two "strengths" and up to two "focus_areas" (each at most 15 \
-words), each linked to one of the three objectives.
+words), each linked to one of the three objectives. Only an objective with high or \
+moderate accuracy can be a strength; objectives with low accuracy are focus areas. If no \
+objective qualifies, a strength may describe regular practice instead.
 
 OUTPUT: one JSON object with summary, strengths and focus_areas."""
+
+
+def level(percent: int) -> str:
+    """Accuracy band, so the model does not have to judge raw percentages."""
+    return "high" if percent >= 75 else "moderate" if percent >= 50 else "low"
 
 
 def summary_prompts(inp: dict[str, Any]) -> tuple[str, str]:
@@ -230,7 +243,8 @@ def summary_prompts(inp: dict[str, Any]) -> tuple[str, str]:
         if o["answers"]:
             lines.append(
                 f"- {o['label']} ({o['exercise']}): {o['answers']} answers, "
-                f"{o['percent_correct']}% correct, recent trend {o['trend']}"
+                f"{o['percent_correct']}% correct ({level(o['percent_correct'])} accuracy), "
+                f"recent trend {o['trend']}"
             )
         else:
             lines.append(f"- {o['label']} ({o['exercise']}): no answers yet")

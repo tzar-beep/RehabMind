@@ -21,6 +21,7 @@ MAX_FEEDBACK_WORDS = 30
 MAX_HINT_WORDS = 18
 MAX_SUMMARY_WORDS = 90
 MAX_ITEM_WORDS = 20
+LOW_ACCURACY = 50  # percent; below this an objective cannot be called a strength
 
 # Claims that the answer was right, when the deterministic outcome says otherwise.
 _CLAIMS_CORRECT = (
@@ -110,4 +111,13 @@ def check_summary(raw: str, inp: dict[str, Any]) -> tuple[Verdict, SummaryOutput
         invented = [n for n in re.findall(r"\d+(?:\.\d+)?", text) if n not in numbers]
         if invented:
             reasons.append(f"invented_number:{name}")
+    # A strength must be supported by the data: no objective with low accuracy.
+    low = [
+        o["label"].lower()
+        for o in inp.get("objectives", [])
+        if o.get("answers") and o.get("percent_correct", 0) < LOW_ACCURACY
+    ]
+    for i, text in enumerate(out.strengths):
+        if any(label in text.lower() for label in low):
+            reasons.append(f"unsupported_strength:strengths.{i}")
     return Verdict(not reasons, None if not reasons else "safety", reasons), out

@@ -156,7 +156,7 @@ class FakeAIProvider:
             raise AIProviderError("simulated provider timeout")
 
         stim, why = self._choose(inp, seed)
-        target: str = stim["target"]
+        target: str = stim.get("target", "")
         kind = inp.get("exercise_type", "picture_naming")
         prompts = _PROMPTS[kind]
         out: dict[str, Any] = {
@@ -179,7 +179,10 @@ class FakeAIProvider:
         elif fault == "unsafe_text":
             out["prompt"] = "This will help your brain heal."
         elif fault == "answer_leak":
-            out["prompt"] = f"Is this a {target}?" if kind == "picture_naming" else target[:60]
+            # Without the answer text (description), a model can still leak by guessing
+            # from the picture's name, e.g. "photo_scene_dog_running" -> "dog running".
+            guess = target or " ".join(stim["slug"].split("_")[2:])
+            out["prompt"] = f"Is this a {guess}?" if kind == "picture_naming" else guess[:60]
         elif fault == "invented_image":
             out["image_url"] = "https://example.com/made-up-picture.jpg"
         elif fault == "extra_field":

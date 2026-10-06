@@ -126,7 +126,13 @@ async def build_input(
         "candidates": [
             {
                 "slug": s.slug,
-                "target": s.target,
+                # Description hints must not name what is in the picture, so the model is
+                # not shown the scene's answer at all for that type.
+                **(
+                    {}
+                    if exercise_type == ExerciseType.PICTURE_DESCRIPTION
+                    else {"target": s.target}
+                ),
                 "category": s.category,
                 "difficulty": s.difficulty,
                 "kind": s.kind,
@@ -145,8 +151,34 @@ def build_request(inp: dict[str, Any]) -> GenerationRequest:
         system_prompt=system,
         user_prompt=user,
         input=inp,
-        output_schema=inline_schema(ExerciseOutput.model_json_schema()),
+        output_schema=exercise_schema(inp["exercise_type"]),
     )
+
+
+# Fields each exercise type must (and must not) produce. Small models skip optional fields,
+# so the schema sent to the model makes the right ones required and drops the others.
+_TYPE_FIELDS = {
+    ExerciseType.PICTURE_NAMING: ("semantic_cue", "phonemic_cue"),
+    ExerciseType.SENTENCE_CONSTRUCTION: ("hint",),
+    ExerciseType.PICTURE_DESCRIPTION: ("hint",),
+}
+_OPTIONAL = {"semantic_cue", "phonemic_cue", "hint"}
+
+
+def exercise_schema(exercise_type: str) -> dict[str, Any]:
+    schema = inline_schema(ExerciseOutput.model_json_schema())
+    wanted = _TYPE_FIELDS[exercise_type]
+    props = schema["properties"]
+    for name in _OPTIONAL - set(wanted):
+        props.pop(name, None)
+    for name in wanted:
+        # Required and non-null for this type (validation still checks content).
+        any_of = props[name].pop("anyOf", None)
+        if any_of:
+            props[name].update(next(s for s in any_of if s.get("type") == "string"))
+        props[name].pop("default", None)
+    schema["required"] = [*schema.get("required", []), *wanted]
+    return schema
 
 
 def _proposal(

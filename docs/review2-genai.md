@@ -261,7 +261,105 @@ tasks step by step.
 
 ## 9. Real outputs from the local model
 
-_Filled in from real runs; see the end of this document._
+Produced by `qwen2.5:3b` running locally through Ollama on an RTX 3050 laptop GPU
+(`uv run python -m app.scripts.genai_demo`). Unedited model output, then RehabMind's
+validation verdict. Typical latency 1–3 s per call once the model is loaded (the first call
+after start-up loads the model into GPU memory; the API warms it up in the background).
+
+**Use case 1a: picture naming (word retrieval).** 1.7 s, 611 prompt + 71 output tokens.
+
+```json
+{
+  "stimulus_slug": "photo_cup_01",
+  "difficulty": 1,
+  "prompt": "Name the object in this picture.",
+  "semantic_cue": "It's used for holding hot drinks.",
+  "phonemic_cue": "c",
+  "rationale": "introduce_new"
+}
+```
+
+Validation: **valid**. The meaning cue does not name the answer, and the first-sound cue is a
+prefix of "cup". The patient sees this question, then "It's used for holding hot drinks.",
+then "It starts with “c…”".
+
+**Use case 1b: sentence construction (sentence formation).** 1.2 s.
+
+```json
+{
+  "stimulus_slug": "photo_scene_dog_running",
+  "difficulty": 2,
+  "prompt": "Form a sentence about the dog.",
+  "hint": "Describe what the dog is doing.",
+  "rationale": "introduce_new"
+}
+```
+
+Validation: **valid** (the hint uses one content word of the sentence, "dog", which is
+allowed; the word bank and accepted sentences come from the catalogue).
+
+**Use case 1c: picture description (descriptive language).** 2.8 s.
+
+```json
+{
+  "stimulus_slug": "photo_scene_dog_running",
+  "difficulty": 2,
+  "prompt": "Describe the scene and who is there.",
+  "hint": "Look for people, animals, and objects in the background.",
+  "rationale": "introduce_new"
+}
+```
+
+Validation: **valid** (the hint does not name anything in the picture). In other runs the
+model wrote "Look for the dog and its surroundings"; that was **rejected**
+(`answer_leak:hint`), retried, and if still invalid the rule-based exercise is used.
+
+**Use case 2: feedback (descriptive language, answer "someone is riding", outcome close).**
+1.1 s.
+
+```json
+{
+  "feedback": "Nailed the man and riding, almost perfect!",
+  "optional_hint": "Try adding the bicycle next time."
+}
+```
+
+Validation: **rejected** (`contradicts_score:feedback`): "perfect" contradicts the
+deterministic outcome *close but not correct*. The system retries; a typical accepted output
+from other runs is `{"feedback": "Nailed describing a man, almost got the bicycle.",
+"optional_hint": "Try to say 'someone is riding a bicycle'"}`. If both attempts fail, the
+patient simply keeps the standard feedback.
+
+**Use case 3: progress summary.** 2.6 s.
+
+```json
+{
+  "summary": "Word retrieval shows 65% correct over 4 sessions, steady progress. Sentence formation at 50% correct, recent stability. Descriptive language at 33% correct, insufficient data for trend.",
+  "strengths": ["Word retrieval: Moderate accuracy", "Sentence formation: Steady progress"],
+  "focus_areas": ["Descriptive language: Low accuracy", "Regular practice: Consistent engagement"]
+}
+```
+
+Validation: **valid**: every number (65, 50, 33, 4) appears in the supplied data, and no
+low-accuracy objective is listed as a strength. Before the accuracy-band rule was added, the
+model once called 4% "strong"; the prompt now gives a band (low/moderate/high) per objective
+and validation rejects unsupported strengths (`unsupported_strength`).
+
+**Measured reliability.** Across repeated runs of all five scenarios, 13–14 of 15 outputs
+passed validation first time; every failure was caught by validation (answer leak, a prompt
+over 8 words, a score-contradicting word) and handled by retry or fallback. The patient
+never saw an invalid output.
+
+**Prompt iterations made while testing with the real model** (prompt engineering in practice):
+1. The model skipped optional hint fields → the JSON Schema sent to the model now makes the
+   type's hint fields *required* (per exercise type).
+2. Meaning cues contained the answer ("A cup is …") and first-sound cues were "cup-" → added
+   a concrete example to the instructions; now consistently valid.
+3. Description hints named the animal → the scene text is no longer sent for description
+   exercises, and possessives ("dog's") are now caught by the leak check.
+4. Feedback said "right"/"perfect" for close answers → the forbidden words are listed in the
+   system prompt (and still validated).
+5. Summary called 4% "strong" → accuracy bands in the prompt plus a validation rule.
 
 ## 10. Running it
 
@@ -275,6 +373,9 @@ AI_PROVIDER=ollama
 OLLAMA_MODEL=qwen2.5:3b
 AI_DEMO_VIEW=true                      # development only
 
+# reproduce the examples in section 9 (no database needed)
+cd backend && uv run python -m app.scripts.genai_demo
+
 # services (see README quick start)
 docker compose up -d --wait
 cd backend && uv run alembic upgrade head && uv run uvicorn app.main:app --port 8000
@@ -287,7 +388,7 @@ Check: `GET /api/v1/ai/status` (as a clinician) reports `"generative": true,
 
 ## 11. Implemented vs future work
 
-**Implemented and tested:** Ollama provider; three versioned prompts; AI exercise content for
+**Implemented and tested:** Ollama provider with the model loaded at API start-up; three versioned prompts; AI exercise content for
 all three exercise types; AI feedback; AI progress summaries; learned ability estimate;
 validation, retry, fallback and audit for all three tasks; demo pipeline view; real-model
 integration tests (run when Ollama is available).
@@ -296,3 +397,26 @@ integration tests (run when Ollama is available).
 evaluation with clinicians and people with aphasia; using the ability estimate to set
 difficulty (needs clinical validation); model-generated pictures (deliberately excluded);
 streaming responses.
+
+## 12. Review 2 demonstration script (about 10 minutes)
+
+1. **Architecture (1 min).** Show the pipeline diagram (section 1) and the rule "LLM writes
+   content; the app owns the rules". Show `ollama list` → `qwen2.5:3b`, and that nothing calls
+   a cloud API.
+2. **Real generation (2 min).** Run `uv run python -m app.scripts.genai_demo`. Point out the
+   three prompt versions, the structured context in each prompt, the JSON outputs, the
+   latency and token counts, and any validation rejection (criterion 3 + GenAI).
+3. **Patient flow (3 min).** Sign in as `patient@recovery.local`, start practice.
+   - Picture naming: show the AI-written question and hints (word retrieval).
+   - Answer by voice: faster-whisper transcribes on the laptop (DL), the NLP scorer decides
+     the outcome, then the **"A tip for you"** card appears (feedback, after scoring).
+   - Sentence construction / picture description: AI hint; word bank from the catalogue.
+4. **Clinician view (3 min).** Sign in as `clinician@recovery.local` → Alex.
+   - **AI progress summary**: click "Write a new summary"; numbers checked against the data.
+   - **AI pipeline (demo)** tab: learned ability per objective (ML), then for one exercise:
+     objective → structured context → full prompt → raw output → validation → what the patient
+     saw → response and deterministic score → AI feedback → next exercise.
+   - **AI audit log**: every attempt with prompt version, model and reason codes.
+5. **Safety and fallback (1 min).** Stop Ollama (`taskkill /IM ollama.exe /F`), start a new
+   exercise: the patient still gets a rule-based exercise and the audit log shows
+   `provider_error`. Restart Ollama afterwards.

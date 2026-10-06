@@ -74,6 +74,19 @@ class OllamaAIProvider:
             },
         )
 
+    async def warm_up(self) -> bool:
+        """Load the model into (GPU) memory so the first patient request is fast.
+        An empty generate request loads the model without producing text."""
+        try:
+            r = await self._client.post(
+                "/api/generate",
+                json={"model": self.model, "prompt": "", "keep_alive": KEEP_ALIVE},
+                timeout=300,
+            )
+            return r.status_code == 200
+        except httpx.HTTPError:
+            return False
+
     async def status(self) -> dict[str, Any]:
         """Is the server up, and is the configured model downloaded?"""
         try:
