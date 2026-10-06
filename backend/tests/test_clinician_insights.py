@@ -95,6 +95,7 @@ async def test_sessions_trends_and_detail(care):  # noqa: F811
     trend = (await clinician.get(f"{base(pid)}/trends")).json()
     assert [t["session_id"] for t in trend] == [s1, s2]  # oldest first
     assert [t["accuracy"] for t in trend] == [1.0, 0.5]
+    assert [(t["correct"], t["incorrect"], t["skipped"]) for t in trend] == [(2, 0, 0), (1, 1, 0)]
 
     detail = (await clinician.get(f"{base(pid)}/sessions/{s2}")).json()
     assert [e["position"] for e in detail["exercises"]] == [1, 2]

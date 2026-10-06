@@ -6,7 +6,10 @@ import { z } from "zod";
 
 import { ConstraintSummary } from "@/components/clinician/ConstraintSummary";
 import { EmptyState } from "@/components/clinician/EmptyState";
-import { LineChart } from "@/components/clinician/LineChart";
+import {
+  AnswersBySessionChart,
+  DifficultyBySessionChart,
+} from "@/components/clinician/TrendCharts";
 import { Facts, Section } from "@/components/clinician/Section";
 import { StatusBadge } from "@/components/clinician/StatusBadge";
 import { buttonClasses } from "@/components/ui/Button";
@@ -17,7 +20,6 @@ import {
 } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import {
-  axisLabels,
   formatDate,
   formatDateTime,
   formatMs,
@@ -46,7 +48,6 @@ export default async function PatientOverviewPage({
   const o = ov.outcomes;
   const attempted = o.correct + o.near_miss + o.incorrect + o.skipped;
   const base = `/clinician/patients/${patientId}`;
-  const labels = axisLabels((trend ?? []).map((t) => t.started_at));
 
   return (
     <div className="flex flex-col gap-10">
@@ -149,36 +150,8 @@ export default async function PatientOverviewPage({
             />
             {trend && trend.length >= MIN_TREND_SESSIONS ? (
               <div className="grid gap-6 lg:grid-cols-2">
-                <LineChart
-                  title="Accuracy by session"
-                  description={`Share of answers marked correct in each of the last ${trend.length} sessions with answers.`}
-                  valueHeader="Correct"
-                  points={trend.map((t, i) => ({
-                    label: labels[i],
-                    value: t.accuracy,
-                    detail: `${formatDateTime(t.started_at)}: ${t.correct} of ${t.attempted} correct`,
-                  }))}
-                  yMin={0}
-                  yMax={1}
-                  yTicks={[0, 0.25, 0.5, 0.75, 1]}
-                  formatY={(v) => `${Math.round(v * 100)}%`}
-                />
-                <LineChart
-                  title="Exercise difficulty by session"
-                  description="Average difficulty (1–5) of the exercises answered in each session."
-                  valueHeader="Average difficulty"
-                  points={trend.map((t, i) => ({
-                    label: labels[i],
-                    value: t.avg_difficulty,
-                    detail: `${formatDateTime(t.started_at)}: average difficulty ${t.avg_difficulty.toFixed(1)} over ${t.attempted} answers`,
-                  }))}
-                  yMin={1}
-                  yMax={5}
-                  yTicks={[1, 2, 3, 4, 5]}
-                  formatY={(v) =>
-                    Number.isInteger(v) ? String(v) : v.toFixed(1)
-                  }
-                />
+                <AnswersBySessionChart trend={trend} />
+                <DifficultyBySessionChart trend={trend} />
               </div>
             ) : (
               <EmptyState

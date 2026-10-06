@@ -114,6 +114,9 @@ export const TrendPointSchema = z.object({
   started_at: dt,
   attempted: z.number(),
   correct: z.number(),
+  near_miss: z.number(),
+  incorrect: z.number(),
+  skipped: z.number(),
   accuracy: z.number(),
   avg_difficulty: z.number(),
 });
