@@ -8,7 +8,7 @@ from sqlalchemy.exc import DBAPIError
 from app.ai.fake import FAULTS, FakeAIProvider
 from app.ai.models import AIGeneration
 from app.ai.provider import GenerationRequest, set_ai_provider
-from app.ai.schemas import PictureNamingOutput
+from app.ai.schemas import PROMPT_VERSION, PictureNamingOutput
 from app.clinical.models import ConstraintSet
 from app.core.db import SessionLocal
 from app.exercises.models import Exercise, Stimulus
@@ -49,6 +49,7 @@ CUP = Stimulus(
     accepted_answers=["cup", "mug"],
     category="food",
     difficulty=2,
+    exercise_types=["picture_naming"],
     is_active=True,
 )
 CS = ConstraintSet(
@@ -171,7 +172,7 @@ async def test_valid_ai_output_is_issued_and_audited(care, ai):  # noqa: F811
 
     [gen] = await generations(pid)
     assert gen.status == "accepted" and str(gen.exercise_id) == ex["id"]
-    assert gen.provider == "fake" and gen.prompt_version == "picture-naming-v1"
+    assert gen.provider == "fake" and gen.prompt_version == PROMPT_VERSION
     assert gen.constraint_version == 1 and gen.parsed_output["rationale"]
     async with SessionLocal() as db:
         assert (await db.get(Exercise, uuid.UUID(ex["id"]))).source == "ai"

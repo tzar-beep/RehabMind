@@ -47,6 +47,8 @@ export const ExerciseSchema = z.object({
   image_url: z.string().nullable(),
   response_modes: z.array(z.string()),
   cues: z.array(z.string()),
+  words: z.array(z.string()).nullable().optional(),
+  image_kind: z.string().optional(),
 });
 export type Exercise = z.infer<typeof ExerciseSchema>;
 
@@ -77,6 +79,8 @@ export const ResponseResultSchema = z.object({
   outcome: OutcomeSchema,
   target: z.string(),
   heard: z.string().nullable().optional(),
+  concepts_matched: z.array(z.string()).nullable().optional(),
+  concepts_missing: z.array(z.string()).nullable().optional(),
   state: SessionStateSchema,
 });
 export type ResponseResult = z.infer<typeof ResponseResultSchema>;

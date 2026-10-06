@@ -85,3 +85,67 @@ def score_naming(response: str | None, target: str, accepted: list[str]) -> Scor
     if best_sim >= NEAR_MISS_THRESHOLD and len(best) >= 3:
         return ScoreResult("near_miss", round(best_sim, 3), "similar", best, round(best_sim, 3))
     return ScoreResult("incorrect", 0.0, "none", None, round(best_sim, 3))
+
+
+# ---------- picture description: concept coverage ----------
+
+DESCRIPTION_PARTIAL = 0.5  # at least half the key concepts → "close"
+
+
+def _contains(text: str, term: str) -> bool:
+    return f" {normalize(term)} " in f" {text} "
+
+
+def score_description(response: str | None, concepts: list[dict]) -> ScoreResult:
+    """Count how many key concepts (each with accepted terms) the answer mentions.
+
+    Required concepts decide the outcome; optional ones (setting details such as "grass")
+    are credited when mentioned but never required.
+    """
+    text = normalize(response or "")
+    if text in _SKIP_PHRASES:
+        return ScoreResult(
+            "skipped", 0.0, "skipped", details={"concepts_matched": [], "concepts_missing": []}
+        )
+    matched = [c["name"] for c in concepts if any(_contains(text, t) for t in c["terms"])]
+    required = [c["name"] for c in concepts if not c.get("optional")]
+    missing = [name for name in required if name not in matched]
+    ratio = (len(required) - len(missing)) / len(required) if required else 0.0
+    outcome: Outcome = (
+        "correct" if not missing else "near_miss" if ratio >= DESCRIPTION_PARTIAL else "incorrect"
+    )
+    return ScoreResult(
+        outcome,
+        round(ratio, 3),
+        "concepts",
+        details={"concepts_matched": matched, "concepts_missing": missing},
+    )
+
+
+# ---------- sentence construction: normalized exact match ----------
+
+
+def _sentence_key(text: str) -> str:
+    return " ".join(normalize(text).split())
+
+
+def score_sentence(response: str | None, target: str, accepted: list[str]) -> ScoreResult:
+    """Correct if the sentence matches an accepted variant (case/punctuation/spacing ignored);
+    close if it uses exactly the right words in a different order."""
+    answer = _sentence_key(response or "")
+    if answer in _SKIP_PHRASES:
+        return ScoreResult("skipped", 0.0, "skipped")
+    variants = {_sentence_key(v) for v in [target, *accepted]}
+    if answer in variants:
+        return ScoreResult("correct", 1.0, "exact", answer)
+    if sorted(answer.split()) == sorted(_sentence_key(target).split()):
+        return ScoreResult("near_miss", 0.5, "word_order")
+    return ScoreResult("incorrect", 0.0, "none")
+
+
+def score_exercise(exercise_type: str, response: str | None, expected: dict) -> ScoreResult:
+    if exercise_type == "picture_description":
+        return score_description(response, expected["concepts"])
+    if exercise_type == "sentence_construction":
+        return score_sentence(response, expected["target"], expected.get("accepted_answers", []))
+    return score_naming(response, expected["target"], expected["accepted_answers"])

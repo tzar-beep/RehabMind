@@ -92,6 +92,8 @@ async def test_exercise_payload_never_reveals_the_answer(care):
         "image_url",
         "response_modes",
         "cues",
+        "words",
+        "image_kind",
     }
     target = await target_of(ex["id"])
     assert target not in r.text.replace(ex["image_url"], "")
@@ -237,7 +239,9 @@ async def test_issuer_rejects_out_of_range_proposal():
         max_exercises_per_session=8,
     )
     session = PracticeSession(patient_id=cs.patient_id, planned_exercises=8)
-    stim = Stimulus(difficulty=4, category="tools", is_active=True)
+    stim = Stimulus(
+        difficulty=4, category="tools", is_active=True, exercise_types=["picture_naming"]
+    )
     p = Proposal("picture_naming", 4, ["speech"], stim, {}, {}, "ai")
     assert set(validate(p, cs, session, 9)) == {
         "difficulty_out_of_range",

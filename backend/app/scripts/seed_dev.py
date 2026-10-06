@@ -34,7 +34,11 @@ ACCOUNTS = [
 ]
 
 DEV_CONSTRAINTS = ConstraintSetIn(
-    allowed_exercise_types=[ExerciseType.PICTURE_NAMING],
+    allowed_exercise_types=[
+        ExerciseType.PICTURE_NAMING,
+        ExerciseType.PICTURE_DESCRIPTION,
+        ExerciseType.SENTENCE_CONSTRUCTION,
+    ],
     allowed_response_modes=[ResponseMode.TEXT, ResponseMode.SPEECH],
     min_difficulty=1,
     max_difficulty=3,

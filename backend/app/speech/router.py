@@ -94,6 +94,8 @@ async def speech_status(recording_id: uuid.UUID, user: PatientUser, db: DbDep) -
             outcome=response.outcome,  # type: ignore[union-attr,arg-type]
             target=exercise.expected["target"],  # type: ignore[union-attr]
             heard=response.text,  # type: ignore[union-attr]
+            concepts_matched=response.analysis.get("concepts_matched"),  # type: ignore[union-attr]
+            concepts_missing=response.analysis.get("concepts_missing"),  # type: ignore[union-attr]
             state=await _state(db, session),  # type: ignore[arg-type]
         ),
     )

@@ -1,4 +1,7 @@
-"""AI-personalized picture naming: a fixed, bounded pipeline (not an agent).
+"""AI-personalized exercises: a fixed, bounded pipeline (not an agent).
+
+The application chooses the exercise type (deterministic rotation); the model only picks
+one approved catalogue stimulus for it and words the prompt.
 
     build minimal input → provider.generate → schema → clinical → safety
         ├─ accept → Proposal(source="ai") → ExerciseIssuer (validates again) → DB trigger
@@ -23,7 +26,7 @@ from app.ai.schemas import (
     PROMPT_VERSION,
     SYSTEM_PROMPT,
     USER_PROMPT_TEMPLATE,
-    PictureNamingOutput,
+    ExerciseOutput,
 )
 from app.clinical.models import ConstraintSet
 from app.exercises.cues import phonemic_cue
@@ -31,17 +34,19 @@ from app.exercises.generator import (
     NoSafeExercise,
     Proposal,
     allowed_modes,
+    build,
     candidates_at,
+    prefer_photos,
     used_stimuli,
 )
 from app.exercises.models import Exercise, Stimulus
-from app.exercises.types import ExerciseType, ResponseMode
+from app.exercises.types import ExerciseType
 from app.performance.models import PerformanceProfile
 from app.performance.progression import clamp
 from app.sessions.models import ExerciseResponse, PracticeSession
 from app.validation.exercise import check_clinical, check_safety, check_schema
 
-TASK = "picture_naming.personalize"
+TASK = "exercise.personalize"
 MAX_ATTEMPTS = 2
 TIMEOUT_S = 10
 MAX_CANDIDATES = 12
@@ -70,23 +75,27 @@ async def build_input(
     session: PracticeSession,
     cs: ConstraintSet,
     profile: PerformanceProfile,
+    exercise_type: str = ExerciseType.PICTURE_NAMING,
 ) -> tuple[dict[str, Any], dict[str, Stimulus]]:
     """Data minimization: no names, emails, user/patient IDs or free text from the patient."""
     in_session, recent = await used_stimuli(db, session.patient_id, session.id)
     target = clamp(profile.target_difficulty, cs)
-    pool = await candidates_at(db, cs, target, in_session)
+    pool = await candidates_at(db, cs, target, in_session, exercise_type)
     if not pool:
         for level in sorted(
             range(cs.min_difficulty, cs.max_difficulty + 1), key=lambda d: abs(d - target)
         ):
-            if pool := await candidates_at(db, cs, level, in_session):
+            if pool := await candidates_at(db, cs, level, in_session, exercise_type):
                 break
     if not pool:
         raise NoSafeExercise("no candidates for AI personalization")
-    pool = sorted(pool, key=lambda s: (s.id in recent, s.slug))[:MAX_CANDIDATES]
+    # Real-world photos only when any exist at this level (drawings are the fallback),
+    # unseen first.
+    pool = sorted(prefer_photos(pool), key=lambda s: (s.id in recent, s.slug))
+    pool = pool[:MAX_CANDIDATES]
     accuracy, counts = await _category_stats(db, session.patient_id)
     return {
-        "exercise_type": ExerciseType.PICTURE_NAMING.value,
+        "exercise_type": str(exercise_type),
         "target_difficulty": target,
         "min_difficulty": cs.min_difficulty,
         "max_difficulty": cs.max_difficulty,
@@ -99,6 +108,7 @@ async def build_input(
                 "target": s.target,
                 "category": s.category,
                 "difficulty": s.difficulty,
+                "kind": s.kind,
                 "seen": s.id in recent,
             }
             for s in pool
@@ -112,6 +122,7 @@ def _request(inp: dict[str, Any]) -> GenerationRequest:
         prompt_version=PROMPT_VERSION,
         system_prompt=SYSTEM_PROMPT,
         user_prompt=USER_PROMPT_TEMPLATE.format(
+            exercise_type=inp["exercise_type"],
             target_difficulty=inp["target_difficulty"],
             min_difficulty=inp["min_difficulty"],
             max_difficulty=inp["max_difficulty"],
@@ -120,28 +131,24 @@ def _request(inp: dict[str, Any]) -> GenerationRequest:
             candidates=json.dumps(inp["candidates"]),
         ),
         input=inp,
-        output_schema=PictureNamingOutput.model_json_schema(),
+        output_schema=ExerciseOutput.model_json_schema(),
     )
 
 
-def _proposal(out: PictureNamingOutput, stim: Stimulus, cs: ConstraintSet, model: str) -> Proposal:
-    modes = allowed_modes(cs)
-    return Proposal(
-        exercise_type=ExerciseType.PICTURE_NAMING,
-        difficulty=out.difficulty,
-        response_modes=modes,
-        stimulus=stim,
-        content={
-            "prompt": out.prompt,
-            "instructions": "Say the word for this picture."
-            if ResponseMode.SPEECH in modes
-            else "Type the word for this picture.",
-            "image_url": stim.image_path,
-            # Cueing hierarchy: meaning first, then first sound.
-            "cues": [out.semantic_cue, phonemic_cue(out.phonemic_cue)],
-        },
-        expected={"target": stim.target, "accepted_answers": stim.accepted_answers},
-        source="ai",
+def _proposal(
+    out: ExerciseOutput, stim: Stimulus, cs: ConstraintSet, model: str, exercise_type: str
+) -> Proposal:
+    cues = None
+    if exercise_type == ExerciseType.PICTURE_NAMING:
+        # Cueing hierarchy: meaning first, then first sound.
+        cues = [out.semantic_cue or "", phonemic_cue(out.phonemic_cue or "")]
+    return build(
+        exercise_type,
+        stim,
+        allowed_modes(cs),
+        "ai",
+        prompt=out.prompt,
+        cues=cues,
         generator_version=f"{model}:{PROMPT_VERSION}",
     )
 
@@ -153,13 +160,14 @@ async def propose(
     cs: ConstraintSet,
     profile: PerformanceProfile,
     position: int,
+    exercise_type: str = ExerciseType.PICTURE_NAMING,
 ) -> tuple[Proposal | None, AIGeneration | None]:
     """Return an accepted proposal plus its (not yet persisted) audit row, or (None, None).
 
     Rejected attempts are persisted immediately. The accepted row is persisted by the caller
     only after the issuer has created the exercise, so it can reference the exercise.
     """
-    inp, candidates = await build_input(db, session, cs, profile)
+    inp, candidates = await build_input(db, session, cs, profile, exercise_type)
     request = _request(inp)
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
@@ -197,14 +205,16 @@ async def propose(
         verdict = check_schema(result.raw_output)
         if verdict.ok and verdict.output:
             row.parsed_output = verdict.output.model_dump(mode="json")
-            verdict = check_clinical(verdict.output, cs, candidates)
+            verdict = check_clinical(verdict.output, cs, candidates, exercise_type)
             if verdict.ok and verdict.output:
-                verdict = check_safety(verdict.output, candidates[verdict.output.stimulus_slug])
+                verdict = check_safety(
+                    verdict.output, candidates[verdict.output.stimulus_slug], exercise_type
+                )
 
         if verdict.ok and verdict.output:
             row.status = "accepted"
             stim = candidates[verdict.output.stimulus_slug]
-            return _proposal(verdict.output, stim, cs, result.model), row
+            return _proposal(verdict.output, stim, cs, result.model, exercise_type), row
 
         row.status, row.failed_stage, row.reason_codes = "rejected", verdict.stage, verdict.reasons
         db.add(row)
