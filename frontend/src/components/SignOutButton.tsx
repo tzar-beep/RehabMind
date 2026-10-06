@@ -1,5 +1,6 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -22,7 +23,13 @@ export function SignOutButton() {
   }
 
   return (
-    <Button variant="secondary" onClick={signOut} busy={busy}>
+    <Button
+      variant="secondary"
+      onClick={signOut}
+      busy={busy}
+      className="whitespace-nowrap"
+    >
+      {!busy && <LogOut aria-hidden="true" size={18} />}
       Sign out
     </Button>
   );

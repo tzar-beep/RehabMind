@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PatientNav } from "@/components/clinician/PatientNav";
+import { Avatar } from "@/components/ui/Avatar";
 import { PatientOverviewSchema } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import { formatDate } from "@/lib/format";
@@ -37,12 +38,15 @@ export default async function PatientLayout({
             </li>
           </ol>
         </nav>
-        <div>
-          <p className="text-3xl font-bold">{patient.display_name}</p>
-          <p className="text-ink-muted">
-            Patient since {formatDate(patient.patient_since)} · Care team:{" "}
-            {patient.care_team.join(", ")}
-          </p>
+        <div className="flex items-center gap-5 rounded-card border border-line bg-surface p-6 shadow-card">
+          <Avatar name={patient.display_name} size="lg" />
+          <div>
+            <p className="text-3xl font-bold">{patient.display_name}</p>
+            <p className="text-ink-muted">
+              Patient since {formatDate(patient.patient_since)} · Care team:{" "}
+              {patient.care_team.join(", ")}
+            </p>
+          </div>
         </div>
         <PatientNav patientId={patientId} />
       </div>

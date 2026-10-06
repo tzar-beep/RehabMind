@@ -1,3 +1,4 @@
+import { Activity, Gauge, MessageSquareText, Timer } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -95,13 +96,26 @@ export default async function SessionDetailPage({
 
       <Facts
         items={[
-          { label: "Status", value: SESSION_STATUS[s.status] ?? s.status },
-          { label: "Answered", value: `${s.attempted} of ${s.planned}` },
           {
+            icon: Activity,
+            label: "Status",
+            value: SESSION_STATUS[s.status] ?? s.status,
+          },
+          {
+            icon: MessageSquareText,
+            label: "Answered",
+            value: `${s.attempted} of ${s.planned}`,
+          },
+          {
+            icon: Gauge,
             label: "Average difficulty",
             value: s.avg_difficulty?.toFixed(1) ?? "—",
           },
-          { label: "Duration", value: formatDuration(s.duration_s) },
+          {
+            icon: Timer,
+            label: "Duration",
+            value: formatDuration(s.duration_s),
+          },
         ]}
       />
       <p>

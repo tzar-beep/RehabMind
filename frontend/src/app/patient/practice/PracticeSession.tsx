@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  CircleCheck,
+  HeartHandshake,
+  Lightbulb,
+  PartyPopper,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -152,8 +159,9 @@ export function PracticeSession() {
     const isWord = view.exerciseType === "picture_naming";
     const done = view.next.exercise === null;
     return (
-      <div className="flex flex-col items-center gap-8 text-center">
+      <div className="flex flex-col items-center gap-8 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
         <div role="status" className="flex flex-col items-center gap-4">
+          <OutcomeIcon outcome={view.outcome} />
           <p className="text-3xl font-bold">{fb.title}</p>
           {view.imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -205,7 +213,15 @@ export function PracticeSession() {
   if (!state.exercise) {
     const s = state.summary;
     return (
-      <div className="flex flex-col items-center gap-6 text-center">
+      <div className="relative isolate flex flex-col items-center gap-6 overflow-hidden rounded-card border border-line bg-surface px-6 py-12 text-center shadow-card">
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 -z-10 h-40 bg-linear-to-b from-accent-soft to-transparent"
+        />
+        <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-4 py-1.5 font-bold text-accent-hover">
+          <PartyPopper aria-hidden="true" size={18} />
+          Session finished
+        </span>
         {s && <CompletionRing done={s.practiced} total={state.total} />}
         <h1 className="text-4xl font-bold">Practice complete</h1>
         {s && (
@@ -302,8 +318,8 @@ export function PracticeSession() {
             height={isPhoto ? 360 : 240}
             className={
               isPhoto
-                ? "max-h-80 w-auto max-w-full rounded-card border border-line bg-surface object-contain"
-                : "rounded-card border border-line bg-surface p-8"
+                ? "max-h-80 w-auto max-w-full rounded-card border-8 border-surface bg-surface object-contain shadow-card ring-1 ring-line"
+                : "rounded-card border border-line bg-surface p-8 shadow-card"
             }
           />
         )}
@@ -317,9 +333,15 @@ export function PracticeSession() {
           {hints > 0 && (
             <div
               role="status"
-              className="w-full rounded-card bg-accent-soft px-6 py-4"
+              className="flex w-full gap-4 rounded-card border border-accent/20 bg-accent-soft px-6 py-5"
             >
-              <ul className="flex flex-col gap-2 text-xl">
+              <span
+                aria-hidden="true"
+                className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning shadow-sm"
+              >
+                <Lightbulb size={22} />
+              </span>
+              <ul className="flex flex-col gap-2 self-center text-xl">
                 {ex.cues.slice(0, hints).map((cue) => (
                   <li key={cue}>
                     <Cue text={cue} />
@@ -499,5 +521,25 @@ function Cue({ text }: { text: string }) {
       </strong>
       {`…”${after}`}
     </>
+  );
+}
+
+const OUTCOME_ICON = {
+  correct: { Icon: CircleCheck, cls: "bg-success-soft text-success" },
+  near_miss: { Icon: Sparkles, cls: "bg-accent-soft text-accent-hover" },
+  incorrect: { Icon: HeartHandshake, cls: "bg-[#e5edf9] text-[#2f5ea8]" },
+  skipped: { Icon: HeartHandshake, cls: "bg-[#e5edf9] text-[#2f5ea8]" },
+} as const;
+
+/** Friendly outcome icon; never red, so a missed word never feels like failure. */
+function OutcomeIcon({ outcome }: { outcome: keyof typeof OUTCOME_ICON }) {
+  const { Icon, cls } = OUTCOME_ICON[outcome];
+  return (
+    <span
+      aria-hidden="true"
+      className={`animate-pop grid size-16 place-items-center rounded-full ${cls}`}
+    >
+      <Icon size={34} />
+    </span>
   );
 }

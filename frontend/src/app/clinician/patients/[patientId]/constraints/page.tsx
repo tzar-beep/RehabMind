@@ -47,7 +47,7 @@ export default async function ConstraintsPage({
 
       <Section id="active" title="Active version">
         {active ? (
-          <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-6">
+          <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-6 shadow-card">
             <div className="flex flex-wrap items-center gap-3">
               <StatusBadge tone="success">
                 Version {active.version} · active

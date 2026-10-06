@@ -43,6 +43,7 @@ from app.exercises.models import Exercise, Stimulus
 from app.exercises.types import ExerciseType
 from app.performance.models import PerformanceProfile
 from app.performance.progression import clamp
+from app.sessions import resets
 from app.sessions.models import ExerciseResponse, PracticeSession
 from app.validation.exercise import check_clinical, check_safety, check_schema
 
@@ -58,7 +59,10 @@ async def _category_stats(db: AsyncSession, patient_id: uuid.UUID) -> tuple[dict
         select(Stimulus.category, ExerciseResponse.outcome)
         .join(Exercise, Exercise.stimulus_id == Stimulus.id)
         .join(ExerciseResponse, ExerciseResponse.exercise_id == Exercise.id)
-        .where(Exercise.patient_id == patient_id)
+        .where(
+            Exercise.patient_id == patient_id,
+            resets.after(ExerciseResponse.created_at, await resets.cutoff(db, patient_id)),
+        )
         .order_by(ExerciseResponse.created_at.desc())
         .limit(50)
     )

@@ -45,7 +45,7 @@ export function VersionCompare({
   );
 
   return (
-    <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5">
+    <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
       <div className="flex flex-wrap gap-4">
         {picker("cmp-a", "Compare", a, setA)}
         {picker("cmp-b", "With", b, setB)}

@@ -33,7 +33,11 @@ CORS lists explicit origins only — never `*` with credentials (enforced at sta
 |---|---|
 | `postgres` | Container admin only; never used by the app |
 | `rehabmind_migrator` | Owns schema; runs Alembic |
-| `rehabmind_app` | Runtime: DML only; cannot create/alter tables or disable triggers; INSERT/SELECT only on `audit_logs` |
+| `rehabmind_app` | Runtime: DML only; cannot create/alter tables or disable triggers; INSERT/SELECT only on `audit_logs`, `ai_generations`, `clinical_constraint_sets` and `progress_resets` |
+
+Admin-created accounts get a generated first password (16 characters from an unambiguous
+alphabet, `secrets` module), returned once in the create response and never logged or stored
+in plain text. There is no self-service password change yet (see Remaining gaps).
 
 ## Audit
 
@@ -88,3 +92,5 @@ by digest (infrastructure) or version (application bases).
 - Encryption key from a managed KMS; encrypted volumes and backups.
 - Login IP limit trusts `X-Forwarded-For` from the proxy chain (Caddy → Next → API).
 - No penetration test or formal threat model review.
+- No self-service password change: a generated first password stays valid until an admin
+  provisions a new account (a change-password flow is the natural next step).

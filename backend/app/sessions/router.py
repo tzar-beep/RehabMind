@@ -1,8 +1,10 @@
 import uuid
+from datetime import UTC, datetime, timedelta
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
+from sqlalchemy import func, select
 
 from app.auth.deps import DbDep, PatientUser
 from app.clinical.service import latest_constraints
@@ -10,8 +12,8 @@ from app.exercises.generator import NoSafeExercise
 from app.exercises.models import Exercise
 from app.patients.access import accessible_patients
 from app.patients.models import Patient
-from app.sessions import service
-from app.sessions.models import PracticeSession
+from app.sessions import resets, service
+from app.sessions.models import ExerciseResponse, PracticeSession
 
 router = APIRouter(prefix="/practice", tags=["practice"])
 
@@ -70,6 +72,22 @@ class PracticeStatus(BaseModel):
     has_active_session: bool
 
 
+class RecentSession(BaseModel):
+    started_at: datetime
+    answered: int
+
+
+class PracticeActivity(BaseModel):
+    """The patient's own practice activity. Counts only: no scores or accuracy."""
+
+    sessions_completed: int
+    pictures_practised: int
+    recent: list[RecentSession]
+
+
+ACTIVITY_DAYS = 8  # a week plus a day, so the caller can group by its local date
+
+
 _NO_PLAN = HTTPException(status.HTTP_409_CONFLICT, "Your practice plan is not ready yet.")
 _NO_EXERCISE = HTTPException(
     status.HTTP_409_CONFLICT, "No practice is available right now. Please contact your care team."
@@ -121,6 +139,50 @@ async def practice_status(user: PatientUser, db: DbDep) -> PracticeStatus:
     return PracticeStatus(
         has_plan=await latest_constraints(db, patient.id) is not None,
         has_active_session=await service.active_session(db, patient.id) is not None,
+    )
+
+
+@router.get("/activity", response_model=PracticeActivity)
+async def practice_activity(user: PatientUser, db: DbDep) -> PracticeActivity:
+    patient = await _me(user, db)
+    reset_at = await resets.cutoff(db, patient.id)
+    completed = await db.scalar(
+        select(func.count())
+        .select_from(PracticeSession)
+        .where(
+            PracticeSession.patient_id == patient.id,
+            PracticeSession.status == "completed",
+            resets.after(PracticeSession.started_at, reset_at),
+        )
+    )
+    practised = await db.scalar(
+        select(func.count())
+        .select_from(ExerciseResponse)
+        .where(
+            ExerciseResponse.patient_id == patient.id,
+            resets.after(ExerciseResponse.created_at, reset_at),
+        )
+    )
+    since = max(
+        datetime.now(UTC) - timedelta(days=ACTIVITY_DAYS),
+        reset_at or datetime.min.replace(tzinfo=UTC),
+    )
+    answered = (
+        select(func.count())
+        .select_from(ExerciseResponse)
+        .join(Exercise, Exercise.id == ExerciseResponse.exercise_id)
+        .where(Exercise.session_id == PracticeSession.id)
+        .scalar_subquery()
+    )
+    rows = await db.execute(
+        select(PracticeSession.started_at, answered)
+        .where(PracticeSession.patient_id == patient.id, PracticeSession.started_at >= since)
+        .order_by(PracticeSession.started_at)
+    )
+    return PracticeActivity(
+        sessions_completed=completed or 0,
+        pictures_practised=practised or 0,
+        recent=[RecentSession(started_at=t, answered=n) for t, n in rows],
     )
 
 

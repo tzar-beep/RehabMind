@@ -16,6 +16,9 @@ docker compose --env-file .env.production -f compose.prod.yaml exec api \
 ```
 
 Open `https://localhost` (Caddy's local CA: accept the certificate warning, or trust the CA).
+After the first admin exists, further accounts can be added in the app (**Accounts → Add a
+user**). The system generates a 16-character first password, shows it to the admin once and
+stores only its Argon2id hash.
 The clinician sets practice limits in the UI before the patient can practise.
 
 ## Topology

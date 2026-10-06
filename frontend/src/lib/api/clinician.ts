@@ -31,6 +31,13 @@ export const PatientListItemSchema = z.object({
 });
 export type PatientListItem = z.infer<typeof PatientListItemSchema>;
 
+export const ResetInfoSchema = z.object({
+  at: dt,
+  by: z.string().nullable(),
+  reason: z.string(),
+});
+export type ResetInfo = z.infer<typeof ResetInfoSchema>;
+
 export const PatientOverviewSchema = z.object({
   id: z.string(),
   display_name: z.string(),
@@ -49,6 +56,7 @@ export const PatientOverviewSchema = z.object({
   hinted_responses: z.number(),
   median_latency_ms: z.number().nullable(),
   current_working_difficulty: z.number().nullable(),
+  last_reset: ResetInfoSchema.nullable().optional(),
 });
 export type PatientOverview = z.infer<typeof PatientOverviewSchema>;
 
@@ -63,6 +71,7 @@ export const SessionSummarySchema = z.object({
   avg_difficulty: z.number().nullable(),
   modes: z.array(z.string()),
   duration_s: z.number().nullable(),
+  before_reset: z.boolean().optional(),
 });
 export type SessionSummary = z.infer<typeof SessionSummarySchema>;
 

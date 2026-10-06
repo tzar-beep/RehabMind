@@ -1,4 +1,15 @@
-import { ChartLine, ClipboardList } from "lucide-react";
+import {
+  ChartLine,
+  CircleCheck,
+  CircleMinus,
+  ClipboardList,
+  Gauge,
+  Keyboard,
+  Lightbulb,
+  ListChecks,
+  MessageSquareText,
+  Timer,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,6 +23,7 @@ import {
 } from "@/components/clinician/TrendCharts";
 import { Facts, Section } from "@/components/clinician/Section";
 import { StatusBadge } from "@/components/clinician/StatusBadge";
+import { Alert } from "@/components/ui/Alert";
 import { buttonClasses } from "@/components/ui/Button";
 import {
   ConstraintVersionSchema,
@@ -26,6 +38,8 @@ import {
   percent,
   responseMode,
 } from "@/lib/format";
+
+import { ResetProgress } from "./ResetProgress";
 
 export const metadata: Metadata = { title: "Patient overview" };
 
@@ -53,6 +67,15 @@ export default async function PatientOverviewPage({
     <div className="flex flex-col gap-10">
       <h1 className="sr-only">{ov.display_name}: overview</h1>
 
+      {ov.last_reset && (
+        <Alert tone="info">
+          <strong>Fresh start on {formatDateTime(ov.last_reset.at)}</strong>
+          {ov.last_reset.by && <> by {ov.last_reset.by}</>}: &ldquo;
+          {ov.last_reset.reason}&rdquo;. Figures below count practice since
+          then; earlier sessions stay in the session history.
+        </Alert>
+      )}
+
       <Section
         id="limits"
         title="Current practice limits"
@@ -67,7 +90,7 @@ export default async function PatientOverviewPage({
         }
       >
         {active ? (
-          <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-6">
+          <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-6 shadow-card">
             <div className="flex flex-wrap items-center gap-3">
               <StatusBadge tone="success">
                 Active: version {active.version}
@@ -105,37 +128,48 @@ export default async function PatientOverviewPage({
             <Facts
               items={[
                 {
+                  icon: ListChecks,
                   label: "Sessions completed",
                   value: ov.sessions_completed,
                   hint: `${ov.sessions_stopped_early} stopped early${ov.has_active_session ? " · 1 in progress" : ""}`,
                 },
-                { label: "Answers given", value: attempted },
                 {
+                  icon: MessageSquareText,
+                  label: "Answers given",
+                  value: attempted,
+                },
+                {
+                  icon: CircleCheck,
                   label: "Correct",
                   value: percent(o.correct, attempted),
                   hint: `${o.correct} correct · ${o.near_miss} close`,
                 },
                 {
+                  icon: CircleMinus,
                   label: "Incorrect or skipped",
                   value: o.incorrect + o.skipped,
                   hint: `${o.incorrect} incorrect · ${o.skipped} skipped`,
                 },
                 {
+                  icon: Lightbulb,
                   label: "Answers after a hint",
                   value: ov.hinted_responses,
                   hint: "Correct-with-hint holds the level",
                 },
                 {
+                  icon: Timer,
                   label: "Median time to answer",
                   value: formatMs(ov.median_latency_ms),
                   hint: "Skipped answers excluded",
                 },
                 {
+                  icon: Gauge,
                   label: "Current working level",
                   value: ov.current_working_difficulty ?? "—",
                   hint: "Set by the progression rule, within limits",
                 },
                 {
+                  icon: Keyboard,
                   label: "Answer methods",
                   value: ov.by_mode.length,
                   hint:
@@ -172,6 +206,14 @@ export default async function PatientOverviewPage({
             </div>
           </>
         )}
+      </Section>
+
+      <Section
+        id="fresh-start"
+        title="Fresh start"
+        description="Reset progress when starting a new therapy block. Nothing is deleted, and the reset is recorded."
+      >
+        <ResetProgress patientId={patientId} patientName={ov.display_name} />
       </Section>
     </div>
   );

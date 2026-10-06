@@ -38,6 +38,13 @@ export const PracticeStatusSchema = z.object({
   has_active_session: z.boolean(),
 });
 
+export const PracticeActivitySchema = z.object({
+  sessions_completed: z.number(),
+  pictures_practised: z.number(),
+  recent: z.array(z.object({ started_at: z.string(), answered: z.number() })),
+});
+export type PracticeActivity = z.infer<typeof PracticeActivitySchema>;
+
 export const ExerciseSchema = z.object({
   id: z.string(),
   position: z.number(),

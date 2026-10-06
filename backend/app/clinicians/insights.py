@@ -20,6 +20,7 @@ from app.clinicians.schemas import (
     OutcomeCounts,
     PatientListItem,
     PatientOverview,
+    ResetInfo,
     SessionDetail,
     SessionSummary,
     SpeechAttempt,
@@ -29,6 +30,7 @@ from app.clinicians.schemas import (
 from app.exercises.models import Exercise, Stimulus
 from app.patients.models import Patient
 from app.performance.models import PerformanceProfile
+from app.sessions import resets
 from app.sessions.models import ExerciseResponse, PracticeSession
 from app.speech.models import AudioAsset
 from app.users.models import User
@@ -67,6 +69,7 @@ async def patient_list(db: AsyncSession, patients: list[Patient]) -> list[Patien
     ids = [p.id for p in patients]
     if not ids:
         return []
+    cut = resets.cutoffs_subquery()
     sessions = {
         pid: (completed, last)
         for pid, completed, last in (
@@ -76,7 +79,11 @@ async def patient_list(db: AsyncSession, patients: list[Patient]) -> list[Patien
                     func.count().filter(PracticeSession.status == "completed"),
                     func.max(PracticeSession.started_at),
                 )
-                .where(PracticeSession.patient_id.in_(ids))
+                .outerjoin(cut, cut.c.patient_id == PracticeSession.patient_id)
+                .where(
+                    PracticeSession.patient_id.in_(ids),
+                    resets.since(PracticeSession.started_at, cut.c.reset_at),
+                )
                 .group_by(PracticeSession.patient_id)
             )
         ).all()
@@ -92,7 +99,11 @@ async def patient_list(db: AsyncSession, patients: list[Patient]) -> list[Patien
             )
             .label("rn"),
         )
-        .where(ExerciseResponse.patient_id.in_(ids))
+        .outerjoin(cut, cut.c.patient_id == ExerciseResponse.patient_id)
+        .where(
+            ExerciseResponse.patient_id.in_(ids),
+            resets.since(ExerciseResponse.created_at, cut.c.reset_at),
+        )
         .subquery()
     )
     recent = {
@@ -126,6 +137,14 @@ async def patient_list(db: AsyncSession, patients: list[Patient]) -> list[Patien
 
 async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
     pid = patient.id
+    last_reset = await resets.latest_reset(db, pid)
+    reset_at = last_reset.created_at if last_reset else None
+    sessions_since = (PracticeSession.patient_id == pid) & resets.after(
+        PracticeSession.started_at, reset_at
+    )
+    responses_since = (ExerciseResponse.patient_id == pid) & resets.after(
+        ExerciseResponse.created_at, reset_at
+    )
     s_total, s_completed, s_ended, s_active, first, last = (
         await db.execute(
             select(
@@ -135,7 +154,7 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
                 func.count().filter(PracticeSession.status == "active"),
                 func.min(PracticeSession.started_at),
                 func.max(PracticeSession.started_at),
-            ).where(PracticeSession.patient_id == pid)
+            ).where(sessions_since)
         )
     ).one()
 
@@ -144,7 +163,7 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
     for mode, outcome, n in (
         await db.execute(
             select(ExerciseResponse.mode, ExerciseResponse.outcome, func.count())
-            .where(ExerciseResponse.patient_id == pid)
+            .where(responses_since)
             .group_by(ExerciseResponse.mode, ExerciseResponse.outcome)
         )
     ).all():
@@ -161,7 +180,7 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
                 func.percentile_cont(0.5)
                 .within_group(ExerciseResponse.latency_ms)
                 .filter(ExerciseResponse.outcome != "skipped"),
-            ).where(ExerciseResponse.patient_id == pid)
+            ).where(responses_since)
         )
     ).one()
 
@@ -195,6 +214,13 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
         hinted_responses=hinted,
         median_latency_ms=int(median) if median is not None else None,
         current_working_difficulty=level,
+        last_reset=ResetInfo(
+            at=last_reset.created_at,
+            by=await db.scalar(select(User.display_name).where(User.id == last_reset.reset_by)),
+            reason=last_reset.reason,
+        )
+        if last_reset
+        else None,
     )
 
 
@@ -221,7 +247,7 @@ def _session_aggregates():
     )
 
 
-def _summary(s: PracticeSession, agg) -> SessionSummary:
+def _summary(s: PracticeSession, agg, reset_at=None) -> SessionSummary:
     duration = int((s.completed_at - s.started_at).total_seconds()) if s.completed_at else None
     return SessionSummary(
         id=str(s.id),
@@ -241,6 +267,7 @@ def _summary(s: PracticeSession, agg) -> SessionSummary:
         else None,
         modes=sorted(agg.modes or []) if agg else [],
         duration_s=duration,
+        before_reset=reset_at is not None and s.started_at < reset_at,
     )
 
 
@@ -248,6 +275,7 @@ async def sessions_page(
     db: AsyncSession, patient_id: uuid.UUID, limit: int, offset: int
 ) -> tuple[list[SessionSummary], int]:
     agg = _session_aggregates()
+    reset_at = await resets.cutoff(db, patient_id)
     total = await db.scalar(select(func.count()).where(PracticeSession.patient_id == patient_id))
     rows = await db.execute(
         select(PracticeSession, agg)
@@ -257,17 +285,22 @@ async def sessions_page(
         .limit(limit)
         .offset(offset)
     )
-    return [_summary(r[0], r) for r in rows.all()], total or 0
+    return [_summary(r[0], r, reset_at) for r in rows.all()], total or 0
 
 
 async def trends(db: AsyncSession, patient_id: uuid.UUID) -> list[TrendPoint]:
     """Most recent sessions with at least one response, oldest first."""
     agg = _session_aggregates()
+    reset_at = await resets.cutoff(db, patient_id)
     rows = (
         await db.execute(
             select(PracticeSession.id, PracticeSession.started_at, agg)
             .join(agg, agg.c.session_id == PracticeSession.id)
-            .where(PracticeSession.patient_id == patient_id, agg.c.attempted > 0)
+            .where(
+                PracticeSession.patient_id == patient_id,
+                agg.c.attempted > 0,
+                resets.after(PracticeSession.started_at, reset_at),
+            )
             .order_by(PracticeSession.started_at.desc())
             .limit(TREND_SESSIONS)
         )
@@ -294,6 +327,7 @@ async def session_detail(
     session = await db.get(PracticeSession, session_id)
     if session is None or session.patient_id != patient_id:
         return None
+    reset_at = await resets.cutoff(db, patient_id)
     agg = _session_aggregates()
     agg_row = (await db.execute(select(agg).where(agg.c.session_id == session_id))).first()
 
@@ -350,4 +384,4 @@ async def session_detail(
                 speech_attempts=attempts.get(ex.id, []),
             )
         )
-    return SessionDetail(session=_summary(session, agg_row), exercises=exercises)
+    return SessionDetail(session=_summary(session, agg_row, reset_at), exercises=exercises)
