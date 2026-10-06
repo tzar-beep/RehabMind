@@ -64,3 +64,51 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Bklit UI chart variables (vendored components in src/components/charts),
+ * mapped onto RehabMind tokens. Outcome colours are a validated categorical
+ * palette (lightness, chroma, colour-blind separation and contrast checks pass).
+ */
+:root {
+  --chart-1: #00897b;
+  --chart-2: #4a7fd0;
+  --chart-3: #c27c2c;
+  --chart-4: #9b6bb5;
+  --chart-5: #8a8378;
+  --chart-outcome-correct: var(--chart-1);
+  --chart-outcome-close: var(--chart-2);
+  --chart-outcome-incorrect: var(--chart-3);
+  --chart-outcome-skipped: var(--chart-4);
+  --chart-background: var(--color-surface);
+  --chart-foreground: var(--color-ink);
+  --chart-foreground-muted: var(--color-ink-muted);
+  --chart-line-primary: var(--chart-1);
+  --chart-line-secondary: var(--chart-2);
+  --chart-crosshair: var(--color-ink-muted);
+  --chart-grid: var(--color-grid);
+  --chart-brush-border: var(--chart-grid);
+  --chart-tooltip-background: rgb(28 36 48 / 0.92);
+  --chart-tooltip-foreground: #ffffff;
+  --chart-tooltip-muted: #c8ced6;
+  --chart-marker-background: var(--color-surface);
+  --chart-marker-border: var(--color-line);
+  --chart-marker-foreground: var(--color-ink);
+  --chart-label: var(--color-ink-muted);
+  /* shadcn-style names the vendored components also read. */
+  --foreground: var(--color-ink);
+  --muted-foreground: var(--color-ink-muted);
+  --background: var(--color-surface);
+}
+
+/* Tailwind colour utilities used by the vendored chart components. */
+@theme inline {
+  --color-chart-label: var(--chart-label);
+  --color-chart-tooltip-background: var(--chart-tooltip-background);
+  --color-chart-tooltip-foreground: var(--chart-tooltip-foreground);
+  --color-chart-tooltip-muted: var(--chart-tooltip-muted);
+  --color-legend-foreground: var(--color-ink);
+  --color-legend-muted: var(--color-accent-soft);
+  --color-legend-muted-foreground: var(--color-ink-muted);
+  --color-legend-track: var(--color-line);
+}

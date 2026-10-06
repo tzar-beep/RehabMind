@@ -122,6 +122,9 @@ class TrendPoint(BaseModel):
     started_at: datetime
     attempted: int
     correct: int
+    near_miss: int
+    incorrect: int
+    skipped: int
     accuracy: float  # correct / attempted, 0..1
     avg_difficulty: float
 

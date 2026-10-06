@@ -278,6 +278,9 @@ async def trends(db: AsyncSession, patient_id: uuid.UUID) -> list[TrendPoint]:
             started_at=r.started_at,
             attempted=r.attempted,
             correct=r.correct,
+            near_miss=r.near_miss,
+            incorrect=r.incorrect,
+            skipped=r.skipped,
             accuracy=round(r.correct / r.attempted, 3),
             avg_difficulty=round(float(r.avg_difficulty), 2),
         )
