@@ -19,6 +19,10 @@
   --color-accent-soft: #e3f0ee;
   --color-focus: #1d4ed8;
 
+  /* Brand panel (sign-in page): white text 12:1, muted text 8:1. */
+  --color-brand-deep: #0a3d3e;
+  --color-brand-muted: #b8ddd8;
+
   --color-success: #2e6b3f;
   --color-success-soft: #e6f2e9;
   --color-warning: #7a5000;
@@ -32,6 +36,15 @@
 
   --radius-control: 0.75rem;
   --radius-card: 1.25rem;
+
+  /* Gentle entrance (blur + rise, no opacity so contrast checks see final colours). */
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  @keyframes rise {
+    from {
+      transform: translateY(12px);
+      filter: blur(6px);
+    }
+  }
 
   /* Minimum interactive target (WCAG 2.5.5 enhanced). */
   --spacing-target: 3rem;
@@ -60,6 +73,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
