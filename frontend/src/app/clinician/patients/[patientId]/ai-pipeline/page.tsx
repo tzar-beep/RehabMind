@@ -25,7 +25,12 @@ const SOURCE: Record<string, string> = {
 
 function Json({ value }: { value: unknown }) {
   return (
-    <pre className="max-h-72 overflow-auto rounded-control bg-ink p-4 text-sm leading-relaxed whitespace-pre-wrap text-white">
+    // Focusable so keyboard users can scroll long prompts and outputs.
+    <pre
+      tabIndex={0}
+      aria-label="Data"
+      className="max-h-72 overflow-auto rounded-control bg-ink p-4 text-sm leading-relaxed whitespace-pre-wrap text-white"
+    >
       {typeof value === "string" ? value : JSON.stringify(value, null, 2)}
     </pre>
   );
@@ -62,9 +67,9 @@ function Step({
 function Attempts({ gen }: { gen: PipelineGeneration }) {
   return (
     <ul className="flex flex-col gap-2">
-      {gen.attempts.map((a) => (
+      {gen.attempts.map((a, i) => (
         <li
-          key={a.attempt}
+          key={i}
           className="flex flex-wrap items-center gap-2 rounded-control border border-line p-3 text-sm"
         >
           {a.status === "accepted" ? (

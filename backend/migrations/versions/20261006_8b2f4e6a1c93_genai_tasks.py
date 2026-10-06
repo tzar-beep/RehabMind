@@ -27,9 +27,7 @@ def upgrade() -> None:
         "ai_generations",
         sa.Column("usage", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     )
-    op.create_index(
-        "ix_ai_generations_exercise_task", "ai_generations", ["exercise_id", "task"]
-    )
+    op.create_index("ix_ai_generations_exercise_task", "ai_generations", ["exercise_id", "task"])
 
 
 def downgrade() -> None:

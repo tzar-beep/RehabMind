@@ -183,7 +183,7 @@ class PipelineOut(BaseModel):
 def _generation(rows: list[AIGeneration]) -> PipelineGeneration | None:
     if not rows:
         return None
-    rows = sorted(rows, key=lambda g: g.attempt)
+    rows = sorted(rows, key=lambda g: (g.created_at, g.attempt))
     first = rows[0]
     system = user = None
     if first.prompt_version == EXERCISE_PROMPT_VERSION:

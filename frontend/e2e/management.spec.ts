@@ -54,3 +54,25 @@ test("clinician reset dialog explains the fresh start and needs a reason", async
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
 });
+
+test("AI pipeline demo view renders without errors when enabled", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  page.on("pageerror", (e) => errors.push(e.message));
+  await signIn(page, "clinician@recovery.local");
+  await expect(page).toHaveURL(/\/clinician$/);
+  await page.getByRole("link", { name: "Alex" }).click();
+  const tab = page.getByRole("link", { name: "AI pipeline (demo)" });
+  await expect(page.getByRole("link", { name: "Overview" })).toBeVisible();
+  test.skip(!(await tab.isVisible()), "AI_DEMO_VIEW is off");
+  await tab.click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Patient performance: learned ability model",
+    }),
+  ).toBeVisible();
+  await a11y(page);
+  expect(errors).toEqual([]);
+});
