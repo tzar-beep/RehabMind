@@ -13,7 +13,7 @@ export default async function AdminHome() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-3xl font-bold">Accounts</h1>
-      <div className="overflow-x-auto rounded-card border border-line bg-surface">
+      <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card">
         <table className="w-full text-left">
           <caption className="sr-only">All user accounts</caption>
           <thead className="border-b border-line text-sm text-ink-muted">

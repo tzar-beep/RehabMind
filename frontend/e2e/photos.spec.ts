@@ -40,7 +40,7 @@ test("patient builds a sentence from a real-world photo", async ({ page }) => {
   await enablePhotoExercises(page, true);
   await page.goto("/login");
   await page.getByLabel("Email").fill("patient@recovery.local");
-  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/patient$/);
   await page.request.post("/api/v1/practice/sessions/current/end", {

@@ -1,5 +1,5 @@
+import { Image as ImageIcon, Lightbulb, MessageSquareText } from "lucide-react";
 import type { Metadata } from "next";
-
 import Link from "next/link";
 
 import { buttonClasses } from "@/components/ui/Button";
@@ -8,7 +8,23 @@ import { backendGet, requireRole } from "@/lib/api/server";
 
 export const metadata: Metadata = { title: "Home" };
 
-const JOURNEY = ["Words", "Sentences", "Conversation"];
+const STEPS = [
+  {
+    icon: ImageIcon,
+    title: "Look at the picture",
+    text: "Take as long as you need.",
+  },
+  {
+    icon: MessageSquareText,
+    title: "Give your answer",
+    text: "Type it, tap the words or say it.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Ask for a hint",
+    text: "Hints are there whenever you want one.",
+  },
+];
 
 export default async function PatientHome() {
   const me = await requireRole("patient");
@@ -20,7 +36,7 @@ export default async function PatientHome() {
 
       <section
         aria-labelledby="today-heading"
-        className="rounded-card border border-line bg-surface p-8"
+        className="rounded-card border border-line bg-surface p-8 shadow-card"
       >
         <h2 id="today-heading" className="mb-3 text-2xl font-bold">
           Today&rsquo;s practice
@@ -48,21 +64,29 @@ export default async function PatientHome() {
         )}
       </section>
 
-      <section aria-labelledby="journey-heading">
-        <h2 id="journey-heading" className="mb-4 text-xl font-bold">
-          Your journey
+      <section aria-labelledby="how-heading">
+        <h2 id="how-heading" className="mb-4 text-xl font-bold">
+          How practice works
         </h2>
-        <ol className="flex flex-wrap items-center gap-3 text-lg">
-          {JOURNEY.map((step, i) => (
-            <li key={step} className="flex items-center gap-3">
-              <span className="rounded-full border-2 border-line-strong bg-surface px-5 py-2">
-                {step}
+        <ol className="grid gap-4 sm:grid-cols-3">
+          {STEPS.map(({ icon: Icon, title, text }, i) => (
+            <li
+              key={title}
+              className="flex gap-4 rounded-card border border-line bg-surface p-5 sm:flex-col sm:gap-3"
+            >
+              <span
+                aria-hidden="true"
+                className="grid size-11 shrink-0 place-items-center rounded-full bg-accent-soft text-accent"
+              >
+                <Icon size={22} />
               </span>
-              {i < JOURNEY.length - 1 && (
-                <span aria-hidden="true" className="text-ink-muted">
-                  →
+              <span className="flex flex-col gap-1">
+                <span className="text-lg font-bold">
+                  <span className="text-ink-muted">{i + 1}. </span>
+                  {title}
                 </span>
-              )}
+                <span className="text-ink-muted">{text}</span>
+              </span>
             </li>
           ))}
         </ol>

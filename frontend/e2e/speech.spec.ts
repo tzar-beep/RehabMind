@@ -10,7 +10,9 @@ test("patient answers by voice through the real speech pipeline", async ({
   test.setTimeout(120_000);
   await page.goto("/login");
   await page.getByLabel("Email").fill("patient@recovery.local");
-  await page.getByLabel("Password").fill(process.env.SEED_DEV_PASSWORD ?? "");
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill(process.env.SEED_DEV_PASSWORD ?? "");
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
 

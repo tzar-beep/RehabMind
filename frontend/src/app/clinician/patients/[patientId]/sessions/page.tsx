@@ -54,7 +54,7 @@ export default async function SessionsPage({
         </EmptyState>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-card border border-line bg-surface">
+          <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card">
             <table className="w-full min-w-[820px] text-left">
               <caption className="sr-only">
                 Practice sessions, page {page} of {pages}

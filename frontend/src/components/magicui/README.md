@@ -1,10 +1,11 @@
-# Vendored Magic UI components
+# Vendored Magic UI component
 
 Source: [Magic UI](https://magicui.design) (`github.com/magicuidesign/magicui`), MIT licence,
-copied from the registry (`glyph-matrix`, `border-beam`). Used on the sign-in page only.
+copied from the registry (`glyph-matrix`). Used on the sign-in page only; decorative and
+`aria-hidden`.
 
-Local changes (both are decorative and `aria-hidden`):
-- `glyph-matrix.tsx`: with `prefers-reduced-motion` draws one still frame and never animates.
-- `border-beam.tsx`: not rendered with `prefers-reduced-motion` (hydration-safe media query
-  instead of `useReducedMotion`); dropped the unused `style`, `transition` and
-  `initialOffset` props.
+Local changes to `glyph-matrix.tsx`:
+
+- with `prefers-reduced-motion` it draws one still frame and never animates;
+- new `settleAfter` prop: stops changing after that many ms so the page comes to rest
+  (no constant background motion).

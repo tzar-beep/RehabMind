@@ -5,6 +5,7 @@ import { useRef, useState, type FormEvent } from "react";
 
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
 import { ApiError, apiFetch } from "@/lib/api/client";
 import { MeSchema, ROLE_HOME } from "@/lib/api/schemas";
@@ -57,10 +58,9 @@ export function LoginForm() {
         inputMode="email"
         required
       />
-      <TextField
+      <PasswordField
         label="Password"
         name="password"
-        type="password"
         autoComplete="current-password"
         required
       />
