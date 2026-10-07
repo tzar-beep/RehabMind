@@ -27,15 +27,53 @@ versioned settings, and can audit every AI decision.
 
 ---
 
+## 📖 About
+
+Aphasia after a stroke makes it hard to find, say or put words together. Recovery depends on
+a lot of practice, yet therapy time with a speech and language therapist is limited.
+RehabMind fills the gap between sessions with short, calm picture exercises that patients can
+do at home, while the clinician stays in charge of every rule that matters.
+
+**Who uses it**
+
+| Role | What they do |
+|---|---|
+| 🧑‍🦽 **Patient** | Names pictures, builds sentences and describes scenes by typing, tapping word tiles or speaking. Gets hints, honest feedback and a weekly progress view. |
+| 🩺 **Clinician** | Sets practice limits (difficulty range, picture sets, input modes), reviews accuracy trends and sessions, audits every AI decision and can give a patient a fresh start. |
+| 🛠️ **Admin** | Creates and manages accounts and care-team assignments. Sees no clinical data. |
+
+**Core idea:** the AI writes the content; the application owns the rehabilitation rules.
+Scores are deterministic, difficulty is clamped to the clinician's range, only approved
+pictures can be used, and every generated exercise or feedback tip is validated and logged.
+
+**How the AI concepts are used (honestly)**
+
+- **ML**: an online logistic (Rasch/Elo-style) ability estimate per objective, fitted from each patient's answers. No dataset training.
+- **DL**: faster-whisper `small.en` for local speech-to-text, used pretrained.
+- **Transformer / GenAI**: Qwen2.5-3B through Ollama, used pretrained (not fine-tuned) with three versioned prompts.
+- **NLP**: deterministic answer scoring (normalisation, fuzzy match, concepts, word order).
+
+Everything runs locally at **$0**: no paid APIs and no API keys.
+
+---
+
 ## 📸 Screenshots
 
-| Patient: picture naming with hints | Patient: supportive feedback |
+| Sign in | Patient home |
+|---|---|
+| ![Sign in](docs/images/login.png) | ![Patient home](docs/images/patient-home.png) |
+
+| Patient: picture naming with a hint | Patient: feedback with an AI tip |
 |---|---|
 | ![Practice with hints](docs/images/practice-hints.png) | ![Feedback](docs/images/practice-feedback.png) |
 
-| Clinician: patient overview & trends | Clinician: versioned practice limits |
+| Clinician: dashboard | Clinician: patient overview & trends |
 |---|---|
-| ![Overview](docs/images/clinician-overview.png) | ![Constraints](docs/images/clinician-constraints.png) |
+| ![Clinician dashboard](docs/images/clinician-home.png) | ![Overview](docs/images/clinician-overview.png) |
+
+| Clinician: versioned practice limits | Clinician: AI pipeline map |
+|---|---|
+| ![Constraints](docs/images/clinician-constraints.png) | ![AI pipeline](docs/images/clinician-ai-pipeline.png) |
 
 <details>
 <summary><b>Clinician: AI audit log</b></summary>
@@ -154,8 +192,8 @@ Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.p
 
 ## ✅ Quality
 
-- **146** backend tests, including property-based tests of the max-difficulty rule
-- Frontend unit tests and **Playwright end-to-end** tests, with axe accessibility checks on every screen
+- **235** backend tests, including property-based tests of the max-difficulty rule
+- **23** Vitest unit tests and **23 Playwright end-to-end** tests, with axe accessibility checks on every screen
 - Phone and tablet layout checks, dependency audits, and a CI workflow
 
 ## 📚 Documentation
