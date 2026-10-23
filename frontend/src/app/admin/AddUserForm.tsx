@@ -144,15 +144,7 @@ export function AddUserForm({
         noValidate
         className="flex flex-col gap-6 rounded-card border border-line bg-surface p-6 shadow-card sm:p-8"
       >
-        <div className="flex items-center gap-3">
-          <span
-            aria-hidden="true"
-            className="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent-hover"
-          >
-            <UserPlus size={22} />
-          </span>
-          <h2 className="text-2xl font-bold">Add a user</h2>
-        </div>
+        <h2 className="text-xl font-bold">Add a user</h2>
 
         {error && <Alert tone="error">{error}</Alert>}
 

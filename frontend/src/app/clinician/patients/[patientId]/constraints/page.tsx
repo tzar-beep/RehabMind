@@ -38,10 +38,8 @@ export default async function ConstraintsPage({
       <div>
         <h1 className="text-2xl font-bold">Practice limits</h1>
         <p className="max-w-prose text-ink-muted">
-          These clinician-set limits bound every exercise the patient receives,
-          whether chosen by the AI or by the rule-based generator. They are
-          enforced on the server and in the database. Versions are never edited:
-          each change creates a new version.
+          Every exercise, AI-written or rule-based, stays inside these limits.
+          Changes create a new version; old versions are kept.
         </p>
       </div>
 

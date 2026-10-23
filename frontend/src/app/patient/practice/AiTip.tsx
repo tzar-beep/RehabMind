@@ -51,7 +51,7 @@ export function AiTip({ exerciseId }: { exerciseId: string }) {
     >
       <span
         aria-hidden="true"
-        className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning shadow-sm"
+        className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning"
       >
         <Lightbulb size={22} />
       </span>

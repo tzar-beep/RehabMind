@@ -24,7 +24,7 @@ export function SignOutButton() {
 
   return (
     <Button
-      variant="secondary"
+      variant="quiet"
       onClick={signOut}
       busy={busy}
       className="whitespace-nowrap"

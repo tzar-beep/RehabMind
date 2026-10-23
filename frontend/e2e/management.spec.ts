@@ -27,6 +27,7 @@ test("admin add-user form is accessible and shows the clinician picker for patie
 }) => {
   await signIn(page, "admin@recovery.local");
   await expect(page).toHaveURL(/\/admin$/);
+  await page.locator("summary", { hasText: "Add a user" }).click();
   await expect(page.getByRole("heading", { name: "Add a user" })).toBeVisible();
   await expect(page.getByLabel("Care team clinician")).toBeVisible();
   await page.getByRole("radio", { name: "Clinician" }).check();

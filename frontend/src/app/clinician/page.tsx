@@ -1,16 +1,10 @@
-import {
-  CalendarDays,
-  CalendarCheck,
-  CalendarX,
-  ShieldAlert,
-  Users,
-} from "lucide-react";
+import { CalendarDays, ChevronRight, Users } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { z } from "zod";
 
 import { EmptyState } from "@/components/clinician/EmptyState";
-import { Facts, Section } from "@/components/clinician/Section";
+import { Facts } from "@/components/clinician/Section";
 import { StatusBadge } from "@/components/clinician/StatusBadge";
 import { Avatar } from "@/components/ui/Avatar";
 import {
@@ -18,25 +12,93 @@ import {
   type PatientListItem,
 } from "@/lib/api/clinician";
 import { backendGet, requireRole } from "@/lib/api/server";
-import { daysSince, formatDate, responseMode } from "@/lib/format";
+import { daysSince, responseMode } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Patients" };
 
 const RECENT_DAYS = 7;
 
+/** Why a patient needs the clinician's attention, if they do (most urgent first). */
+function attention(p: PatientListItem): string | null {
+  if (!p.constraints) return "No practice limits yet: practice cannot start";
+  const days = daysSince(p.last_session_at);
+  if (days === null) return "Has not practised yet";
+  if (days >= RECENT_DAYS) return `No practice for ${days} days`;
+  return null;
+}
+
 function lastPractice(p: PatientListItem) {
   const days = daysSince(p.last_session_at);
-  if (days === null)
-    return <StatusBadge tone="neutral">No sessions yet</StatusBadge>;
-  const when =
-    days === 0 ? "Today" : days === 1 ? "Yesterday" : `${days} days ago`;
+  if (days === null) return "No sessions yet";
+  if (days === 0) return "Practised today";
+  if (days === 1) return "Practised yesterday";
+  return `Last practised ${days} days ago`;
+}
+
+function PatientRow({ p }: { p: PatientListItem }) {
+  const share = p.recent_responses ? p.recent_correct / p.recent_responses : 0;
   return (
-    <span className="flex flex-col">
-      <span className="font-bold">{when}</span>
-      <span className="text-sm text-ink-muted">
-        {formatDate(p.last_session_at!)}
-      </span>
-    </span>
+    <li className="relative grid gap-x-8 gap-y-3 px-5 py-4 transition-colors hover:bg-canvas sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center">
+      <div className="flex min-w-0 items-center gap-3">
+        <Avatar name={p.display_name} />
+        <div className="min-w-0">
+          {/* The name is the link; its hit area covers the whole row. */}
+          <Link
+            href={`/clinician/patients/${p.id}`}
+            className="text-lg font-bold text-ink after:absolute after:inset-0 after:content-[''] hover:text-accent"
+          >
+            {p.display_name}
+          </Link>
+          <p className="text-sm text-ink-muted">
+            {lastPractice(p)} · {p.sessions_completed}{" "}
+            {p.sessions_completed === 1 ? "session" : "sessions"}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-sm text-ink-muted">Last 20 answers</span>
+        {p.recent_responses ? (
+          <span className="flex items-center gap-3">
+            <span
+              aria-hidden="true"
+              className="h-2 w-28 overflow-hidden rounded-full bg-line"
+            >
+              <span
+                className="block h-full rounded-full bg-chart"
+                style={{ width: `${share * 100}%` }}
+              />
+            </span>
+            <span className="tabular-nums">
+              {p.recent_correct} of {p.recent_responses} correct
+            </span>
+          </span>
+        ) : (
+          <span className="text-ink-muted">—</span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-sm text-ink-muted">Practice limits</span>
+        {p.constraints ? (
+          <span>
+            Levels {p.constraints.min_difficulty}–{p.constraints.max_difficulty}{" "}
+            ·{" "}
+            {p.constraints.allowed_response_modes.map(responseMode).join(", ")}
+          </span>
+        ) : (
+          <span>
+            <StatusBadge tone="warning">Not set</StatusBadge>
+          </span>
+        )}
+      </div>
+
+      <ChevronRight
+        aria-hidden="true"
+        size={20}
+        className="hidden text-ink-muted sm:block"
+      />
+    </li>
   );
 }
 
@@ -50,6 +112,16 @@ export default async function ClinicianDashboard() {
   const recent = patients.filter(
     (p) => (daysSince(p.last_session_at) ?? Infinity) < RECENT_DAYS,
   );
+  const flagged = patients
+    .map((p) => ({ p, reason: attention(p) }))
+    .filter((x): x is { p: PatientListItem; reason: string } => !!x.reason);
+  // Patients who need something first, then the most recently active.
+  const ordered = [...patients].sort(
+    (a, b) =>
+      Number(!attention(a)) - Number(!attention(b)) ||
+      (daysSince(a.last_session_at) ?? Infinity) -
+        (daysSince(b.last_session_at) ?? Infinity),
+  );
 
   return (
     <div className="flex flex-col gap-8">
@@ -59,7 +131,9 @@ export default async function ClinicianDashboard() {
           <p className="mt-1 text-base text-ink-muted">
             {patients.length === 0
               ? "No patients assigned yet."
-              : `${recent.length} of ${patients.length} practised in the last ${RECENT_DAYS} days. Recorded practice, not a clinical assessment.`}
+              : flagged.length
+                ? `${flagged.length} of ${patients.length} need your attention. Recorded practice, not a clinical assessment.`
+                : `${patients.length === 1 ? patients[0].display_name : `All ${patients.length} patients`} practised in the last ${RECENT_DAYS} days. Recorded practice, not a clinical assessment.`}
           </p>
         </div>
         <p className="flex items-center gap-2 text-sm text-ink-muted">
@@ -82,126 +156,61 @@ export default async function ClinicianDashboard() {
         <>
           <Facts
             items={[
+              { label: "Assigned patients", value: patients.length },
               {
-                icon: Users,
-                label: "Assigned patients",
-                value: patients.length,
-              },
-              {
-                icon: CalendarCheck,
                 label: `Practised in the last ${RECENT_DAYS} days`,
                 value: recent.length,
               },
               {
-                icon: CalendarX,
-                label: `No practice in the last ${RECENT_DAYS} days`,
-                value: patients.length - recent.length,
-              },
-              {
-                icon: ShieldAlert,
-                label: "Without practice limits",
-                value: patients.filter((p) => !p.constraints).length,
-                hint: "Practice cannot start until limits are set",
+                label: "Need your attention",
+                value: flagged.length,
+                hint: flagged.length
+                  ? "Shown first in the list below"
+                  : "Nothing to follow up",
               },
             ]}
           />
 
-          <Section
-            id="patient-list"
-            title="Patients"
-            description="Sorted by care-team assignment."
-          >
-            <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card">
-              <table className="w-full min-w-[720px] text-left">
-                <caption className="sr-only">
-                  Assigned patients and recent practice
-                </caption>
-                <thead className="border-b border-line text-sm font-normal text-ink-muted">
-                  <tr>
-                    <th scope="col" className="px-5 py-3">
-                      Patient
-                    </th>
-                    <th scope="col" className="px-5 py-3">
-                      Last practice
-                    </th>
-                    <th scope="col" className="px-5 py-3 text-right">
-                      Sessions completed
-                    </th>
-                    <th scope="col" className="px-5 py-3">
-                      Last 20 answers
-                    </th>
-                    <th scope="col" className="px-5 py-3">
-                      Practice limits
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-line">
-                  {patients.map((p) => (
-                    <tr
-                      key={p.id}
-                      className="align-top"
+          {flagged.length > 0 && (
+            <section aria-labelledby="attention-heading">
+              <h2 id="attention-heading" className="mb-3 text-xl font-bold">
+                To follow up
+              </h2>
+              <ul className="flex flex-col gap-2">
+                {flagged.map(({ p, reason }) => (
+                  <li
+                    key={p.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-warning/30 bg-warning-soft px-5 py-3"
+                  >
+                    <span>
+                      <span className="font-bold">{p.display_name}</span>:{" "}
+                      {reason}
+                    </span>
+                    <Link
+                      href={`/clinician/patients/${p.id}${p.constraints ? "" : "/constraints"}`}
+                      className="font-bold text-ink underline underline-offset-4"
                     >
-                      <th scope="row" className="px-5 py-4">
-                        <span className="flex items-center gap-3">
-                          <Avatar name={p.display_name} />
-                          <Link
-                            href={`/clinician/patients/${p.id}`}
-                            className="inline-flex min-h-target min-w-target items-center text-lg font-bold text-accent underline-offset-4 hover:underline"
-                          >
-                            {p.display_name}
-                          </Link>
-                        </span>
-                      </th>
-                      <td className="px-5 py-4">{lastPractice(p)}</td>
-                      <td className="px-5 py-4 text-right tabular-nums">
-                        {p.sessions_completed}
-                      </td>
-                      <td className="px-5 py-4">
-                        {p.recent_responses ? (
-                          <span className="flex w-40 flex-col gap-1.5">
-                            <span className="tabular-nums">
-                              {p.recent_correct} of {p.recent_responses} correct
-                            </span>
-                            <span
-                              aria-hidden="true"
-                              className="h-2 overflow-hidden rounded-full bg-line"
-                            >
-                              <span
-                                className="block h-full rounded-full bg-chart"
-                                style={{
-                                  width: `${(p.recent_correct / p.recent_responses) * 100}%`,
-                                }}
-                              />
-                            </span>
-                          </span>
-                        ) : (
-                          <span className="text-ink-muted">No answers yet</span>
-                        )}
-                      </td>
-                      <td className="px-5 py-4">
-                        {p.constraints ? (
-                          <span className="flex flex-col items-start gap-1">
-                            <span className="rounded-full bg-accent-soft px-3 py-0.5 text-sm font-bold text-accent-hover">
-                              Difficulty {p.constraints.min_difficulty}–
-                              {p.constraints.max_difficulty}
-                            </span>
-                            <span className="text-sm text-ink-muted">
-                              {p.constraints.allowed_response_modes
-                                .map(responseMode)
-                                .join(" or ")}{" "}
-                              · v{p.constraints.version}
-                            </span>
-                          </span>
-                        ) : (
-                          <StatusBadge tone="warning">Not set</StatusBadge>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Section>
+                      {p.constraints ? "Open overview" : "Set practice limits"}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section
+            aria-labelledby="patient-list"
+            className="flex flex-col gap-3"
+          >
+            <h2 id="patient-list" className="text-xl font-bold">
+              Patients
+            </h2>
+            <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+              {ordered.map((p) => (
+                <PatientRow key={p.id} p={p} />
+              ))}
+            </ul>
+          </section>
         </>
       )}
     </div>

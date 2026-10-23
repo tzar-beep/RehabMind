@@ -70,8 +70,10 @@ test("patient signs in, sees their home, and signs out", async ({
 test("clinician sees only assigned patients", async ({ page }) => {
   await signIn(page, "clinician@recovery.local");
   await expect(page).toHaveURL(/\/clinician$/);
-  const rows = page.getByRole("table").getByRole("row");
-  await expect(rows).toHaveCount(2); // header + one assigned patient
+  const rows = page
+    .getByRole("region", { name: "Patients" })
+    .getByRole("listitem");
+  await expect(rows).toHaveCount(1); // one assigned patient
   await expect(page.getByRole("link", { name: "Alex" })).toBeVisible();
   await expect(page.getByText("Sam")).toHaveCount(0); // another care team
   await expectNoA11yViolations(page);

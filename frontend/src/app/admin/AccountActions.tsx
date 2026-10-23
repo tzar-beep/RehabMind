@@ -78,7 +78,7 @@ export function AccountActions({
     });
 
   return (
-    <div className="flex min-w-64 flex-col gap-2">
+    <div className="flex flex-col gap-2">
       {error && <Alert tone="error">{error}</Alert>}
 
       {user.role === "patient" && available.length > 0 && (
@@ -169,7 +169,7 @@ export function AccountActions({
         </div>
       ) : (
         <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => setPending("reset")}>
+          <Button variant="quiet" onClick={() => setPending("reset")}>
             <KeyRound aria-hidden="true" size={18} />
             Reset password
           </Button>

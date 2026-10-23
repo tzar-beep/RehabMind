@@ -83,7 +83,7 @@ const CONCEPT_LIGHT: Record<Concept, string> = {
   NLP: "bg-warning-soft text-warning",
   Transformer: "bg-accent-soft text-accent-hover",
   GenAI: "bg-[#fde8ef] text-[#9d2c5a]",
-  Rules: "bg-canvas text-ink-muted ring-1 ring-line",
+  Rules: "bg-canvas text-ink-muted border border-line",
 };
 
 const STATE: Record<State, { dot: string; beam: string; label: string }> = {
@@ -672,9 +672,9 @@ export function PipelineMap({ data }: { data: Pipeline }) {
                           }}
                           className={cn(
                             "relative flex h-full w-full flex-col gap-2 rounded-2xl border-2 p-3.5 text-left text-ink transition-all duration-500",
-                            "border-white bg-surface shadow-[0_10px_28px_-14px_rgba(0,0,0,0.65)] hover:-translate-y-0.5",
+                            "border-white bg-surface hover:-translate-y-0.5",
                             active &&
-                              "-translate-y-1 border-[#5ec4b6] shadow-[0_0_0_4px_rgba(94,196,182,0.45),0_0_40px_-2px_rgba(94,196,182,0.9)]",
+                              "-translate-y-1 border-[#5ec4b6] outline-4 outline-[#5ec4b6]/60",
                             (s.state === "skip" || s.state === "idle") &&
                               !active &&
                               "border-dashed border-[#9fb7b3] bg-[#e8f0ee]",
@@ -746,7 +746,7 @@ export function PipelineMap({ data }: { data: Pipeline }) {
           }}
         />
 
-        <div className="relative overflow-hidden rounded-3xl bg-surface shadow-xl shadow-ink/10 ring-1 ring-line">
+        <div className="relative overflow-hidden rounded-3xl border border-line bg-surface">
           {playing && (
             <div
               aria-hidden="true"
@@ -923,7 +923,7 @@ function Rail({
                   "grid size-11 place-items-center rounded-full border-2 transition-all duration-500",
                   i < selected && "border-accent bg-accent text-white",
                   i === selected &&
-                    "scale-110 border-accent bg-surface text-accent shadow-[0_0_0_5px_rgba(15,110,110,0.18)]",
+                    "scale-110 border-accent bg-surface text-accent outline-4 outline-accent-soft",
                   i > selected &&
                     "border-line-strong bg-surface text-ink-muted",
                 )}
@@ -982,9 +982,7 @@ function Stats({ traces }: { traces: Trace[] }) {
           key={label}
           className="flex flex-col-reverse justify-center rounded-2xl border border-line bg-surface p-4"
         >
-          <dt className="text-sm text-ink-muted">
-            {label}
-          </dt>
+          <dt className="text-sm text-ink-muted">{label}</dt>
           <dd className="text-2xl font-bold tabular-nums">{value}</dd>
         </div>
       ))}

@@ -83,7 +83,7 @@ export function ResetProgress({
       <dialog
         ref={dialog}
         aria-labelledby={titleId}
-        className="m-auto w-[min(36rem,calc(100%-2rem))] rounded-card border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-ink/50 backdrop:backdrop-blur-sm"
+        className="m-auto w-[min(36rem,calc(100%-2rem))] rounded-card border border-line bg-surface p-0 text-ink shadow-float backdrop:bg-ink/50"
       >
         <form
           onSubmit={onSubmit}

@@ -182,7 +182,7 @@ test("AI audit log explains accepted, retried and rule-based exercises", async (
     page.getByRole("heading", { name: "AI audit log" }),
   ).toBeVisible();
   await expect(
-    page.getByText("This is audit metadata recorded by the application.", {
+    page.getByText("the patient gets a rule-based exercise instead", {
       exact: false,
     }),
   ).toBeVisible();

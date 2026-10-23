@@ -18,6 +18,8 @@ import { backendGet, requireRole } from "@/lib/api/server";
 
 export const metadata: Metadata = { title: "Home" };
 
+const NEWCOMER_SESSIONS = 3;
+
 const STEPS = [
   {
     icon: ImageIcon,
@@ -101,26 +103,29 @@ export default async function PatientHome() {
 
       {activity && <WeekActivity activity={activity} />}
 
-      <section aria-labelledby="how-heading">
-        <h2 id="how-heading" className="mb-4 text-2xl font-bold">
-          How practice works
-        </h2>
-        <ol className="grid gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-3">
-          {STEPS.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="flex gap-4 bg-surface p-6 sm:flex-col">
-              <Icon
-                aria-hidden="true"
-                size={28}
-                className="shrink-0 text-accent"
-              />
-              <span className="flex flex-col gap-1">
-                <span className="text-xl font-bold">{title}</span>
-                <span className="text-ink-muted">{text}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
+      {/* The explainer is for newcomers; returning patients go straight to practice. */}
+      {(activity?.sessions_completed ?? 0) < NEWCOMER_SESSIONS && (
+        <section aria-labelledby="how-heading">
+          <h2 id="how-heading" className="mb-4 text-2xl font-bold">
+            How practice works
+          </h2>
+          <ol className="grid gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-3">
+            {STEPS.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="flex gap-4 bg-surface p-6 sm:flex-col">
+                <Icon
+                  aria-hidden="true"
+                  size={28}
+                  className="shrink-0 text-accent"
+                />
+                <span className="flex flex-col gap-1">
+                  <span className="text-xl font-bold">{title}</span>
+                  <span className="text-ink-muted">{text}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
     </div>
   );
 }

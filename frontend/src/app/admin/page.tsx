@@ -4,6 +4,7 @@ import { z } from "zod";
 import { StatusBadge } from "@/components/clinician/StatusBadge";
 import { Alert } from "@/components/ui/Alert";
 import { Avatar } from "@/components/ui/Avatar";
+import { buttonClasses } from "@/components/ui/Button";
 import { UserSummarySchema } from "@/lib/api/schemas";
 import { backendGet, getCurrentUser } from "@/lib/api/server";
 
@@ -26,9 +27,26 @@ export default async function AdminHome() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-3xl font-bold">Accounts</h1>
-      <AddUserForm clinicians={clinicians} />
-      <h2 className="mt-4 text-2xl font-bold">User list</h2>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Accounts</h1>
+        <p className="mt-1 text-base text-ink-muted">
+          {users.length} {users.length === 1 ? "account" : "accounts"} ·{" "}
+          {users.filter((u) => u.role === "patient").length} patients ·{" "}
+          {users.filter((u) => u.role === "clinician").length} clinicians
+        </p>
+      </div>
+      <details className="group">
+        <summary
+          className={`${buttonClasses("primary")} w-fit cursor-pointer list-none [&::-webkit-details-marker]:hidden`}
+        >
+          <span className="group-open:hidden">Add a user</span>
+          <span className="hidden group-open:inline">Close the form</span>
+        </summary>
+        <div className="mt-4 max-w-3xl">
+          <AddUserForm clinicians={clinicians} />
+        </div>
+      </details>
+      <h2 className="mt-2 text-xl font-bold">User list</h2>
       {unassigned > 0 && (
         <Alert tone="warning">
           {unassigned === 1 ? "1 patient has" : `${unassigned} patients have`}{" "}
@@ -39,7 +57,7 @@ export default async function AdminHome() {
       <div
         tabIndex={0}
         aria-label="Scrollable table"
-        className="overflow-x-auto rounded-card border border-line bg-surface shadow-card"
+        className="overflow-x-auto rounded-card border border-line bg-surface"
       >
         <table className="w-full text-left">
           <caption className="sr-only">All user accounts</caption>
@@ -47,9 +65,6 @@ export default async function AdminHome() {
             <tr>
               <th scope="col" className="px-6 py-3">
                 Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Email
               </th>
               <th scope="col" className="px-6 py-3">
                 Role
@@ -67,16 +82,20 @@ export default async function AdminHome() {
           </thead>
           <tbody className="divide-y divide-line">
             {users.map((u) => (
-              <tr key={u.id} className="transition-colors hover:bg-canvas/60">
-                <td className="px-6 py-3 font-bold whitespace-nowrap">
+              <tr key={u.id} className="align-top">
+                <td className="px-6 py-3">
                   <span className="flex items-center gap-3">
                     <Avatar name={u.display_name} size="sm" />
-                    {u.display_name}
+                    <span className="flex flex-col">
+                      <span className="font-bold whitespace-nowrap">
+                        {u.display_name}
+                      </span>
+                      <span className="text-sm text-ink-muted">{u.email}</span>
+                    </span>
                   </span>
                 </td>
-                <td className="px-6 py-3">{u.email}</td>
                 <td className="px-6 py-3">
-                  <span className="rounded-full bg-canvas px-3 py-1 text-sm font-bold capitalize ring-1 ring-line">
+                  <span className="rounded-full bg-canvas px-3 py-1 text-sm font-bold capitalize">
                     {u.role}
                   </span>
                 </td>

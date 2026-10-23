@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  CircleCheck,
-  HeartHandshake,
-  Lightbulb,
-  PartyPopper,
-  Sparkles,
-} from "lucide-react";
+import { CircleCheck, HeartHandshake, Lightbulb, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -148,6 +142,7 @@ export function PracticeSession() {
     // Same shape as the exercise screen, so nothing jumps when it appears.
     return (
       <LoadingRegion label="Getting your practice ready…" className="gap-8">
+        <h1 className="sr-only">Practice</h1>
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-32" />
           <Skeleton className="h-6 w-28" />
@@ -238,10 +233,6 @@ export function PracticeSession() {
     const s = state.summary;
     return (
       <div className="relative isolate flex flex-col items-center gap-6 overflow-hidden rounded-card border border-line bg-surface px-6 py-12 text-center shadow-card">
-        <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-4 py-1.5 font-bold text-accent-hover">
-          <PartyPopper aria-hidden="true" size={18} />
-          Session finished
-        </span>
         {s && <CompletionRing done={s.practiced} total={state.total} />}
         <h1 className="text-4xl font-bold">Practice complete</h1>
         {s && (
@@ -364,7 +355,7 @@ export function PracticeSession() {
             >
               <span
                 aria-hidden="true"
-                className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning shadow-sm"
+                className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning"
               >
                 <Lightbulb size={22} />
               </span>

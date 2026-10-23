@@ -48,18 +48,29 @@ const RESULT: Record<
   },
 };
 
+/** "photo_cat_02" → "cat", "photo_scene_dog_running" → "dog running" (catalogue slugs). */
+function pictureName(slug: string) {
+  return slug
+    .replace(/^photo_(scene_)?/, "")
+    .replace(/_\d+$/, "")
+    .replaceAll("_", " ");
+}
+
 function Run({ run }: { run: AIRun }) {
   const r = RESULT[run.result];
   return (
-    <li className="rounded-card border border-line bg-surface">
+    <li>
       <details>
-        <summary className="flex min-h-target cursor-pointer flex-wrap items-center gap-x-4 gap-y-2 px-5 py-4">
-          <StatusBadge tone={r.tone}>{r.label}</StatusBadge>
+        <summary className="grid min-h-target cursor-pointer items-center gap-x-6 gap-y-1 px-5 py-3.5 hover:bg-canvas sm:grid-cols-[15rem_minmax(0,1fr)_auto]">
+          <span>
+            <StatusBadge tone={r.tone}>{r.label}</StatusBadge>
+          </span>
           <span className="font-bold">
             {run.position ? `Exercise ${run.position}` : "Exercise"}
-            {run.final_exercise?.picture && ` · ${run.final_exercise.picture}`}
+            {run.final_exercise?.picture &&
+              ` · ${pictureName(run.final_exercise.picture)}`}
           </span>
-          <span className="text-sm text-ink-muted">
+          <span className="text-sm text-ink-muted sm:text-right">
             {formatDateTime(run.created_at)} · {run.attempts.length}{" "}
             {run.attempts.length === 1 ? "attempt" : "attempts"}
           </span>
@@ -195,12 +206,9 @@ export default async function AIGenerationsPage({
       <div>
         <h1 className="text-2xl font-bold">AI audit log</h1>
         <p className="max-w-prose text-ink-muted">
-          What the application recorded each time it asked the AI to personalise
-          an exercise. Every suggestion is checked for format, clinical limits
-          and safety before use; if checks fail, the patient receives a
-          rule-based exercise instead. This is audit metadata recorded by the
-          application. The AI gives no explanations; selection reasons are fixed
-          codes it must choose from.
+          Every AI suggestion is checked for format, clinical limits and safety.
+          If it fails, the patient gets a rule-based exercise instead. Open an
+          entry for the full record.
         </p>
       </div>
 
@@ -216,7 +224,7 @@ export default async function AIGenerationsPage({
             accepted first time · {counts.ai_generated_after_retry ?? 0}{" "}
             accepted after retry · {counts.rule_based_used ?? 0} rule-based.
           </p>
-          <ol className="flex flex-col gap-3">
+          <ol className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
             {runs.map((run, i) => (
               <Run
                 key={`${run.session_id}-${run.position ?? run.created_at}-${i}`}

@@ -110,13 +110,13 @@ export function AbilityVisual({ ctx }: { ctx: Record<string, unknown> }) {
           <span>Learned ability θ = {theta.toFixed(2)}</span>
           <span>Doing well</span>
         </div>
-        <div className="relative h-4 rounded-full bg-linear-to-r from-[#e9b8a8] via-[#f3d9a4] to-[#9fd8c4]">
+        <div className="relative h-4 rounded-full bg-accent-soft">
           <motion.span
             aria-hidden="true"
             initial={{ left: "50%" }}
             animate={{ left: `${pos}%` }}
             transition={{ type: "spring", stiffness: 80, damping: 14 }}
-            className="absolute top-1/2 size-7 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-brand-deep shadow-lg"
+            className="absolute top-1/2 size-7 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-brand-deep"
           />
         </div>
       </div>
@@ -201,7 +201,7 @@ export function ContextVisual({ ctx }: { ctx: Record<string, unknown> }) {
           {candidates.slice(0, 8).map((c) => (
             <span
               key={c.slug}
-              className="rounded-full bg-surface px-3 py-1 font-mono text-xs ring-1 ring-line"
+              className="rounded-full bg-surface px-3 py-1 font-mono text-xs border border-line"
             >
               {c.slug.replace("photo_", "")}
             </span>
@@ -263,7 +263,7 @@ export function PromptVisual({ gen }: { gen: PipelineGeneration }) {
               part?.[2] ?? "bg-canvas border-line-strong",
             )}
           >
-            <span className="w-24 shrink-0 text-xs font-bold tracking-wide text-ink-muted uppercase">
+            <span className="w-24 shrink-0 text-sm font-bold text-ink-muted">
               {part?.[1] ?? "Prompt"}
             </span>
             <span className="min-w-0 text-sm">
@@ -293,10 +293,10 @@ export function LLMVisual({ gen }: { gen: PipelineGeneration }) {
         <span className="rounded-full bg-accent px-3 py-1 font-bold text-white">
           {a?.model}
         </span>
-        <span className="rounded-full bg-canvas px-3 py-1 text-sm ring-1 ring-line">
+        <span className="rounded-full bg-canvas px-3 py-1 text-sm border border-line">
           decoder-only transformer · local GPU via Ollama
         </span>
-        <span className="rounded-full bg-canvas px-3 py-1 text-sm ring-1 ring-line">
+        <span className="rounded-full bg-canvas px-3 py-1 text-sm border border-line">
           {a?.latency_ms} ms
         </span>
       </div>
@@ -380,7 +380,7 @@ export function ValidationVisual({ gen }: { gen: PipelineGeneration }) {
                           state === "pass" && "bg-success-soft text-success",
                           state === "fail" && "bg-danger-soft text-danger",
                           state === "skip" &&
-                            "bg-surface text-ink-muted ring-1 ring-line",
+                            "bg-surface text-ink-muted border border-line",
                         )}
                       >
                         {state === "pass" ? (
@@ -440,7 +440,7 @@ export function ExerciseVisual({ t }: { t: Trace }) {
           alt={`Picture: ${t.picture ?? ""}`}
           width={240}
           height={180}
-          className="h-48 w-auto rounded-2xl border-8 border-surface object-cover shadow-card ring-1 ring-line"
+          className="h-48 w-auto rounded-2xl border-8 border-surface object-cover shadow-card border border-line"
         />
       )}
       <div className="flex flex-col gap-3">
@@ -498,7 +498,7 @@ export function ResponseVisual({ t }: { t: Trace }) {
         initial={{ opacity: 0, x: -16, scale: 0.96 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 160, damping: 18 }}
-        className="rounded-3xl rounded-bl-md bg-surface px-6 py-4 text-2xl shadow-card ring-1 ring-line"
+        className="rounded-3xl rounded-bl-md bg-surface px-6 py-4 text-2xl shadow-card border border-line"
       >
         {r.text ? `“${r.text}”` : "(the patient chose “I’m not sure”)"}
       </motion.p>
@@ -539,7 +539,7 @@ export function SpeechVisual({ t }: { t: Trace }) {
         ))}
       </div>
       <ArrowRight aria-hidden="true" className="text-ink-muted" />
-      <div className="rounded-2xl bg-surface px-5 py-3 shadow-card ring-1 ring-line">
+      <div className="rounded-2xl bg-surface px-5 py-3 shadow-card border border-line">
         <p className="text-sm text-ink-muted">
           faster-whisper transcript (on this machine)
         </p>
@@ -692,7 +692,7 @@ export function FeedbackVisual({ gen }: { gen: PipelineGeneration | null }) {
     <div className="flex gap-4 rounded-3xl border border-accent/20 bg-accent-soft px-6 py-5">
       <span
         aria-hidden="true"
-        className="grid size-12 shrink-0 place-items-center rounded-full bg-surface text-warning shadow-sm"
+        className="grid size-12 shrink-0 place-items-center rounded-full bg-surface text-warning"
       >
         <Lightbulb size={24} />
       </span>
