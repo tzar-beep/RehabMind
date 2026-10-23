@@ -1,5 +1,3 @@
-import { useId } from "react";
-
 import { cn } from "@/lib/utils";
 
 /**
@@ -7,7 +5,6 @@ import { cn } from "@/lib/utils";
  * progress), on a deep-teal tile. Decorative; the wordmark carries the name.
  */
 export function BrandLogo({ className }: { className?: string }) {
-  const gradient = useId();
   return (
     <svg
       viewBox="0 0 40 40"
@@ -15,13 +12,7 @@ export function BrandLogo({ className }: { className?: string }) {
       focusable="false"
       className={cn("size-9 shrink-0", className)}
     >
-      <defs>
-        <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#14857f" />
-          <stop offset="1" stopColor="#0a3d3e" />
-        </linearGradient>
-      </defs>
-      <rect width="40" height="40" rx="11" fill={`url(#${gradient})`} />
+      <rect width="40" height="40" rx="11" fill="#0f6e6e" />
       <path
         d="M13 9h14a5 5 0 0 1 5 5v7a5 5 0 0 1-5 5H18l-5.5 4.5V26H13a5 5 0 0 1-5-5v-7a5 5 0 0 1 5-5Z"
         fill="#ffffff"
@@ -45,12 +36,7 @@ export function BrandMark({
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <BrandLogo
-        className={cn(
-          large && "size-12",
-          inverted && "rounded-[11px] ring-1 ring-white/25",
-        )}
-      />
+      <BrandLogo className={cn(large && "size-12")} />
       <span
         className={cn(
           "leading-none font-bold tracking-tight",

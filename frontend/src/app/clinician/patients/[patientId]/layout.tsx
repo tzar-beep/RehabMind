@@ -23,10 +23,10 @@ export default async function PatientLayout({
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <Breadcrumbs patientId={patientId} patientName={patient.display_name} />
-        <div className="flex items-center gap-5 rounded-card border border-line bg-surface p-6 shadow-card">
+        <div className="flex items-center gap-4">
           <Avatar name={patient.display_name} size="lg" />
           <div>
-            <p className="text-3xl font-bold">{patient.display_name}</p>
+            <p className="text-2xl font-bold tracking-tight">{patient.display_name}</p>
             <p className="text-ink-muted">
               Patient since {formatDate(patient.patient_since)} · Care team:{" "}
               {patient.care_team.join(", ")}
