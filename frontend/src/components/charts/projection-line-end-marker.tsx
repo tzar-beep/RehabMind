@@ -25,11 +25,11 @@ export function ProjectionLineEndMarker({
 
   const getX = useCallback(
     (point: ProjectionPoint) => xScale(point.date) ?? 0,
-    [xScale],
+    [xScale]
   );
   const getY = useCallback(
     (point: ProjectionPoint) => yScale(point.value) ?? 0,
-    [yScale],
+    [yScale]
   );
 
   const showStroke =

@@ -56,7 +56,8 @@ export interface ChartTooltipProps {
    * When a function, receives the hovered point and line config.
    */
   dotColor?:
-    string | ((point: Record<string, unknown>, line: LineConfig) => string);
+    | string
+    | ((point: Record<string, unknown>, line: LineConfig) => string);
   /** Additional content to show below rows (e.g., markers) */
   children?: React.ReactNode;
   /** Custom class name */

@@ -144,7 +144,7 @@ const BarXAxisInner = memo(function BarXAxisInner({
         />
       ))}
     </div>,
-    container,
+    container
   );
 });
 
