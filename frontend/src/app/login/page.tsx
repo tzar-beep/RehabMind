@@ -35,9 +35,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <main
       id="main"
-      className="grid flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
+      className="grid h-dvh grid-cols-1 overflow-hidden lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
     >
-      <div className="flex flex-col gap-10 bg-brand-deep px-6 py-10 text-white sm:px-10 lg:p-14">
+      <div className="hidden min-h-0 flex-col gap-8 overflow-hidden bg-brand-deep text-white lg:flex lg:px-14 lg:py-12">
         <BrandMark inverted large className="hidden lg:inline-flex" />
 
         <div className="flex max-w-xl flex-col gap-4">
@@ -52,13 +52,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
         <ul
           aria-label="Some pictures from the practice library"
-          className="grid max-w-xl grid-cols-3 gap-3 sm:gap-4"
+          // Two rows of three, as wide as the window height allows so the page never scrolls.
+          className="grid w-[clamp(15rem,calc((100dvh-37rem)*1.5),36rem)] grid-cols-3 gap-3"
         >
-          {LIBRARY.map((p, i) => (
-            <li
-              key={p.src}
-              className={`flex flex-col gap-2 ${i >= 3 ? "hidden sm:flex" : ""}`}
-            >
+          {LIBRARY.map((p) => (
+            <li key={p.src} className="flex flex-col gap-1.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={p.src}
@@ -67,14 +65,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
                 height={200}
                 className="aspect-square w-full rounded-lg object-cover"
               />
-              <span aria-hidden="true" className="text-lg font-bold">
+              <span aria-hidden="true" className="text-base font-bold">
                 {p.word}
               </span>
             </li>
           ))}
         </ul>
 
-        <div className="mt-auto hidden flex-col gap-4 lg:flex">
+        <div className="mt-auto hidden flex-col gap-4 lg:flex [@media(max-height:760px)]:hidden">
           <dl className="grid max-w-xl grid-cols-3 gap-px overflow-hidden rounded-card bg-white/15">
             {FACTS.map((f) => (
               <div key={f.label} className="bg-brand-deep px-4 py-3">
@@ -92,9 +90,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         </div>
       </div>
 
-      <div className="order-first flex justify-center bg-surface px-6 py-8 sm:px-10 sm:py-14 lg:order-none lg:items-start lg:pt-[10.5rem]">
+      <div className="flex min-h-0 items-center justify-center overflow-y-auto bg-surface px-6 py-8 sm:px-10">
         <div className="w-full max-w-md">
-          <BrandMark className="mb-8 lg:hidden" />
+          <div className="mb-8 lg:hidden">
+            <BrandMark />
+            <p className="mt-3 text-lg text-ink-muted">
+              Practise words, one picture at a time.
+            </p>
+          </div>
           <h1 className="mb-2 text-2xl font-bold tracking-tight">Sign in</h1>
           <p className="mb-8 text-lg text-ink-muted">
             Welcome back. Take your time.
