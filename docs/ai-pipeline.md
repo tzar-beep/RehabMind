@@ -23,7 +23,8 @@ issue_next()
                               category allowed
         check_safety()        no answer leak, no medical/recovery claims, no pressure
                               language, no links/digits, short plain wording, valid
-                              first-sound cue
+                              first-sound cue; aphasia-friendly language: everyday words
+                              (Zipf ≥ 3), sentences ≤ 12 words, no patronising tone
         → accept: Proposal(source="ai") → ExerciseIssuer (validates again) → DB trigger
         → reject/error: audited, retry
   └─ deterministic rules proposal → most conservative fallback (minimum difficulty)
@@ -77,3 +78,10 @@ the current one.
 Hints are revealed on request: meaning first, then first sound. A correct answer after a
 hint counts as correct for the patient but **holds** the difficulty level (cued, not
 independent naming).
+
+With `progression_mode = "ability"` (clinician opt-in), the learned ability estimate stops
+being context only: after 10 answers it sets the next level to the one it predicts the
+patient gets right about 80% of the time, still clamped to the clinician's range. The
+estimate is deterministic; the LLM never sets the level. Evidence and limits:
+[validation/personalization.md](validation/personalization.md). How often the validators
+reject raw model output, and why: [validation/genai.md](validation/genai.md).

@@ -12,6 +12,10 @@ from app.clinical.models import ConstraintSet
 from app.performance.models import PerformanceProfile
 
 RECENT_WINDOW = 20
+# Ability-guided mode: aim for this predicted success rate (the "productive band" in
+# docs/validation/personalization.md) once there are enough answers to estimate ability.
+TARGET_SUCCESS = 0.8
+MIN_ANSWERS_FOR_ABILITY = 10
 
 
 def clamp(value: int, cs: ConstraintSet) -> int:
@@ -61,3 +65,13 @@ def apply_outcome(profile: PerformanceProfile, outcome: str, cs: ConstraintSet) 
             profile.consecutive_incorrect = 0
 
     profile.target_difficulty = clamp(level, cs)
+
+
+def ability_guided_level(theta: float, cs: ConstraintSet) -> int:
+    """The allowed level whose predicted success is closest to TARGET_SUCCESS."""
+    from app.performance.ability import p_success
+
+    return min(
+        range(cs.min_difficulty, cs.max_difficulty + 1),
+        key=lambda level: (abs(p_success(theta, level) - TARGET_SUCCESS), level),
+    )

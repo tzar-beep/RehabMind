@@ -1,4 +1,5 @@
 import uuid
+from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import func, select
@@ -17,6 +18,7 @@ class ConstraintSetIn(BaseModel):
     max_exercises_per_session: int = Field(ge=1, le=50)
     advance_after_correct: int = Field(default=3, ge=1, le=10)
     step_back_after_incorrect: int = Field(default=2, ge=1, le=10)
+    progression_mode: Literal["step", "ability"] = "step"
     note: str | None = Field(default=None, max_length=500)
 
     @model_validator(mode="after")
@@ -43,6 +45,7 @@ class ConstraintSetOut(ConstraintSetIn):
             max_exercises_per_session=cs.max_exercises_per_session,
             advance_after_correct=cs.advance_after_correct,
             step_back_after_incorrect=cs.step_back_after_incorrect,
+            progression_mode=cs.progression_mode,
             note=cs.note,
         )
 

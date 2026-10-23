@@ -15,6 +15,7 @@ from typing import Any
 from pydantic import BaseModel, ValidationError
 
 from app.ai.schemas import FeedbackOutput, SummaryOutput
+from app.validation import plain_language
 from app.validation.exercise import _UNSAFE_PATTERNS, Verdict
 
 MAX_FEEDBACK_WORDS = 30
@@ -55,7 +56,11 @@ def _parse[M: BaseModel](raw: str, model: type[M]) -> tuple[M | None, Verdict | 
         return None, Verdict(False, "schema", codes)
 
 
-def check_feedback(raw: str, outcome: str) -> tuple[Verdict, FeedbackOutput | None]:
+def check_feedback(
+    raw: str, outcome: str, task_words: set[str] = frozenset()
+) -> tuple[Verdict, FeedbackOutput | None]:
+    """`task_words`: words the exercise itself uses (target, accepted answers, the patient's
+    answer), allowed even when rare."""
     out, failed = _parse(raw, FeedbackOutput)
     if failed or out is None:
         return failed or Verdict(False, "schema", ["invalid"]), None
@@ -73,6 +78,7 @@ def check_feedback(raw: str, outcome: str) -> tuple[Verdict, FeedbackOutput | No
             reasons.append(f"contradicts_score:{name}")
         if outcome == "correct" and re.search(_CLAIMS_WRONG, text, re.IGNORECASE):
             reasons.append(f"contradicts_score:{name}")
+        reasons += plain_language.check(text, name, task_words)
     return Verdict(not reasons, None if not reasons else "safety", reasons), out
 
 

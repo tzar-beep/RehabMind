@@ -108,6 +108,9 @@ const REASON: Record<string, string> = {
   difficulty_mismatch: "Difficulty did not match the picture",
   category_not_allowed: "Category not allowed",
   invalid_phonemic_cue: "First-sound hint did not match the word",
+  rare_word: "Uses an uncommon word",
+  long_sentence: "Sentence too long",
+  patronising: "Patronising or childish tone",
   provider_error: "Provider error",
   timeout: "Provider timed out",
 };
@@ -123,6 +126,10 @@ export function reasonLabel(code: string): string {
     link_or_contact: "Link or contact details",
     digits: "Contains numbers",
     too_long: "Too long",
+    rare_word: "Uses an uncommon word",
+    long_sentence: "Sentence too long",
+    patronising: "Patronising or childish tone",
+    contradicts_score: "Contradicts the score",
     missing: "Missing field",
     extra_forbidden: "Unexpected field",
     enum: "Invalid value",
@@ -140,4 +147,29 @@ export const SPEECH_ATTEMPT_REASON: Record<string, string> = {
   transcription_error: "processing error",
   timed_out: "timed out",
   exercise_closed: "exercise already closed",
+};
+
+/** Picture-naming error types (Philadelphia Naming Test categories, backend app.analysis.errors). */
+export const ERROR_TYPE: Record<string, string> = {
+  correct: "Correct",
+  no_response: "No response",
+  description: "Described it instead (circumlocution)",
+  semantic: "Related meaning (semantic)",
+  formal: "Similar sound, real word (formal)",
+  mixed: "Related meaning and sound (mixed)",
+  unrelated: "Unrelated word",
+  nonword_related: "Non-word close to the target",
+  nonword_unrelated: "Non-word unlike the target",
+};
+export const errorType = (t: string) => ERROR_TYPE[t] ?? humanize(t);
+
+export const PROGRESSION_MODE: Record<string, string> = {
+  step: "Step rule (answers in a row)",
+  ability: "Ability-guided (aims for about 80% success)",
+};
+
+export const DIFFICULTY_RATING: Record<string, string> = {
+  too_easy: "Too easy",
+  just_right: "Just right",
+  too_hard: "Too hard",
 };

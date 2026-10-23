@@ -35,6 +35,7 @@ class ConstraintSet(Base):
         CheckConstraint("step_back_after_incorrect BETWEEN 1 AND 10", name="step_back_rule"),
         CheckConstraint("cardinality(allowed_exercise_types) > 0", name="has_types"),
         CheckConstraint("cardinality(allowed_response_modes) > 0", name="has_modes"),
+        CheckConstraint("progression_mode IN ('step', 'ability')", name="progression_mode"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -51,6 +52,10 @@ class ConstraintSet(Base):
     max_exercises_per_session: Mapped[int] = mapped_column(SmallInteger)
     advance_after_correct: Mapped[int] = mapped_column(SmallInteger, default=3)
     step_back_after_incorrect: Mapped[int] = mapped_column(SmallInteger, default=2)
+    # step: the consecutive-answer rule above. ability: the level the learned ability
+    # estimate predicts the patient gets right about 80% of the time (app.performance).
+    # Either way the level is clamped to [min_difficulty, max_difficulty].
+    progression_mode: Mapped[str] = mapped_column(String(16), default="step", server_default="step")
     note: Mapped[str | None] = mapped_column(String(500))
     created_by_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

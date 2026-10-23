@@ -7,7 +7,9 @@ import {
   Keyboard,
   Lightbulb,
   ListChecks,
+  MessageCircleHeart,
   MessageSquareText,
+  Shapes,
   Timer,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -34,6 +36,8 @@ import {
 } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import {
+  DIFFICULTY_RATING,
+  errorType,
   formatDate,
   formatDateTime,
   formatMs,
@@ -68,6 +72,17 @@ export default async function PatientOverviewPage({
   if (!ov) notFound();
   const active = versions?.[0];
   const o = ov.outcomes;
+  const errors = Object.entries(ov.error_profile)
+    .filter(([t]) => t !== "correct")
+    .sort((a, b) => b[1] - a[1]);
+  const topError = errors[0];
+  const ratedSessions = Object.values(ov.difficulty_ratings).reduce(
+    (a, b) => a + b,
+    0,
+  );
+  const errorBreakdown = errors
+    .map(([t, n]) => `${errorType(t)}: ${n}`)
+    .join(" · ");
   const attempted = o.correct + o.near_miss + o.incorrect + o.skipped;
   const base = `/clinician/patients/${patientId}`;
 
@@ -195,6 +210,21 @@ export default async function PatientOverviewPage({
                   hint: "Set by the progression rule, within limits",
                 },
                 {
+                  icon: MessageCircleHeart,
+                  label: "How sessions felt (patient)",
+                  value: ratedSessions || "—",
+                  hint:
+                    Object.entries(ov.difficulty_ratings)
+                      .map(([r, n]) => `${DIFFICULTY_RATING[r] ?? r}: ${n}`)
+                      .join(" · ") || "No ratings yet",
+                },
+                {
+                  icon: Shapes,
+                  label: "Most common naming error",
+                  value: topError ? errorType(topError[0]) : "—",
+                  hint: errorBreakdown || "No naming errors yet",
+                },
+                {
                   icon: Keyboard,
                   label: "Answer methods",
                   value: ov.by_mode.length,
@@ -204,7 +234,10 @@ export default async function PatientOverviewPage({
                         (m) =>
                           `${responseMode(m.mode)}: ${m.correct}/${m.attempted} correct`,
                       )
-                      .join(" · ") || "None yet",
+                      .join(" · ") +
+                      (ov.uncertain_speech_matches
+                        ? ` · ${ov.uncertain_speech_matches} speech answer(s) to check`
+                        : "") || "None yet",
                 },
               ]}
             />

@@ -9,7 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai import personalization
 from app.ai.provider import get_ai_provider
-from app.analysis.scoring import ScoreResult, score_exercise
+from app.analysis.errors import classify_naming
+from app.analysis.scoring import ScoreResult, normalize, score_exercise
 from app.audit import service as audit
 from app.clinical.models import ConstraintSet
 from app.clinical.service import latest_constraints
@@ -17,8 +18,14 @@ from app.exercises import generator
 from app.exercises.generator import NoSafeExercise
 from app.exercises.issuer import ConstraintViolation, issue
 from app.exercises.models import Exercise
-from app.exercises.types import IMPLEMENTED_TYPES, ExerciseType, ResponseMode
-from app.performance.progression import apply_outcome, get_profile
+from app.exercises.types import IMPLEMENTED_TYPES, OBJECTIVES, ExerciseType, ResponseMode
+from app.performance import ability
+from app.performance.progression import (
+    MIN_ANSWERS_FOR_ABILITY,
+    ability_guided_level,
+    apply_outcome,
+    get_profile,
+)
 from app.sessions.models import ExerciseResponse, PracticeSession
 
 
@@ -192,6 +199,18 @@ async def submit_response(
         raise PracticeConflict(f"{mode} responses not allowed for this exercise")
 
     result = score_exercise(exercise.exercise_type, text, exercise.expected)
+    clinical: dict[str, object] = {}
+    if exercise.exercise_type == "picture_naming":
+        # PNT-style error type: information for the clinician, never used for scoring.
+        clinical["error_type"] = classify_naming(
+            text, exercise.expected["target"], exercise.expected["accepted_answers"], result.outcome
+        )
+    stt = (extra_analysis or {}).get("stt")
+    if result.outcome == "correct" and isinstance(stt, dict) and result.matched:
+        # Speech recognisers tend to "hear" the expected word. A correct match on a word the
+        # recogniser itself was unsure of is flagged for the clinician to check.
+        unsure = {normalize(w) for w in stt.get("low_confidence_words") or []}
+        clinical["uncertain_speech_match"] = bool(unsure & set(result.matched.split()))
     exercise.status = "skipped" if result.outcome == "skipped" else "answered"
     db.add(
         ExerciseResponse(
@@ -208,6 +227,7 @@ async def submit_response(
                 "similarity": result.similarity,
                 "hints_used": hints_used,
                 **result.details,
+                **clinical,
                 **(extra_analysis or {}),
             },
             latency_ms=latency_ms,
@@ -223,6 +243,11 @@ async def submit_response(
         "near_miss" if result.outcome == "correct" and hints_used else result.outcome
     )
     apply_outcome(profile, progression_outcome, cs)
+    if cs.progression_mode == "ability" and (objective := OBJECTIVES.get(exercise.exercise_type)):
+        # The step rule above still keeps its counters; the level comes from the estimate.
+        est = (await ability.estimates(db, patient_id))[objective.value]
+        if est.attempts >= MIN_ANSWERS_FOR_ABILITY:
+            profile.target_difficulty = ability_guided_level(est.ability, cs)
     await issue_next(db, session)
     await db.commit()
     return exercise, result, session

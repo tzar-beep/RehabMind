@@ -73,6 +73,7 @@ const LIMIT_KEYS: (keyof ConstraintFields)[] = [
   "max_exercises_per_session",
   "advance_after_correct",
   "step_back_after_incorrect",
+  "progression_mode",
 ];
 
 const norm = (x: unknown) =>

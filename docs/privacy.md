@@ -20,6 +20,14 @@ browser MediaRecorder (≤15 s, ≤2 MB)
 - Development uses synthetic speech only (e.g. Windows SAPI); `*.wav`/`*.webm` are git-ignored.
 - Future clinician-approved retention would be a policy in `app/storage/audio.py`; not in V1.
 
+## Research exports
+
+`app.scripts.study_data export` writes one row per answer for validation studies
+([validation/](validation/README.md)): a keyed-hash pseudonym instead of the patient ID (the
+key is a study secret, never stored in the repository), study day instead of date, no names,
+emails or free-text answers. Patients' optional after-session difficulty ratings are
+included.
+
 ## Transcripts
 
 Stored with the response for clinician review, with `low_confidence_words` and

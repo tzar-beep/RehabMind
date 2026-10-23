@@ -1,4 +1,5 @@
 import uuid
+from types import SimpleNamespace
 
 import pytest
 from sqlalchemy import select, text, update
@@ -9,6 +10,8 @@ from app.core.db import SessionLocal
 from app.exercises.generator import Proposal
 from app.exercises.issuer import validate
 from app.exercises.models import Exercise, Stimulus
+from app.performance.ability import fit
+from app.performance.progression import ability_guided_level
 from app.sessions.models import PracticeSession
 from app.users.models import Role
 from tests.conftest import assign, create_user, login, make_client, patient_id
@@ -330,3 +333,54 @@ async def test_only_assigned_clinicians_set_constraints(care):
     second = await set_plan(clinician, pid)
     assert (first["version"], second["version"]) == (1, 2)
     assert (await clinician.get(url)).json()["version"] == 2
+
+
+# ---------- ability-guided progression (clinician opt-in) ----------
+
+
+async def test_ability_mode_sets_level_from_the_estimate(care):
+    """Ten correct answers. The step rule (advance after 3) would be at level 4 by now; in
+    ability mode the next level is the one the fitted estimate predicts ~80% success at."""
+    patient, clinician, pid = care
+    await set_plan(
+        clinician,
+        pid,
+        progression_mode="ability",
+        max_difficulty=5,
+        max_exercises_per_session=20,
+        advance_after_correct=3,
+        step_back_after_incorrect=2,
+    )
+    state = (await patient.post(START)).json()
+    for _ in range(10):
+        state = (await answer(patient, state, correct=True))["state"]
+    exercises = sorted(await issued(pid), key=lambda e: e.position)
+    theta = fit([("correct", e.difficulty) for e in exercises[:10]])
+    limits = SimpleNamespace(min_difficulty=1, max_difficulty=5)
+    assert exercises[-1].difficulty == ability_guided_level(theta, limits) == 3
+
+
+async def test_progression_mode_is_versioned_and_defaults_to_step(care):
+    _, clinician, pid = care
+    assert (await set_plan(clinician, pid))["progression_mode"] == "step"
+    assert (await set_plan(clinician, pid, progression_mode="ability"))["progression_mode"] == (
+        "ability"
+    )
+    r = await clinician.post(f"/api/v1/patients/{pid}/constraints", json=plan(progression_mode="x"))
+    assert r.status_code == 422
+
+
+async def test_patient_rates_a_finished_session(care):
+    patient, clinician, pid = care
+    await set_plan(clinician, pid, max_exercises_per_session=1)
+    state = (await patient.post(START)).json()
+    url = f"/api/v1/practice/sessions/{state['session_id']}/rating"
+    assert (await patient.put(url, json={"rating": "just_right"})).status_code == 409
+    await answer(patient, state, correct=True)
+    assert (await patient.put(url, json={"rating": "meh"})).status_code == 422
+    assert (await patient.put(url, json={"rating": "too_hard"})).status_code == 204
+    assert (await clinician.put(url, json={"rating": "too_easy"})).status_code == 403
+    overview = (await clinician.get(f"/api/v1/patients/{pid}/overview")).json()
+    assert overview["difficulty_ratings"] == {"too_hard": 1}
+    page = (await clinician.get(f"/api/v1/patients/{pid}/sessions")).json()
+    assert page["items"][0]["difficulty_rating"] == "too_hard"

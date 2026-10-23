@@ -12,6 +12,7 @@ A clinician (assigned to the patient) defines a **constraint set**:
 | `min_difficulty` / `max_difficulty` | Hard range, 1–5 |
 | `max_exercises_per_session` | 1–50 |
 | `advance_after_correct` / `step_back_after_incorrect` | Progression rule thresholds |
+| `progression_mode` | `step` (default): the thresholds above. `ability`: the level the learned ability estimate predicts ~80% success at, after 10 answers. Both clamped to the range |
 
 Sets are **immutable versions** (`POST /patients/{id}/constraints` appends version N+1).
 The newest version applies to the **very next exercise**, including mid-session.

@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/clinician/StatusBadge";
 import { SessionDetailSchema, type ExerciseDetail } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import {
+  errorType,
   exerciseType,
   formatDateTime,
   formatDuration,
@@ -161,7 +162,16 @@ export default async function SessionDetailPage({
                       : "no hints"}
                     {ex.match_type &&
                       ` · scoring rule: ${ex.match_type.replaceAll("_", " ")}`}
+                    {ex.error_type &&
+                      ex.error_type !== "correct" &&
+                      ` · error type: ${errorType(ex.error_type)}`}
                   </p>
+                  {ex.uncertain_speech_match && (
+                    <p className="text-sm font-bold text-warning">
+                      Check this one: scored correct, but the speech recogniser
+                      was unsure of the word it heard.
+                    </p>
+                  )}
                 </>
               ) : (
                 <p className="text-sm text-ink-muted">

@@ -1,0 +1,296 @@
+target,response,expected_type
+cup,a cup,correct
+cup,cup,correct
+dog,dog,correct
+dog,it's a dog,correct
+dog,dogs,correct
+cat,the cat,correct
+cat,Cat.,correct
+bicycle,bike,correct
+bicycle,a bicycle,correct
+airplane,plane,correct
+airplane,aeroplane,correct
+refrigerator,fridge,correct
+television,tv,correct
+phone,telephone,correct
+phone,mobile phone,correct
+glasses,spectacles,correct
+sofa,couch,correct
+light bulb,bulb,correct
+light bulb,lightbulb,correct
+house,a house,correct
+tree,tree,correct
+flower,flowers,correct
+banana,bananas,correct
+apple,an apple,correct
+egg,an egg,correct
+key,keys,correct
+book,the book,correct
+car,car,correct
+bus,a bus,correct
+umbrella,umbrella,correct
+horse,horse,correct
+headphones,headphones,correct
+scissors,scissors,correct
+dog,cat,semantic
+dog,bone,semantic
+dog,animal,semantic
+cat,dog,semantic
+cat,mouse,semantic
+fork,spoon,semantic
+knife,fork,semantic
+cup,saucer,semantic
+cup,teapot,semantic
+apple,pear,semantic
+apple,orange,semantic
+banana,apple,semantic
+carrot,potato,semantic
+carrot,rabbit,semantic
+bed,pillow,semantic
+bed,chair,semantic
+sofa,chair,semantic
+table,chair,semantic
+car,bus,semantic
+bus,train,semantic
+bicycle,motorbike,semantic
+airplane,helicopter,semantic
+horse,cow,semantic
+bird,parrot,semantic
+fish,shark,semantic
+guitar,violin,semantic
+piano,keyboard,semantic
+hammer,nail,semantic
+hammer,screwdriver,semantic
+umbrella,rain,semantic
+clock,watch,semantic
+key,lock,semantic
+glasses,eyes,semantic
+toothbrush,comb,semantic
+phone,camera,semantic
+door,window,semantic
+sun,moon,semantic
+tree,flower,semantic
+flower,tree,semantic
+dog,log,formal
+dog,dot,formal
+cat,hat,formal
+cat,cap,formal
+key,tea,formal
+book,cook,formal
+bed,red,formal
+house,mouse,formal
+clock,sock,formal
+lamp,camp,formal
+sun,son,formal
+car,jar,formal
+bus,bun,formal
+fish,dish,formal
+horse,course,formal
+egg,leg,formal
+cup,pup,formal
+fork,pork,formal
+plate,gate,formal
+knife,wife,formal
+kettle,metal,formal
+table,cable,formal
+door,floor,formal
+tree,three,formal
+bird,word,formal
+phone,bone,formal
+shoe,blue,formal
+pencil,stencil,formal
+camera,carrot,formal
+hammer,summer,formal
+anchor,ankle,formal
+bottle,battle,formal
+apple,chapel,formal
+cat,cow,mixed
+dog,duck,mixed
+dog,donkey,mixed
+fish,fox,mixed
+horse,hen,mixed
+cup,kettle,mixed
+fork,flask,mixed
+plate,pan,mixed
+plate,pot,mixed
+bottle,bowl,mixed
+bed,bench,mixed
+sofa,settee,mixed
+sofa,stool,mixed
+car,cab,mixed
+car,coach,mixed
+bus,bike,mixed
+bus,boat,mixed
+carrot,cabbage,mixed
+carrot,cucumber,mixed
+tomato,potato,mixed
+microscope,telescope,mixed
+dumbbell,ball,mixed
+headphones,headset,mixed
+clock,calendar,mixed
+pencil,pen,mixed
+pencil,paper,mixed
+tree,tulip,mixed
+flower,forest,mixed
+sun,star,mixed
+sun,sky,mixed
+house,hut,mixed
+key,keyhole,mixed
+dog,spoon,unrelated
+cat,window,unrelated
+key,banana,unrelated
+book,horse,unrelated
+bed,river,unrelated
+clock,potato,unrelated
+house,pencil,unrelated
+lamp,giraffe,unrelated
+sofa,engine,unrelated
+cup,mountain,unrelated
+knife,garden,unrelated
+fork,doctor,unrelated
+plate,umbrella,unrelated
+kettle,shoe,unrelated
+table,monkey,unrelated
+tree,phone,unrelated
+flower,bucket,unrelated
+car,bread,unrelated
+bus,candle,unrelated
+bicycle,soup,unrelated
+fish,guitar,unrelated
+bird,chair,unrelated
+horse,ladder,unrelated
+apple,train,unrelated
+egg,blanket,unrelated
+banana,clock,unrelated
+phone,river,unrelated
+umbrella,bucket,unrelated
+glasses,tiger,unrelated
+camera,pillow,unrelated
+guitar,orange,unrelated
+hammer,cloud,unrelated
+dog,dag,nonword_related
+cat,tat,nonword_related
+cup,tup,nonword_related
+key,kee,nonword_related
+book,bood,nonword_related
+clock,klock,nonword_related
+house,howse,nonword_related
+lamp,lamd,nonword_related
+sofa,sofer,nonword_related
+pencil,pensil,nonword_related
+scissors,sissors,nonword_related
+refrigerator,refrigerater,nonword_related
+microwave,microwav,nonword_related
+kettle,kettel,nonword_related
+table,tabel,nonword_related
+television,telebision,nonword_related
+banana,banama,nonword_related
+carrot,carret,nonword_related
+tomato,tomado,nonword_related
+umbrella,umbella,nonword_related
+camera,camra,nonword_related
+toothbrush,toothbush,nonword_related
+guitar,guitor,nonword_related
+piano,pinano,nonword_related
+hammer,hammel,nonword_related
+telescope,teletope,nonword_related
+bicycle,bicicle,nonword_related
+airplane,airpane,nonword_related
+horse,horsh,nonword_related
+flower,flowel,nonword_related
+apple,appel,nonword_related
+glasses,glasseys,nonword_related
+dog,flimp,nonword_unrelated
+cat,snorb,nonword_unrelated
+key,plonter,nonword_unrelated
+book,zarg,nonword_unrelated
+bed,tromish,nonword_unrelated
+clock,plimber,nonword_unrelated
+house,vintle,nonword_unrelated
+lamp,skorve,nonword_unrelated
+sofa,brindok,nonword_unrelated
+cup,glarnet,nonword_unrelated
+knife,trelk,nonword_unrelated
+fork,zimbet,nonword_unrelated
+plate,vorgle,nonword_unrelated
+kettle,snipwar,nonword_unrelated
+table,grombo,nonword_unrelated
+tree,plusk,nonword_unrelated
+flower,stomvig,nonword_unrelated
+car,blenth,nonword_unrelated
+bus,krandle,nonword_unrelated
+bicycle,tormaflin,nonword_unrelated
+fish,glurm,nonword_unrelated
+bird,spantle,nonword_unrelated
+horse,twemble,nonword_unrelated
+apple,drosk,nonword_unrelated
+egg,strov,nonword_unrelated
+banana,klemnit,nonword_unrelated
+phone,zurbit,nonword_unrelated
+umbrella,stogwin,nonword_unrelated
+glasses,fennimer,nonword_unrelated
+camera,blorth,nonword_unrelated
+guitar,spromble,nonword_unrelated
+hammer,twindock,nonword_unrelated
+key,you open the door with it,description
+book,you read it at night,description
+bed,where you go to sleep,description
+clock,tells you the time,description
+house,where people live together,description
+scissors,you cut paper with them,description
+lamp,gives light on the table,description
+pencil,you write with this one,description
+sofa,you sit on it in the lounge,description
+cup,you drink tea from it,description
+knife,sharp thing for cutting bread,description
+kettle,boils water for tea,description
+door,you walk through it to go out,description
+television,you watch programmes on it,description
+sun,big hot thing in sky,description
+tree,tall green thing with leaves,description
+car,you drive it to work,description
+bus,big thing you ride to town,description
+bicycle,two wheels you pedal it,description
+dog,pet that barks a lot,description
+cat,pet that says meow,description
+fish,swims in the water tank,description
+bird,flies up in the sky,description
+apple,red fruit from a tree,description
+egg,chicken lays it for breakfast,description
+banana,long yellow fruit monkeys eat,description
+phone,you call people on it,description
+umbrella,keeps rain off your head,description
+glasses,help you see things better,description
+toothbrush,clean your teeth with it,description
+guitar,has strings you play songs,description
+hammer,hit nails into wood with,description
+dog,,no_response
+cat,skip,no_response
+key,I don't know,no_response
+book,idk,no_response
+bed,pass,no_response
+clock,dont know,no_response
+house,not sure,no_response
+lamp,um,no_response
+sofa,uh,no_response
+cup,erm,no_response
+knife,hmm,no_response
+fork,um um,no_response
+plate,er,no_response
+kettle,...,no_response
+table,?,no_response
+tree,I don't know it,no_response
+flower,no idea,no_response
+car,can't remember,no_response
+bus,I forget,no_response
+bicycle,dunno,no_response
+fish,I forgot,no_response
+bird,um I don't know,no_response
+horse,hmm no,no_response
+apple,I can't,no_response
+egg,uhh,no_response
+banana,mm,no_response
+phone,pass please,no_response
+umbrella,sorry,no_response
+glasses,no,no_response
+camera,er um,no_response

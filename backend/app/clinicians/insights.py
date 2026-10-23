@@ -7,7 +7,7 @@ All queries are bounded (aggregates, LIMIT, or pagination).
 import uuid
 from collections import defaultdict
 
-from sqlalchemy import Integer, case, cast, func, select
+from sqlalchemy import Integer, case, cast, func, select, text
 from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -184,6 +184,34 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
         )
     ).one()
 
+    error_type = ExerciseResponse.analysis["error_type"].astext.label("error_type")
+    error_profile = {
+        k: n
+        for k, n in (
+            await db.execute(
+                select(error_type, func.count())
+                .where(responses_since, ExerciseResponse.analysis.has_key("error_type"))
+                .group_by(text("error_type"))
+            )
+        ).all()
+    }
+    uncertain = await db.scalar(
+        select(func.count()).where(
+            responses_since,
+            ExerciseResponse.analysis["uncertain_speech_match"].astext == "true",
+        )
+    )
+
+    ratings = dict(
+        (
+            await db.execute(
+                select(PracticeSession.difficulty_rating, func.count())
+                .where(sessions_since, PracticeSession.difficulty_rating.isnot(None))
+                .group_by(PracticeSession.difficulty_rating)
+            )
+        ).all()
+    )
+
     care_team = (
         await db.execute(
             select(User.display_name)
@@ -214,6 +242,9 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
         hinted_responses=hinted,
         median_latency_ms=int(median) if median is not None else None,
         current_working_difficulty=level,
+        error_profile=error_profile,
+        uncertain_speech_matches=uncertain or 0,
+        difficulty_ratings=ratings,
         last_reset=ResetInfo(
             at=last_reset.created_at,
             by=await db.scalar(select(User.display_name).where(User.id == last_reset.reset_by)),
@@ -267,6 +298,7 @@ def _summary(s: PracticeSession, agg, reset_at=None) -> SessionSummary:
         else None,
         modes=sorted(agg.modes or []) if agg else [],
         duration_s=duration,
+        difficulty_rating=s.difficulty_rating,
         before_reset=reset_at is not None and s.started_at < reset_at,
     )
 
@@ -372,6 +404,10 @@ async def session_detail(
                 response_text=resp.text if resp else None,
                 outcome=resp.outcome if resp else None,
                 match_type=resp.analysis.get("match_type") if resp else None,
+                error_type=resp.analysis.get("error_type") if resp else None,
+                uncertain_speech_match=bool(resp.analysis.get("uncertain_speech_match"))
+                if resp
+                else False,
                 hints_used=resp.analysis.get("hints_used") if resp else None,
                 latency_ms=resp.latency_ms if resp else None,
                 transcript_quality=TranscriptQuality(

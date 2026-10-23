@@ -28,6 +28,7 @@ const valid: ConstraintFields = {
   max_difficulty: 3,
   max_exercises_per_session: 8,
   advance_after_correct: 3,
+  progression_mode: "step",
   step_back_after_incorrect: 2,
   note: null,
 };
