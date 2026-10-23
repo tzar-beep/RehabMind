@@ -108,6 +108,7 @@ class ConstraintOptions(BaseModel):
     difficulty: tuple[int, int]
     max_exercises_per_session: tuple[int, int]
     progression_rule: tuple[int, int]
+    progression_modes: list[str] = ["step", "ability"]
 
 
 @options_router.get("/constraint-options", response_model=ConstraintOptions)

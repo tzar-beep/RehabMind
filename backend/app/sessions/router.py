@@ -215,6 +215,22 @@ async def end_current_session(user: PatientUser, db: DbDep) -> None:
     await service.end_session(db, (await _me(user, db)).id)
 
 
+class RatingIn(BaseModel):
+    rating: Literal["too_easy", "just_right", "too_hard"]
+
+
+@router.put("/sessions/{session_id}/rating", status_code=status.HTTP_204_NO_CONTENT)
+async def rate_session(session_id: uuid.UUID, body: RatingIn, user: PatientUser, db: DbDep) -> None:
+    """How hard the finished session felt. Optional; can be changed until the next one."""
+    session = await db.get(PracticeSession, session_id)
+    if session is None or session.patient_id != (await _me(user, db)).id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Session not found.")
+    if session.status == "active":
+        raise HTTPException(status.HTTP_409_CONFLICT, "Finish the session first.")
+    session.difficulty_rating = body.rating
+    await db.commit()
+
+
 @router.post("/exercises/{exercise_id}/responses", response_model=ResponseResult)
 async def respond(
     exercise_id: uuid.UUID, body: ResponseIn, user: PatientUser, db: DbDep

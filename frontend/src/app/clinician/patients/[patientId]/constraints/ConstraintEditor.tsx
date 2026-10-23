@@ -18,7 +18,7 @@ import {
   picturesAvailable,
   validateConstraints,
 } from "@/lib/constraints";
-import { exerciseType, responseMode } from "@/lib/format";
+import { PROGRESSION_MODE, exerciseType, responseMode } from "@/lib/format";
 
 const DEFAULTS: ConstraintFields = {
   allowed_exercise_types: ["picture_naming"],
@@ -29,6 +29,7 @@ const DEFAULTS: ConstraintFields = {
   max_exercises_per_session: 8,
   advance_after_correct: 3,
   step_back_after_incorrect: 2,
+  progression_mode: "step",
   note: null,
 };
 
@@ -514,6 +515,29 @@ export function ConstraintEditor({
           onChange={(n) => set("step_back_after_incorrect", n)}
         />
       </div>
+
+      <Fieldset legend="How difficulty changes">
+        {(["step", "ability"] as const).map((mode) => (
+          <label key={mode} className="flex items-start gap-3">
+            <input
+              type="radio"
+              name="progression_mode"
+              value={mode}
+              checked={v.progression_mode === mode}
+              onChange={() => set("progression_mode", mode)}
+              className="mt-1 size-5 accent-[var(--color-accent)]"
+            />
+            <span>
+              <span className="font-bold">{PROGRESSION_MODE[mode]}</span>
+              <span className="block text-sm text-ink-muted">
+                {mode === "step"
+                  ? "Uses the two numbers above."
+                  : "After 10 answers, picks the level the learned ability estimate predicts the patient gets right about 80% of the time. In simulation this kept more practice at a useful difficulty. Always stays inside the range above."}
+              </span>
+            </span>
+          </label>
+        ))}
+      </Fieldset>
 
       <div className="flex flex-col gap-1">
         <label htmlFor="note" className="font-bold">

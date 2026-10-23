@@ -23,6 +23,7 @@ from app.ai.prompts import (
 from app.ai.provider import AIProvider, GenerationRequest
 from app.ai.runner import MAX_ATTEMPTS, generate_validated
 from app.ai.schemas import FeedbackOutput
+from app.analysis.scoring import normalize
 from app.clinical.models import ConstraintSet
 from app.exercises.models import Exercise
 from app.exercises.types import OBJECTIVE_LABELS, OBJECTIVES, TARGET_SKILLS
@@ -63,6 +64,12 @@ def build_request(inp: dict[str, Any]) -> GenerationRequest:
     )
 
 
+def task_words(exercise: Exercise, response: ExerciseResponse) -> set[str]:
+    texts = [exercise.expected.get("target", ""), response.text or ""]
+    texts += exercise.expected.get("accepted_answers", [])
+    return {w for t in texts for w in normalize(t).split()}
+
+
 async def feedback_for(
     db: AsyncSession, provider: AIProvider, exercise: Exercise, response: ExerciseResponse
 ) -> FeedbackOutput | None:
@@ -87,7 +94,7 @@ async def feedback_for(
         db,
         provider,
         build_request(inp),
-        lambda raw: check_feedback(raw, response.outcome),
+        lambda raw: check_feedback(raw, response.outcome, task_words(exercise, response)),
         patient_id=exercise.patient_id,
         constraint_set_id=exercise.constraint_set_id,
         constraint_version=await _constraint_version(db, exercise),

@@ -192,7 +192,13 @@ Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.p
 
 ## ✅ Quality
 
-- **235** backend tests, including property-based tests of the max-difficulty rule
+- **259** backend tests, including property-based tests of the max-difficulty rule
+- **Clinical validation** ([docs/validation](docs/validation/README.md)): scoring benchmark
+  (held-out κ = 0.95, 1.0% false accepts), Philadelphia Naming Test error types, a
+  difficulty audit against word norms (ρ = 0.80), a raw-vs-shipped GenAI audit (17.8% of raw
+  outputs leaked the answer; none reached patients), a learner simulation (ability-guided
+  progression keeps 71% of practice in the productive band vs 45%), and ready-to-run study
+  protocols for clinicians, older adults and people with aphasia
 - **23** Vitest unit tests and **23 Playwright end-to-end** tests, with axe accessibility checks on every screen
 - Phone and tablet layout checks, dependency audits, and a CI workflow
 
@@ -200,6 +206,7 @@ Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.p
 
 [Architecture](docs/architecture.md) ·
 [Clinical constraints](docs/clinical-constraints.md) ·
+[Clinical validation](docs/validation/README.md) ·
 [AI pipeline](docs/ai-pipeline.md) ·
 [Clinician workflow](docs/clinician-workflow.md) ·
 [Security](docs/security.md) ·

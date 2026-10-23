@@ -11,6 +11,7 @@ import { SessionPageSchema } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import {
   formatDateTime,
+  DIFFICULTY_RATING,
   formatDuration,
   responseMode,
   SESSION_STATUS,
@@ -89,6 +90,9 @@ export default async function SessionsPage({
                   <th scope="col" className="px-5 py-3">
                     Duration
                   </th>
+                  <th scope="col" className="px-5 py-3">
+                    Patient&rsquo;s rating
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
@@ -134,6 +138,12 @@ export default async function SessionsPage({
                     </td>
                     <td className="px-5 py-3">
                       {formatDuration(s.duration_s)}
+                    </td>
+                    <td className="px-5 py-3">
+                      {s.difficulty_rating
+                        ? (DIFFICULTY_RATING[s.difficulty_rating] ??
+                          s.difficulty_rating)
+                        : "—"}
                     </td>
                   </tr>
                 ))}

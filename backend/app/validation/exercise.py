@@ -17,6 +17,7 @@ from app.ai.schemas import ExerciseOutput
 from app.analysis.scoring import normalize
 from app.clinical.models import ConstraintSet
 from app.exercises.models import Stimulus
+from app.validation import plain_language
 
 
 @dataclass
@@ -93,11 +94,22 @@ def _leak_terms(stim: Stimulus, exercise_type: str) -> list[str]:
     return [normalize(a) for a in stim.accepted_answers]
 
 
+def _task_words(stim: Stimulus) -> set[str]:
+    """Words the picture's own task uses: allowed in AI text even when rare."""
+    texts = [stim.target, stim.category, *stim.accepted_answers]
+    task = stim.task or {}
+    texts += task.get("sentence", {}).get("words", [])
+    for c in task.get("description", {}).get("concepts", []):
+        texts += [c["name"], *c["terms"]]
+    return {w for t in texts for w in normalize(t).split()}
+
+
 def check_safety(
     out: ExerciseOutput, stim: Stimulus, exercise_type: str = "picture_naming"
 ) -> Verdict:
     reasons: list[str] = []
     answers = _leak_terms(stim, exercise_type)
+    task_words = _task_words(stim)
     texts = [("prompt", out.prompt, MAX_PROMPT_WORDS)]
     if out.semantic_cue:
         texts.append(("semantic_cue", out.semantic_cue, MAX_CUE_WORDS))
@@ -112,6 +124,7 @@ def check_safety(
         for code, pattern in _UNSAFE_PATTERNS.items():
             if re.search(pattern, text, re.IGNORECASE):
                 reasons.append(f"{code}:{name}")
+        reasons += plain_language.check(text, name, task_words)
     if exercise_type == "picture_naming":
         cue = (out.phonemic_cue or "").lower()
         if out.hint:

@@ -1,5 +1,5 @@
 import type { ConstraintFields } from "@/lib/api/clinician";
-import { exerciseType, responseMode } from "@/lib/format";
+import { PROGRESSION_MODE, exerciseType, responseMode } from "@/lib/format";
 
 export function constraintRows(
   c: ConstraintFields,
@@ -26,6 +26,10 @@ export function constraintRows(
     {
       label: "Exercises per session",
       value: String(c.max_exercises_per_session),
+    },
+    {
+      label: "How difficulty changes",
+      value: PROGRESSION_MODE[c.progression_mode] ?? c.progression_mode,
     },
     {
       label: "Increase difficulty after",

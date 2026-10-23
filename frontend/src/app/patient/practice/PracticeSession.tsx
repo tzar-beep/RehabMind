@@ -32,6 +32,7 @@ import {
 } from "@/lib/api/schemas";
 
 import { AiTip } from "./AiTip";
+import { DifficultyRating } from "./DifficultyRating";
 import { EMPTY_ANSWER, IMAGE_ALT, TYPE_HINT, feedbackFor } from "./messages";
 import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
 import { WordBank } from "./WordBank";
@@ -257,6 +258,9 @@ export function PracticeSession() {
         <p className="text-xl text-ink-muted">
           Well done for showing up today.
         </p>
+        {s && s.practiced > 0 && (
+          <DifficultyRating sessionId={state.session_id} />
+        )}
         <Link href="/patient" className={buttonClasses("primary", "lg")}>
           Back to home
         </Link>

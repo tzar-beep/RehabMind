@@ -1,0 +1,109 @@
+target,response,expected_type
+toothbrush,a toothbrush,correct
+glasses,glasses,correct
+bed,a bed,correct
+clock,the clock,correct
+bottle,bottle,correct
+guitar,a guitar,correct
+carrot,carrots,correct
+fish,a fish,correct
+bird,birds,correct
+door,door,correct
+hammer,it's a hammer,correct
+sun,the sun,correct
+egg,bread,semantic
+horse,sheep,semantic
+cat,lion,semantic
+bus,taxi,semantic
+guitar,drum,semantic
+bottle,cup,semantic
+shoe,sock,semantic
+door,roof,semantic
+fish,water,semantic
+tree,leaf,semantic
+telescope,binoculars,semantic
+umbrella,coat,semantic
+bus,fuss,formal
+car,star,formal
+cup,pump,formal
+fish,wish,formal
+tree,free,formal
+key,knee,formal
+bed,head,formal
+book,hook,formal
+lamp,stamp,formal
+horse,nurse,formal
+egg,peg,formal
+door,more,formal
+dog,goat,mixed
+cat,kitten,mixed
+fish,frog,mixed
+car,train,mixed
+bus,van,mixed
+apple,peach,mixed
+bottle,bucket,mixed
+knife,spoon,mixed
+bed,cot,mixed
+tree,twig,mixed
+guitar,harp,mixed
+sun,sunshine,mixed
+dog,ticket,unrelated
+cat,rocket,unrelated
+key,pillow,unrelated
+book,spoon,unrelated
+bed,monkey,unrelated
+fish,lorry,unrelated
+bird,candle,unrelated
+horse,radio,unrelated
+apple,wallet,unrelated
+egg,pencil,unrelated
+phone,garden,unrelated
+hammer,jelly,unrelated
+dog,dorg,nonword_related
+cat,cak,nonword_related
+cup,cupt,nonword_related
+key,kef,nonword_related
+book,boog,nonword_related
+bed,bep,nonword_related
+house,houst,nonword_related
+lamp,lanp,nonword_related
+sofa,sopha,nonword_related
+kettle,kettow,nonword_related
+banana,banna,nonword_related
+bicycle,biscicle,nonword_related
+dog,prefnit,nonword_unrelated
+cat,zogwel,nonword_unrelated
+key,brupt,nonword_unrelated
+book,flindam,nonword_unrelated
+bed,skrumtil,nonword_unrelated
+house,zelpo,nonword_unrelated
+lamp,quorb,nonword_unrelated
+sofa,triddle,nonword_unrelated
+kettle,plamfo,nonword_unrelated
+banana,strug,nonword_unrelated
+bicycle,vomp,nonword_unrelated
+fish,blentrop,nonword_unrelated
+dog,man's best friend that barks,description
+cat,furry pet catches mice,description
+key,metal thing for the lock,description
+cup,holds your hot tea,description
+bed,soft place for sleeping,description
+phone,ring ring talk to people,description
+car,four wheels and an engine,description
+apple,fruit that keeps doctor away,description
+umbrella,you hold it when raining,description
+scissors,two blades for cutting,description
+sun,shines in the day sky,description
+book,full of pages to read,description
+dog,I really don't know,no_response
+cat,not sure sorry,no_response
+key,umm,no_response
+book,erm erm,no_response
+bed,skip this one,no_response
+house,can't think,no_response
+lamp,I've forgotten,no_response
+sofa,no idea sorry,no_response
+kettle,pass,no_response
+banana,uh uh,no_response
+bicycle,dunno sorry,no_response
+fish,I don't remember,no_response

@@ -25,13 +25,20 @@ class FakeProvider:
         self.no_speech_prob = 0.01
         self.logprob = -0.2
         self.fail = False
+        self.low_confidence_words: list[str] = []
 
     def transcribe(self, audio: bytes, language: str) -> Transcript:
         assert audio == AUDIO and language == "en"  # decrypted correctly
         if self.fail:
             raise RuntimeError("decoder error")
         return Transcript(
-            self.text or "", "fake", "fake-1", 1.2, self.no_speech_prob, self.logprob, []
+            self.text or "",
+            "fake",
+            "fake-1",
+            1.2,
+            self.no_speech_prob,
+            self.logprob,
+            self.low_confidence_words,
         )
 
 
@@ -118,6 +125,18 @@ async def test_speech_answer_is_transcribed_scored_and_audio_deleted(care, stt):
         resp = (await db.execute(select(ExerciseResponse))).scalar_one()
     assert resp.mode == "speech" and resp.latency_ms == 2500
     assert resp.analysis["stt"]["provider"] == "fake"
+
+
+async def test_correct_match_on_an_uncertain_word_is_flagged(care, stt):  # noqa: F811
+    patient, ex = await speech_plan(care)
+    target = await target_of(ex["id"])
+    stt.text, stt.low_confidence_words = target, [f" {target}."]
+    await upload(patient, ex["id"])
+    async with SessionLocal() as db:
+        resp = (await db.execute(select(ExerciseResponse))).scalar_one()
+    assert resp.outcome == "correct"
+    assert resp.analysis["uncertain_speech_match"] is True
+    assert resp.analysis["error_type"] == "correct"
 
 
 async def test_no_speech_keeps_exercise_open_for_retry(care, stt):  # noqa: F811

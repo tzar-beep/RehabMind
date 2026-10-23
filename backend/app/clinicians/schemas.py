@@ -63,6 +63,11 @@ class PatientOverview(BaseModel):
     hinted_responses: int
     median_latency_ms: int | None
     current_working_difficulty: int | None
+    # Picture-naming error types (app.analysis.errors), e.g. {"semantic": 4, "formal": 1}.
+    error_profile: dict[str, int] = {}
+    uncertain_speech_matches: int = 0
+    # Patients' after-session ratings: too_easy / just_right / too_hard -> count.
+    difficulty_ratings: dict[str, int] = {}
     # Figures above count only practice since this fresh start (None: never reset).
     last_reset: ResetInfo | None = None
 
@@ -78,6 +83,7 @@ class SessionSummary(BaseModel):
     avg_difficulty: float | None
     modes: list[str]
     duration_s: int | None
+    difficulty_rating: str | None = None
     # Started before the patient's latest progress reset: kept for history, not counted.
     before_reset: bool = False
 
@@ -116,6 +122,10 @@ class ExerciseDetail(BaseModel):
     response_text: str | None
     outcome: str | None
     match_type: str | None
+    # Picture naming only: PNT-style error type (app.analysis.errors).
+    error_type: str | None = None
+    # Speech answer scored correct although the recogniser was unsure of the matched word.
+    uncertain_speech_match: bool = False
     hints_used: int | None
     latency_ms: int | None
     transcript_quality: TranscriptQuality | None
@@ -154,3 +164,4 @@ class ConstraintVersion(BaseModel):
     max_exercises_per_session: int
     advance_after_correct: int
     step_back_after_incorrect: int
+    progression_mode: str = "step"

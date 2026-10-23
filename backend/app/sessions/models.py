@@ -2,7 +2,18 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, Float, ForeignKey, Index, Integer, String, Text, func, text
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -21,6 +32,10 @@ class PracticeSession(Base):
         ),
         # Clinician history/trends: a patient's sessions by time.
         Index("ix_practice_sessions_patient_started", "patient_id", "started_at"),
+        CheckConstraint(
+            "difficulty_rating IN ('too_easy', 'just_right', 'too_hard')",
+            name="difficulty_rating",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -31,6 +46,9 @@ class PracticeSession(Base):
     planned_exercises: Mapped[int]
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # The patient's own after-session rating (too_easy | just_right | too_hard), optional.
+    # A direct report of whether practice was at the right difficulty.
+    difficulty_rating: Mapped[str | None] = mapped_column(String(16))
 
 
 class ExerciseResponse(Base):

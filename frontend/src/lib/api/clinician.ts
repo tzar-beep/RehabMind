@@ -56,6 +56,9 @@ export const PatientOverviewSchema = z.object({
   hinted_responses: z.number(),
   median_latency_ms: z.number().nullable(),
   current_working_difficulty: z.number().nullable(),
+  error_profile: z.record(z.string(), z.number()).default({}),
+  uncertain_speech_matches: z.number().default(0),
+  difficulty_ratings: z.record(z.string(), z.number()).default({}),
   last_reset: ResetInfoSchema.nullable().optional(),
 });
 export type PatientOverview = z.infer<typeof PatientOverviewSchema>;
@@ -71,6 +74,7 @@ export const SessionSummarySchema = z.object({
   avg_difficulty: z.number().nullable(),
   modes: z.array(z.string()),
   duration_s: z.number().nullable(),
+  difficulty_rating: z.string().nullable().default(null),
   before_reset: z.boolean().optional(),
 });
 export type SessionSummary = z.infer<typeof SessionSummarySchema>;
@@ -98,6 +102,8 @@ export const ExerciseDetailSchema = z.object({
   response_text: z.string().nullable(),
   outcome: z.string().nullable(),
   match_type: z.string().nullable(),
+  error_type: z.string().nullable().default(null),
+  uncertain_speech_match: z.boolean().default(false),
   hints_used: z.number().nullable(),
   latency_ms: z.number().nullable(),
   transcript_quality: z
@@ -140,6 +146,7 @@ export const ConstraintFieldsSchema = z.object({
   max_exercises_per_session: z.number(),
   advance_after_correct: z.number(),
   step_back_after_incorrect: z.number(),
+  progression_mode: z.enum(["step", "ability"]).default("step"),
   note: z.string().nullable(),
 });
 export type ConstraintFields = z.infer<typeof ConstraintFieldsSchema>;
