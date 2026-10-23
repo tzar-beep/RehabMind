@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 /*
- * Design tokens. Calm, warm-neutral base with a deep teal accent.
+ * Design tokens. A cool neutral ground taken from the teal brand, one accent, flat surfaces
+ * separated by a 1px line or one tone step (no resting shadows, no gradients).
  * All text/background pairs meet WCAG 2.1 AA (most meet AAA).
  */
 @theme {
   --font-sans: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
 
-  --color-canvas: #f7f5f2;
+  --color-canvas: #f2f5f5;
   --color-surface: #ffffff;
   --color-ink: #1c2430;
   --color-ink-muted: #4a5565;
-  --color-line: #d9d4cc;
-  --color-line-strong: #8a8378;
+  --color-line: #dde3e3;
+  --color-line-strong: #6f7a7b;
 
   --color-accent: #0f6e6e;
   --color-accent-hover: #0b5858;
@@ -33,14 +34,14 @@
 
   /* Single-series chart mark (passes chroma + contrast checks); gridlines stay recessive. */
   --color-chart: #00897b;
-  --color-grid: #e7e2da;
+  --color-grid: #e2e8e8;
 
   --radius-control: 0.75rem;
   --radius-card: 1rem;
 
-  /* Two depth levels: flat cards use a border only; raised cards add this soft shadow. */
-  --shadow-card:
-    0 1px 2px rgb(28 36 48 / 0.04), 0 6px 20px -8px rgb(28 36 48 / 0.12);
+  /* Resting cards are flat: a border, never a shadow. Only what floats casts one. */
+  --shadow-card: 0 0 #0000;
+  --shadow-float: 0 12px 32px -12px rgb(17 24 39 / 0.28);
 
   /* Gentle entrance (blur + rise, no opacity so contrast checks see final colours). */
   --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -106,15 +107,7 @@ html {
 }
 
 body {
-  /* A soft, static teal glow at the top of every page for depth. */
-  background:
-    radial-gradient(
-        1100px 420px at 50% -160px,
-        rgb(15 110 110 / 0.1),
-        transparent 70%
-      )
-      no-repeat,
-    var(--color-canvas);
+  background: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
   line-height: 1.6;

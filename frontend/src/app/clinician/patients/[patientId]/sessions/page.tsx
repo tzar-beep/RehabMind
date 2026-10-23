@@ -75,19 +75,19 @@ export default async function SessionsPage({
                   <th scope="col" className="px-5 py-3">
                     Status
                   </th>
-                  <th scope="col" className="px-5 py-3">
+                  <th scope="col" className="px-5 py-3 text-right">
                     Answered
                   </th>
                   <th scope="col" className="px-5 py-3">
                     Results
                   </th>
-                  <th scope="col" className="px-5 py-3">
+                  <th scope="col" className="px-5 py-3 text-right">
                     Avg. difficulty
                   </th>
                   <th scope="col" className="px-5 py-3">
                     Answer methods
                   </th>
-                  <th scope="col" className="px-5 py-3">
+                  <th scope="col" className="px-5 py-3 text-right">
                     Duration
                   </th>
                   <th scope="col" className="px-5 py-3">
@@ -124,19 +124,19 @@ export default async function SessionsPage({
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-3 tabular-nums">
+                    <td className="px-5 py-3 text-right tabular-nums">
                       {s.attempted} of {s.planned}
                     </td>
                     <td className="px-5 py-3 text-sm">
                       <OutcomeText o={s.outcomes} />
                     </td>
-                    <td className="px-5 py-3 tabular-nums">
+                    <td className="px-5 py-3 text-right tabular-nums">
                       {s.avg_difficulty?.toFixed(1) ?? "—"}
                     </td>
                     <td className="px-5 py-3">
                       {s.modes.map(responseMode).join(", ") || "—"}
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="px-5 py-3 text-right tabular-nums">
                       {formatDuration(s.duration_s)}
                     </td>
                     <td className="px-5 py-3">

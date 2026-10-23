@@ -238,10 +238,6 @@ export function PracticeSession() {
     const s = state.summary;
     return (
       <div className="relative isolate flex flex-col items-center gap-6 overflow-hidden rounded-card border border-line bg-surface px-6 py-12 text-center shadow-card">
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 -z-10 h-40 bg-linear-to-b from-accent-soft to-transparent"
-        />
         <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-4 py-1.5 font-bold text-accent-hover">
           <PartyPopper aria-hidden="true" size={18} />
           Session finished

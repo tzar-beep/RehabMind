@@ -1,5 +1,4 @@
-import { Check, Images, Trophy } from "lucide-react";
-import type { ReactNode } from "react";
+import { Check } from "lucide-react";
 
 import type { PracticeActivity } from "@/lib/api/schemas";
 import { cn } from "@/lib/utils";
@@ -39,7 +38,7 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
   return (
     <section
       aria-labelledby="week-heading"
-      className="animate-rise grid gap-6 rounded-card [animation-delay:120ms] border border-line bg-surface p-6 shadow-card sm:p-8 lg:grid-cols-[1fr_auto]"
+      className="grid gap-6 rounded-card border border-line bg-surface p-6 sm:p-8 lg:grid-cols-[1fr_auto]"
     >
       <div className="flex flex-col gap-5">
         <div>
@@ -70,8 +69,8 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
                 className={cn(
                   "grid aspect-square w-full max-w-12 place-items-center rounded-full",
                   count
-                    ? "bg-linear-to-br from-[#14857f] to-brand-deep text-white shadow-md shadow-accent/30"
-                    : "border-2 border-dashed border-line-strong/50 bg-canvas",
+                    ? "bg-accent text-white"
+                    : "bg-canvas",
                   isToday && "ring-4 ring-accent-soft",
                 )}
               >
@@ -84,14 +83,10 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
 
       <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:w-64 lg:grid-cols-1">
         <Stat
-          icon={<Images size={20} />}
-          tile="bg-[#e5edf9] text-[#2f5ea8]"
           label="Pictures practised"
           value={activity.pictures_practised}
         />
         <Stat
-          icon={<Trophy size={20} />}
-          tile="bg-warning-soft text-warning"
           label="Sessions finished"
           value={activity.sessions_completed}
         />
@@ -100,29 +95,11 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
   );
 }
 
-function Stat({
-  icon,
-  tile,
-  label,
-  value,
-}: {
-  icon: ReactNode;
-  tile: string;
-  label: string;
-  value: number;
-}) {
+function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="relative flex min-h-19 flex-col-reverse justify-center rounded-2xl bg-canvas py-3 pr-4 pl-19">
-      <dt className="text-sm text-ink-muted">
-        <span
-          aria-hidden="true"
-          className={`absolute top-1/2 left-4 grid size-11 -translate-y-1/2 place-items-center rounded-xl ${tile}`}
-        >
-          {icon}
-        </span>
-        {label}
-      </dt>
-      <dd className="text-2xl leading-tight font-bold tabular-nums">{value}</dd>
+    <div className="flex flex-col-reverse gap-0.5 border-line py-2 lg:border-l lg:pl-6">
+      <dt className="text-base text-ink-muted">{label}</dt>
+      <dd className="text-3xl leading-tight font-bold tabular-nums">{value}</dd>
     </div>
   );
 }

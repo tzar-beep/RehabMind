@@ -52,24 +52,24 @@ export default async function ClinicianDashboard() {
   );
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="relative isolate overflow-hidden rounded-card bg-linear-to-br from-[#0d5556] via-brand-deep to-[#072b2c] p-8 text-white shadow-card">
-        <div
-          aria-hidden="true"
-          className="absolute -top-24 -right-10 -z-10 size-72 rounded-full bg-[#5ec4b6]/20 blur-3xl"
-        />
-        <p className="flex items-center gap-2 text-base text-brand-muted">
-          <CalendarDays aria-hidden="true" size={18} />
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Your patients</h1>
+          <p className="mt-1 text-base text-ink-muted">
+            {patients.length === 0
+              ? "No patients assigned yet."
+              : `${recent.length} of ${patients.length} practised in the last ${RECENT_DAYS} days. Recorded practice, not a clinical assessment.`}
+          </p>
+        </div>
+        <p className="flex items-center gap-2 text-sm text-ink-muted">
+          <CalendarDays aria-hidden="true" size={16} />
           {new Intl.DateTimeFormat("en-GB", {
             weekday: "long",
             day: "numeric",
             month: "long",
           }).format(new Date())}
-        </p>
-        <h1 className="mt-2 text-4xl font-bold">Your patients</h1>
-        <p className="mt-2 max-w-2xl text-lg text-brand-muted">
-          Welcome, {me.display_name}. Practice activity below is recorded data,
-          not a clinical assessment.
+          <span className="sr-only">, signed in as {me.display_name}</span>
         </p>
       </div>
 
@@ -116,7 +116,7 @@ export default async function ClinicianDashboard() {
                 <caption className="sr-only">
                   Assigned patients and recent practice
                 </caption>
-                <thead className="border-b border-line text-sm text-ink-muted">
+                <thead className="border-b border-line text-sm font-normal text-ink-muted">
                   <tr>
                     <th scope="col" className="px-5 py-3">
                       Patient
@@ -124,7 +124,7 @@ export default async function ClinicianDashboard() {
                     <th scope="col" className="px-5 py-3">
                       Last practice
                     </th>
-                    <th scope="col" className="px-5 py-3">
+                    <th scope="col" className="px-5 py-3 text-right">
                       Sessions completed
                     </th>
                     <th scope="col" className="px-5 py-3">
@@ -139,7 +139,7 @@ export default async function ClinicianDashboard() {
                   {patients.map((p) => (
                     <tr
                       key={p.id}
-                      className="align-top transition-colors hover:bg-canvas/60"
+                      className="align-top"
                     >
                       <th scope="row" className="px-5 py-4">
                         <span className="flex items-center gap-3">
@@ -153,7 +153,7 @@ export default async function ClinicianDashboard() {
                         </span>
                       </th>
                       <td className="px-5 py-4">{lastPractice(p)}</td>
-                      <td className="px-5 py-4 tabular-nums">
+                      <td className="px-5 py-4 text-right tabular-nums">
                         {p.sessions_completed}
                       </td>
                       <td className="px-5 py-4">

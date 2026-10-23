@@ -100,46 +100,6 @@ export default async function PatientOverviewPage({
       )}
 
       <Section
-        id="limits"
-        title="Current practice limits"
-        description="Set by the care team. The AI and the rule-based generator always work inside these."
-        action={
-          <Link
-            href={`${base}/constraints`}
-            className={buttonClasses("secondary")}
-          >
-            {active ? "Review or create new version" : "Set practice limits"}
-          </Link>
-        }
-      >
-        {active ? (
-          <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-6 shadow-card">
-            <div className="flex flex-wrap items-center gap-3">
-              <StatusBadge tone="success">
-                Active: version {active.version}
-              </StatusBadge>
-              <span className="text-sm text-ink-muted">
-                Created {formatDateTime(active.created_at)} by{" "}
-                {active.created_by}
-              </span>
-            </div>
-            <ConstraintSummary constraints={active} />
-          </div>
-        ) : (
-          <EmptyState
-            icon={ClipboardList}
-            title="No practice limits set"
-            action={{
-              href: `${base}/constraints`,
-              label: "Set practice limits",
-            }}
-          >
-            The patient cannot start practice until a clinician sets limits.
-          </EmptyState>
-        )}
-      </Section>
-
-      <Section
         id="activity"
         title="Practice activity"
         description={
@@ -264,6 +224,46 @@ export default async function PatientOverviewPage({
               </Link>
             </div>
           </>
+        )}
+      </Section>
+
+      <Section
+        id="limits"
+        title="Current practice limits"
+        description="Set by the care team. The AI and the rule-based generator always work inside these."
+        action={
+          <Link
+            href={`${base}/constraints`}
+            className={buttonClasses("secondary")}
+          >
+            {active ? "Review or create new version" : "Set practice limits"}
+          </Link>
+        }
+      >
+        {active ? (
+          <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-6 shadow-card">
+            <div className="flex flex-wrap items-center gap-3">
+              <StatusBadge tone="success">
+                Active: version {active.version}
+              </StatusBadge>
+              <span className="text-sm text-ink-muted">
+                Created {formatDateTime(active.created_at)} by{" "}
+                {active.created_by}
+              </span>
+            </div>
+            <ConstraintSummary constraints={active} />
+          </div>
+        ) : (
+          <EmptyState
+            icon={ClipboardList}
+            title="No practice limits set"
+            action={{
+              href: `${base}/constraints`,
+              label: "Set practice limits",
+            }}
+          >
+            The patient cannot start practice until a clinician sets limits.
+          </EmptyState>
         )}
       </Section>
 

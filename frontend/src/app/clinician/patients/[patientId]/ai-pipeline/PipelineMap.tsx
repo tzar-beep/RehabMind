@@ -32,7 +32,6 @@ import {
 } from "react";
 
 import type { Pipeline, PipelineGeneration } from "@/lib/api/clinician";
-import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import { cn } from "@/lib/utils";
 
 import {
@@ -530,7 +529,7 @@ export function PipelineMap({ data }: { data: Pipeline }) {
         <button
           type="button"
           onClick={togglePlay}
-          className="group inline-flex min-h-14 items-center gap-3 rounded-full bg-linear-to-r from-accent to-brand-deep px-7 text-lg font-bold text-white shadow-lg shadow-accent/30 transition-transform hover:scale-[1.02]"
+          className="group inline-flex min-h-14 items-center gap-3 rounded-full bg-accent px-7 text-lg font-bold text-white transition-[background-color,transform] hover:bg-accent-hover active:scale-[0.98]"
         >
           <span className="grid size-8 place-items-center rounded-full bg-white/20">
             {playing ? (
@@ -561,21 +560,8 @@ export function PipelineMap({ data }: { data: Pipeline }) {
       {/* The map */}
       <div
         ref={container}
-        className="relative isolate overflow-hidden rounded-3xl bg-[radial-gradient(900px_420px_at_12%_-12%,rgba(94,196,182,0.30),transparent_60%),radial-gradient(700px_380px_at_100%_115%,rgba(47,94,168,0.30),transparent_60%),linear-gradient(140deg,#0d5556,#0a3d3e_45%,#062627)] p-5 text-white shadow-xl shadow-ink/20 sm:p-7"
+        className="relative isolate overflow-hidden rounded-3xl bg-brand-deep p-5 text-white sm:p-7"
       >
-        {/* Magic UI Flickering Grid, fading out towards the bottom. */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-20 mask-[linear-gradient(to_bottom,#000_55%,transparent)]"
-        >
-          <FlickeringGrid
-            squareSize={4}
-            gridGap={6}
-            color="#5ec4b6"
-            maxOpacity={0.28}
-            flickerChance={0.12}
-          />
-        </div>
         <svg
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10 size-full overflow-visible"
@@ -768,7 +754,7 @@ export function PipelineMap({ data }: { data: Pipeline }) {
             >
               <div
                 key={`${traceIndex}-${selected}`}
-                className="h-full origin-left animate-countdown bg-linear-to-r from-accent to-[#5ec4b6]"
+                className="h-full origin-left animate-countdown bg-[#5ec4b6]"
                 style={{ animationDuration: `${step.ms}ms` }}
               />
             </div>
@@ -794,7 +780,7 @@ export function PipelineMap({ data }: { data: Pipeline }) {
               <div className="flex flex-col gap-4">
                 <span
                   aria-hidden="true"
-                  className="bg-linear-to-br from-[#4f9e94] to-[#5ec4b6] bg-clip-text text-7xl leading-none font-bold text-[#4f9e94]"
+                  className="text-7xl leading-none font-bold text-[#4f9e94]"
                 >
                   {String(selected + 1).padStart(2, "0")}
                 </span>
@@ -919,7 +905,7 @@ function Rail({
         />
         <span
           aria-hidden="true"
-          className="absolute top-1/2 left-6 h-1 -translate-y-1/2 rounded-full bg-linear-to-r from-accent to-[#5ec4b6] transition-[width] duration-700 ease-out"
+          className="absolute top-1/2 left-6 h-1 -translate-y-1/2 rounded-full bg-accent transition-[width] duration-700 ease-out"
           style={{
             width: `calc((100% - 3rem) * ${selected / (steps.length - 1)})`,
           }}
@@ -991,18 +977,12 @@ function Stats({ traces }: { traces: Trace[] }) {
   ];
   return (
     <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      {items.map(({ icon: Icon, label, value }) => (
+      {items.map(({ label, value }) => (
         <div
           key={label}
-          className="relative flex min-h-19 flex-col-reverse justify-center rounded-2xl border border-line bg-surface py-4 pr-4 pl-18 shadow-card"
+          className="flex flex-col-reverse justify-center rounded-2xl border border-line bg-surface p-4"
         >
           <dt className="text-sm text-ink-muted">
-            <span
-              aria-hidden="true"
-              className="absolute top-1/2 left-4 grid size-11 -translate-y-1/2 place-items-center rounded-xl bg-linear-to-br from-accent-soft to-[#d9f7f2] text-accent-hover"
-            >
-              <Icon size={20} />
-            </span>
             {label}
           </dt>
           <dd className="text-2xl font-bold tabular-nums">{value}</dd>

@@ -33,7 +33,22 @@ export function Section({
   );
 }
 
-/** Stat tiles (label above value), each with an optional icon chip. */
+// Columns chosen from the item count so no row ends with an orphan cell.
+const COLUMNS: Record<number, string> = {
+  2: "md:grid-cols-2",
+  3: "md:grid-cols-3",
+  4: "md:grid-cols-4",
+  5: "md:grid-cols-5",
+  6: "md:grid-cols-3",
+  8: "md:grid-cols-4",
+  9: "md:grid-cols-3",
+  10: "md:grid-cols-5",
+};
+
+/**
+ * Headline figures as one container split by 1px dividers (label above value). Figures are
+ * type, not tiles: no icons. `icon` is accepted for compatibility and not drawn.
+ */
 export function Facts({
   items,
 }: {
@@ -45,24 +60,22 @@ export function Facts({
   }[];
 }) {
   return (
-    <dl className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-4">
-      {items.map(({ label, value, hint, icon: Icon }) => (
+    <dl
+      className={`grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line ${
+        COLUMNS[items.length] ?? "md:grid-cols-4"
+      }`}
+    >
+      {items.map(({ label, value, hint }, i) => (
         <div
           key={label}
-          className="flex flex-col gap-1 rounded-card border border-line bg-surface p-5 shadow-card"
+          className={`flex flex-col gap-1 bg-surface p-5 ${
+            items.length % 2 === 1 && i === items.length - 1
+              ? "col-span-2 md:col-span-1"
+              : ""
+          } ${items.length > 4 ? "md:p-4" : ""}`}
         >
-          <dt className="flex items-center gap-2.5 text-sm font-bold text-ink-muted">
-            {Icon && (
-              <span
-                aria-hidden="true"
-                className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent-hover"
-              >
-                <Icon size={17} />
-              </span>
-            )}
-            {label}
-          </dt>
-          <dd className="mt-1 text-3xl font-bold tabular-nums">{value}</dd>
+          <dt className="text-sm text-ink-muted">{label}</dt>
+          <dd className="text-2xl font-bold tabular-nums">{value}</dd>
           {hint && <dd className="text-sm text-ink-muted">{hint}</dd>}
         </div>
       ))}

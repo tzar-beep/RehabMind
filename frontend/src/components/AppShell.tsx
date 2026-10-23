@@ -21,14 +21,14 @@ export function AppShell({
   return (
     <>
       <SkipLink />
-      <header className="sticky top-0 z-40 border-b border-line/80 bg-surface/90 shadow-[0_1px_12px_-6px_rgb(28_36_48/0.15)] backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-line bg-surface">
         <div
           className={`mx-auto flex ${width} items-center justify-between gap-4 px-6 py-3`}
         >
           <p className="flex items-center gap-3">
             <BrandMark />
             {roleLabel && (
-              <span className="hidden rounded-full border border-accent/25 bg-accent-soft px-3 py-0.5 text-sm font-bold text-accent-hover sm:inline">
+              <span className="hidden border-l border-line pl-3 text-base text-ink-muted sm:inline">
                 {roleLabel}
               </span>
             )}
