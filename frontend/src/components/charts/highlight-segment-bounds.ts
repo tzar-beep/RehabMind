@@ -38,9 +38,7 @@ export function computeSegmentBounds(
   xAccessor: (d: Record<string, unknown>) => Date,
   tooltipData: Pick<TooltipData, "index"> | null | undefined,
   selection:
-    | Pick<ChartSelection, "active" | "startX" | "endX">
-    | null
-    | undefined
+    Pick<ChartSelection, "active" | "startX" | "endX"> | null | undefined,
 ): SegmentBounds {
   if (data.length === 0) {
     return INACTIVE_SEGMENT;

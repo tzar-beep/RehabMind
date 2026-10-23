@@ -28,7 +28,7 @@ export interface TooltipDotProps {
 
 function ringCornerRadius(
   halfExtent: number,
-  cornerRadiusFraction: number
+  cornerRadiusFraction: number,
 ): number {
   const side = halfExtent * 2;
   return side * Math.max(0, Math.min(0.5, cornerRadiusFraction));

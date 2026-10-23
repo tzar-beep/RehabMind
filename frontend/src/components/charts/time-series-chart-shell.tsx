@@ -74,7 +74,7 @@ import { computeYDomainsByAxis } from "./y-domain-utils";
 
 function collectNumericExtents(
   data: Record<string, unknown>[],
-  dataKeys: string[]
+  dataKeys: string[],
 ) {
   let minValue = Number.POSITIVE_INFINITY;
   let maxValue = Number.NEGATIVE_INFINITY;
@@ -103,7 +103,7 @@ function collectNumericExtents(
 function resolveTimeSeriesYDomain(
   data: Record<string, unknown>[],
   dataKeys: string[],
-  yScaleDomainMax: number | undefined
+  yScaleDomainMax: number | undefined,
 ): [number, number] {
   if (yScaleDomainMax != null && yScaleDomainMax > 0) {
     return [0, yScaleDomainMax * 1.1];
@@ -228,7 +228,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
           : undefined;
       return resolveTimeSeriesYDomain(sourceData, dataKeys, domainMax);
     },
-    [lines, yScaleDomainMax]
+    [lines, yScaleDomainMax],
   );
 
   const skeletonData = useMemo(() => {
@@ -267,12 +267,12 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
       const value = d[xDataKey];
       return value instanceof Date ? value : new Date(value as string | number);
     },
-    [xDataKey]
+    [xDataKey],
   );
 
   const bisectDate = useMemo(
     () => bisector<Record<string, unknown>, Date>((d) => xAccessor(d)).left,
-    [xAccessor]
+    [xAccessor],
   );
 
   const visiblePlotData = useMemo(() => {
@@ -284,7 +284,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
 
   const projectionConfigs = useMemo(
     () => extractProjectionLineConfigs(children),
-    [children]
+    [children],
   );
 
   const xScale = useMemo(() => {
@@ -316,7 +316,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
     return decimateTimeSeries(
       seriesSourceData,
       maxRenderPointsForWidth(innerWidth),
-      valueKeys
+      valueKeys,
     );
   }, [seriesSourceData, innerWidth, lines]);
 
@@ -337,7 +337,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
         lines,
         resolveDomain: (dataKeys) => resolveYDomain(skeletonData, dataKeys),
       }),
-    [lines, resolveYDomain, skeletonData]
+    [lines, resolveYDomain, skeletonData],
   );
 
   const yDomainTargetByAxis = useMemo(() => {
@@ -354,7 +354,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
       merged[axisId] = mergeProjectionYDomain(
         base[axisId] ?? [0, 100],
         projectionConfigs,
-        axisId
+        axisId,
       );
     }
     for (const config of projectionConfigs) {
@@ -362,7 +362,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
         merged[config.yAxisId] = mergeProjectionYDomain(
           [0, 100],
           projectionConfigs,
-          config.yAxisId
+          config.yAxisId,
         );
       }
     }
@@ -396,17 +396,17 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
         innerHeight,
         lines,
       }),
-    [yDomainsForScales, innerHeight, lines]
+    [yDomainsForScales, innerHeight, lines],
   );
 
   const yScale = getPrimaryYScale(
     yScales,
-    scaleLinear({ range: [innerHeight, 0], domain: [0, 100], nice: true })
+    scaleLinear({ range: [innerHeight, 0], domain: [0, 100], nice: true }),
   );
 
   const dateLabels = useMemo(
     () => visiblePlotData.map((d) => shortDateFmt.format(xAccessor(d))),
-    [visiblePlotData, xAccessor]
+    [visiblePlotData, xAccessor],
   );
 
   const canInteract = isLoaded && isChartInteractionPhase(chartPhase);
@@ -460,7 +460,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
   });
 
   const [registeredReferenceAreas, setRegisteredReferenceAreas] = useState(
-    () => new Map<string, ReferenceAreaConfig>()
+    () => new Map<string, ReferenceAreaConfig>(),
   );
 
   const registerReferenceArea = useCallback(
@@ -481,7 +481,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
         return next;
       });
     },
-    []
+    [],
   );
 
   const unregisterReferenceArea = useCallback((id: string) => {
@@ -497,7 +497,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
 
   const referenceAreaRegistration = useMemo(
     () => ({ registerReferenceArea, unregisterReferenceArea }),
-    [registerReferenceArea, unregisterReferenceArea]
+    [registerReferenceArea, unregisterReferenceArea],
   );
 
   const referenceAreas = useMemo(() => {
@@ -598,7 +598,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
       composedStacked,
       composedStackOffsets,
       composedStackGap,
-    ]
+    ],
   );
 
   const useClipReveal =

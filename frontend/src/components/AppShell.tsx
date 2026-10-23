@@ -14,10 +14,11 @@ export function AppShell({
 }: {
   name: string;
   roleLabel?: string;
+  /** true: the clinician and admin consoles; false: the patient's area. */
   wide?: boolean;
   children: ReactNode;
 }) {
-  const width = wide ? "max-w-6xl" : "max-w-3xl";
+  const width = wide ? "max-w-6xl" : "max-w-5xl";
   return (
     <>
       <SkipLink />

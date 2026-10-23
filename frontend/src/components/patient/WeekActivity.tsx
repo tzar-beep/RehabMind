@@ -68,28 +68,26 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
                 aria-hidden="true"
                 className={cn(
                   "grid aspect-square w-full max-w-12 place-items-center rounded-full",
-                  count
-                    ? "bg-accent text-white"
-                    : "bg-canvas",
+                  count ? "bg-accent text-white" : "bg-canvas",
                   isToday && "ring-4 ring-accent-soft",
                 )}
               >
                 {count > 0 && <Check size={20} strokeWidth={3} />}
+              </span>
+              <span
+                aria-hidden="true"
+                className="h-6 text-sm text-ink-muted tabular-nums"
+              >
+                {count > 0 ? count : ""}
               </span>
             </li>
           ))}
         </ol>
       </div>
 
-      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:w-64 lg:grid-cols-1">
-        <Stat
-          label="Pictures practised"
-          value={activity.pictures_practised}
-        />
-        <Stat
-          label="Sessions finished"
-          value={activity.sessions_completed}
-        />
+      <dl className="grid grid-cols-2 gap-3 lg:w-64 lg:grid-cols-1">
+        <Stat label="Pictures practised" value={activity.pictures_practised} />
+        <Stat label="Sessions finished" value={activity.sessions_completed} />
       </dl>
     </section>
   );

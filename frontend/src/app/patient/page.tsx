@@ -8,6 +8,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { PRACTICE_PICTURES, PictureWall } from "@/components/PictureWall";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
   PracticeActivitySchema,
@@ -35,13 +36,6 @@ const STEPS = [
   },
 ];
 
-// A few pictures from the practice library, each with its word (credits in docs/photo-credits.md).
-const PREVIEW = [
-  { src: "/stimuli/photos/apple_01.jpg", word: "apple" },
-  { src: "/stimuli/photos/dog_01.jpg", word: "dog" },
-  { src: "/stimuli/photos/cup_01.jpg", word: "cup" },
-];
-
 const today = () =>
   new Intl.DateTimeFormat("en-GB", {
     weekday: "long",
@@ -60,14 +54,14 @@ export default async function PatientHome() {
     <div className="flex flex-col gap-10">
       <section
         aria-labelledby="today-heading"
-        className="grid gap-8 rounded-card bg-brand-deep p-8 text-white sm:p-10 md:grid-cols-[1fr_auto] md:items-center"
+        className="grid gap-8 rounded-card bg-brand-deep p-6 text-white sm:p-10 md:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] md:items-center"
       >
         <div className="flex min-w-0 flex-col gap-3">
           <p className="flex items-center gap-2 text-base text-brand-muted">
             <CalendarHeart aria-hidden="true" size={18} />
             {today()}
           </p>
-          <h1 className="text-4xl font-bold tracking-tight">
+          <h1 className="text-4xl leading-tight font-bold tracking-tight">
             Hello, {me.display_name}
           </h1>
           <h2 id="today-heading" className="sr-only">
@@ -82,7 +76,7 @@ export default async function PatientHome() {
               </p>
               <Link
                 href="/patient/practice"
-                className="mt-4 inline-flex min-h-16 w-fit items-center justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold whitespace-nowrap text-brand-deep transition-[background-color,transform] hover:bg-accent-soft active:scale-[0.98]"
+                className="mt-4 inline-flex min-h-16 w-full items-center sm:w-fit justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold whitespace-nowrap text-brand-deep transition-[background-color,transform] hover:bg-accent-soft active:scale-[0.98]"
               >
                 {status.has_active_session
                   ? "Continue practice"
@@ -98,21 +92,11 @@ export default async function PatientHome() {
           )}
         </div>
 
-        <ul aria-hidden="true" className="hidden grid-cols-3 gap-3 md:grid">
-          {PREVIEW.map((p) => (
-            <li key={p.src} className="flex w-28 flex-col gap-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.src}
-                alt=""
-                width={112}
-                height={112}
-                className="aspect-square w-full rounded-lg object-cover"
-              />
-              <span className="text-lg font-bold">{p.word}</span>
-            </li>
-          ))}
-        </ul>
+        <PictureWall className="hidden md:grid" />
+        <PictureWall
+          pictures={PRACTICE_PICTURES.slice(0, 3)}
+          className="md:hidden"
+        />
       </section>
 
       {activity && <WeekActivity activity={activity} />}

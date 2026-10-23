@@ -72,7 +72,7 @@ export function LineChartLoading({
         dataKey: DEFAULT_SKELETON_DATA_KEY,
         pointCount: DEFAULT_SKELETON_POINT_COUNT,
       }),
-    []
+    [],
   );
 
   return (

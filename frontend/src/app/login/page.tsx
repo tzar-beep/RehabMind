@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { BrandMark } from "@/components/BrandMark";
+import { PictureWall } from "@/components/PictureWall";
 import { Alert } from "@/components/ui/Alert";
 import { ROLE_HOME } from "@/lib/api/schemas";
 import { getCurrentUser } from "@/lib/api/server";
@@ -9,17 +10,6 @@ import { getCurrentUser } from "@/lib/api/server";
 import { LoginForm } from "./LoginForm";
 
 export const metadata: Metadata = { title: "Sign in" };
-
-// Pictures from the practice library, each with the word a patient names it by
-// (all openly licensed; credits in docs/photo-credits.md).
-const LIBRARY = [
-  { src: "/stimuli/photos/apple_01.jpg", word: "apple" },
-  { src: "/stimuli/photos/dog_01.jpg", word: "dog" },
-  { src: "/stimuli/photos/kettle_01.jpg", word: "kettle" },
-  { src: "/stimuli/photos/bicycle_01.jpg", word: "bicycle" },
-  { src: "/stimuli/photos/flower_01.jpg", word: "flower" },
-  { src: "/stimuli/photos/guitar_01.jpg", word: "guitar" },
-];
 
 const FACTS = [
   { value: "61", label: "real-world photos" },
@@ -52,27 +42,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           </p>
         </div>
 
-        <ul
-          aria-label="Some pictures from the practice library"
-          className="grid min-h-0 flex-1 grid-cols-3 grid-rows-2 gap-2 overflow-hidden rounded-card"
-        >
-          {LIBRARY.map((p) => (
-            <li key={p.src} className="relative min-h-0 bg-white/5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.src}
-                alt={p.word}
-                className="absolute inset-0 size-full object-cover"
-              />
-              <span
-                aria-hidden="true"
-                className="absolute bottom-2.5 left-2.5 rounded-md bg-white px-2.5 py-0.5 text-base font-bold text-ink"
-              >
-                {p.word}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <PictureWall
+          fill
+          label="Some pictures from the practice library"
+          className="min-h-0 flex-1 grid-rows-2"
+        />
 
         <p className="text-sm text-brand-muted">
           {FACTS.map((f) => `${f.value} ${f.label}`).join(" · ")} · Research
