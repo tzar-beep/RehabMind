@@ -35,71 +35,61 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <main
       id="main"
-      className="grid h-dvh grid-cols-1 overflow-hidden lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
+      className="grid h-dvh grid-cols-1 overflow-hidden lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]"
     >
-      <div className="hidden min-h-0 flex-col gap-8 overflow-hidden bg-brand-deep text-white lg:flex lg:px-14 lg:py-12">
-        <BrandMark inverted large className="hidden lg:inline-flex" />
+      {/* Brand panel: the practice library itself, as a picture wall that fills
+          whatever height the window has, so the page never scrolls. */}
+      <div className="hidden min-h-0 flex-col gap-[clamp(1rem,3.5vh,2rem)] bg-brand-deep p-[clamp(1.5rem,4.5vh,3rem)] text-white lg:flex">
+        <BrandMark inverted large />
 
-        <div className="flex max-w-xl flex-col gap-4">
-          <p className="text-3xl leading-[1.05] font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">
+        <div className="flex max-w-2xl flex-col gap-3">
+          <p className="text-[clamp(2rem,6.2vh,3.25rem)] leading-[1.04] font-bold tracking-tight text-balance">
             Practise words, one picture at a time.
           </p>
-          <p className="text-lg text-brand-muted">
-            Short, calm naming exercises for aphasia recovery. Answer by typing
-            or speaking, within limits your care team sets.
+          <p className="text-[clamp(1rem,2.4vh,1.15rem)] text-brand-muted">
+            Short, calm naming exercises for aphasia recovery, within limits
+            your care team sets.
           </p>
         </div>
 
         <ul
           aria-label="Some pictures from the practice library"
-          // Two rows of three, as wide as the window height allows so the page never scrolls.
-          className="grid w-[clamp(15rem,calc((100dvh-37rem)*1.5),36rem)] grid-cols-3 gap-3"
+          className="grid min-h-0 flex-1 grid-cols-3 grid-rows-2 gap-2 overflow-hidden rounded-card"
         >
           {LIBRARY.map((p) => (
-            <li key={p.src} className="flex flex-col gap-1.5">
+            <li key={p.src} className="relative min-h-0 bg-white/5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={p.src}
                 alt={p.word}
-                width={200}
-                height={200}
-                className="aspect-square w-full rounded-lg object-cover"
+                className="absolute inset-0 size-full object-cover"
               />
-              <span aria-hidden="true" className="text-base font-bold">
+              <span
+                aria-hidden="true"
+                className="absolute bottom-2.5 left-2.5 rounded-md bg-white px-2.5 py-0.5 text-base font-bold text-ink"
+              >
                 {p.word}
               </span>
             </li>
           ))}
         </ul>
 
-        <div className="mt-auto hidden flex-col gap-4 lg:flex [@media(max-height:760px)]:hidden">
-          <dl className="grid max-w-xl grid-cols-3 gap-px overflow-hidden rounded-card bg-white/15">
-            {FACTS.map((f) => (
-              <div key={f.label} className="bg-brand-deep px-4 py-3">
-                <dt className="sr-only">{f.label}</dt>
-                <dd className="text-2xl font-bold tabular-nums">{f.value}</dd>
-                <dd aria-hidden="true" className="text-sm text-brand-muted">
-                  {f.label}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <p className="text-sm text-brand-muted">
-            University research prototype. Not a medical device.
-          </p>
-        </div>
+        <p className="text-sm text-brand-muted">
+          {FACTS.map((f) => `${f.value} ${f.label}`).join(" · ")} · Research
+          prototype
+        </p>
       </div>
 
-      <div className="flex min-h-0 items-center justify-center overflow-y-auto bg-surface px-6 py-8 sm:px-10">
-        <div className="w-full max-w-md">
-          <div className="mb-8 lg:hidden">
+      <div className="flex min-h-0 items-center justify-center overflow-y-auto bg-surface px-6 py-8 sm:px-12">
+        <div className="w-full max-w-sm">
+          <div className="mb-10 lg:hidden">
             <BrandMark />
             <p className="mt-3 text-lg text-ink-muted">
               Practise words, one picture at a time.
             </p>
           </div>
-          <h1 className="mb-2 text-2xl font-bold tracking-tight">Sign in</h1>
-          <p className="mb-8 text-lg text-ink-muted">
+          <h1 className="text-3xl font-bold tracking-tight">Sign in</h1>
+          <p className="mt-2 mb-8 text-lg text-ink-muted">
             Welcome back. Take your time.
           </p>
           {expired && (
@@ -111,7 +101,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             </div>
           )}
           <LoginForm />
-          <p className="mt-10 text-base text-ink-muted">
+          <p className="mt-8 text-base text-ink-muted">
             Trouble signing in? Ask your care team for help.
           </p>
         </div>
