@@ -161,3 +161,23 @@ def test_feedback_never_calls_a_different_word_close():
     raw = json.dumps({"feedback": "You are nearing the right word."})
     assert "contradicts_score:feedback" in check_feedback(raw, "incorrect")[0].reasons
     assert check_feedback(raw, "near_miss")[0].ok
+
+
+def test_simulated_participants_give_realistic_answers():
+    import random
+
+    from app.analysis.errors import classify_naming
+    from app.scripts import simulate_participants as sim
+
+    rng = random.Random(1)  # noqa: S311 - test data
+    base = sim.picture_difficulty()
+    assert len(base) == 52
+    # Rare, long, inconsistently named pictures are harder than common short ones.
+    assert base["boss_microscope"] > base["boss_dog"]
+    answers = sim.Answers()
+    semantic = answers.wrong("semantic", "dog", {"dog", "puppy"}, rng)
+    assert classify_naming(semantic, "dog", ["dog", "puppy"], "incorrect") == "semantic"
+    slip = sim.sound_error("carrot", rng)
+    assert slip != "carrot" and len(slip) == len("carrot")
+    assert answers.wrong("no_response", "dog", {"dog"}, rng) is None
+    assert sim.rating(1.0, rng) == "too_easy" and sim.rating(0.1, rng) == "too_hard"
