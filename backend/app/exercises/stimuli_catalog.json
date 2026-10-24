@@ -1,636 +1,210 @@
 {
-  "version": 2,
-  "source": {
-    "name": "Lucide (lucide-static)",
-    "license": "ISC",
-    "url": "https://lucide.dev"
-  },
-  "stimuli": [
+  "version": 3,
+  "stimuli": [],
+  "photos": [
     {
-      "slug": "key",
-      "source_icon": "key",
-      "difficulty": 1,
-      "category": "household",
-      "target": "key",
-      "accepted_answers": [
-        "key"
-      ]
-    },
-    {
-      "slug": "sun",
-      "source_icon": "sun",
-      "difficulty": 1,
-      "category": "nature",
-      "target": "sun",
-      "accepted_answers": [
-        "sun"
-      ]
-    },
-    {
-      "slug": "car",
-      "source_icon": "car",
-      "difficulty": 1,
+      "slug": "boss_airplane",
+      "image_path": "/stimuli/photos/boss_cessna.jpg",
       "category": "transport",
-      "target": "car",
+      "difficulty": 4,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "airplane",
       "accepted_answers": [
-        "car",
-        "automobile"
-      ]
+        "aeroplane",
+        "aircraft",
+        "airplane",
+        "jet",
+        "plane"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1gz9UJ-Q8_Fp_crHUjkufkoc9Lcibz2Au/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "cessna",
+        "modal_name": "airplane",
+        "name_agreement": 0.38
+      }
     },
     {
-      "slug": "dog",
-      "source_icon": "dog",
-      "difficulty": 1,
-      "category": "animals",
-      "target": "dog",
+      "slug": "boss_anchor",
+      "image_path": "/stimuli/photos/boss_anchor.jpg",
+      "category": "transport",
+      "difficulty": 4,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "anchor",
       "accepted_answers": [
-        "dog",
-        "puppy"
-      ]
+        "anchor"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/18Ly4Ul0iC3aKuq0LwoHyfguv56LBYKbE/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "anchor",
+        "modal_name": "anchor",
+        "name_agreement": 0.93
+      }
     },
     {
-      "slug": "cat",
-      "source_icon": "cat",
-      "difficulty": 1,
-      "category": "animals",
-      "target": "cat",
-      "accepted_answers": [
-        "cat",
-        "kitten"
-      ]
-    },
-    {
-      "slug": "book",
-      "source_icon": "book",
-      "difficulty": 1,
-      "category": "household",
-      "target": "book",
-      "accepted_answers": [
-        "book"
-      ]
-    },
-    {
-      "slug": "bed",
-      "source_icon": "bed",
-      "difficulty": 1,
-      "category": "household",
-      "target": "bed",
-      "accepted_answers": [
-        "bed"
-      ]
-    },
-    {
-      "slug": "fish",
-      "source_icon": "fish",
-      "difficulty": 1,
-      "category": "animals",
-      "target": "fish",
-      "accepted_answers": [
-        "fish"
-      ]
-    },
-    {
-      "slug": "apple",
-      "source_icon": "apple",
-      "difficulty": 2,
+      "slug": "boss_apple",
+      "image_path": "/stimuli/photos/boss_apple07.jpg",
       "category": "food",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
       "target": "apple",
       "accepted_answers": [
         "apple"
-      ]
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1FC2DXuSZpYMXKHEQtTjzYaqd7u2ieaY7/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "apple07",
+        "modal_name": "apple",
+        "name_agreement": 0.95
+      }
     },
     {
-      "slug": "clock",
-      "source_icon": "clock",
-      "difficulty": 2,
-      "category": "household",
-      "target": "clock",
-      "accepted_answers": [
-        "clock",
-        "watch"
-      ]
-    },
-    {
-      "slug": "house",
-      "source_icon": "house",
-      "difficulty": 2,
-      "category": "household",
-      "target": "house",
-      "accepted_answers": [
-        "house",
-        "home"
-      ]
-    },
-    {
-      "slug": "phone",
-      "source_icon": "smartphone",
-      "difficulty": 2,
-      "category": "personal",
-      "target": "phone",
-      "accepted_answers": [
-        "phone",
-        "mobile",
-        "cellphone",
-        "mobile phone",
-        "cell phone",
-        "smartphone",
-        "telephone"
-      ]
-    },
-    {
-      "slug": "tree",
-      "source_icon": "tree-pine",
-      "difficulty": 2,
-      "category": "nature",
-      "target": "tree",
-      "accepted_answers": [
-        "tree",
-        "pine tree",
-        "pine",
-        "fir tree",
-        "christmas tree"
-      ]
-    },
-    {
-      "slug": "bird",
-      "source_icon": "bird",
-      "difficulty": 2,
-      "category": "animals",
-      "target": "bird",
-      "accepted_answers": [
-        "bird"
-      ]
-    },
-    {
-      "slug": "cup",
-      "source_icon": "coffee",
-      "difficulty": 2,
+      "slug": "boss_banana",
+      "image_path": "/stimuli/photos/boss_banana01.jpg",
       "category": "food",
-      "target": "cup",
-      "accepted_answers": [
-        "cup",
-        "mug",
-        "coffee cup",
-        "coffee",
-        "coffee mug",
-        "tea cup"
-      ]
-    },
-    {
-      "slug": "bus",
-      "source_icon": "bus",
-      "difficulty": 2,
-      "category": "transport",
-      "target": "bus",
-      "accepted_answers": [
-        "bus"
-      ]
-    },
-    {
-      "slug": "egg",
-      "source_icon": "egg",
-      "difficulty": 2,
-      "category": "food",
-      "target": "egg",
-      "accepted_answers": [
-        "egg"
-      ]
-    },
-    {
-      "slug": "umbrella",
-      "source_icon": "umbrella",
-      "difficulty": 3,
-      "category": "personal",
-      "target": "umbrella",
-      "accepted_answers": [
-        "umbrella"
-      ]
-    },
-    {
-      "slug": "scissors",
-      "source_icon": "scissors",
-      "difficulty": 3,
-      "category": "household",
-      "target": "scissors",
-      "accepted_answers": [
-        "scissors"
-      ]
-    },
-    {
-      "slug": "glasses",
-      "source_icon": "glasses",
-      "difficulty": 3,
-      "category": "personal",
-      "target": "glasses",
-      "accepted_answers": [
-        "glasses",
-        "spectacles",
-        "eyeglasses"
-      ]
-    },
-    {
-      "slug": "camera",
-      "source_icon": "camera",
-      "difficulty": 3,
-      "category": "personal",
-      "target": "camera",
-      "accepted_answers": [
-        "camera"
-      ]
-    },
-    {
-      "slug": "guitar",
-      "source_icon": "guitar",
-      "difficulty": 3,
-      "category": "music",
-      "target": "guitar",
-      "accepted_answers": [
-        "guitar"
-      ]
-    },
-    {
-      "slug": "banana",
-      "source_icon": "banana",
-      "difficulty": 3,
-      "category": "food",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
       "target": "banana",
       "accepted_answers": [
-        "banana"
-      ]
+        "banana",
+        "bananas"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1LalEV_2wGjzA7EKiCb4gp_lmpfigzZpZ/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "banana01",
+        "modal_name": "banana",
+        "name_agreement": 1.0
+      }
     },
     {
-      "slug": "carrot",
-      "source_icon": "carrot",
-      "difficulty": 3,
-      "category": "food",
-      "target": "carrot",
-      "accepted_answers": [
-        "carrot"
-      ]
-    },
-    {
-      "slug": "lamp",
-      "source_icon": "lamp",
-      "difficulty": 3,
+      "slug": "boss_bed",
+      "image_path": "/stimuli/photos/boss_bed.jpg",
       "category": "household",
-      "target": "lamp",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "bed",
       "accepted_answers": [
-        "lamp"
-      ]
+        "bed"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/18krzjSaDy5AeV2g2xUa3x-iUSBgn8VGV/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "bed",
+        "modal_name": "bed",
+        "name_agreement": 0.81
+      }
     },
     {
-      "slug": "piano",
-      "source_icon": "piano",
-      "difficulty": 3,
-      "category": "music",
-      "target": "piano",
-      "accepted_answers": [
-        "piano",
-        "keyboard"
-      ]
-    },
-    {
-      "slug": "hammer",
-      "source_icon": "hammer",
-      "difficulty": 4,
-      "category": "tools",
-      "target": "hammer",
-      "accepted_answers": [
-        "hammer"
-      ]
-    },
-    {
-      "slug": "bicycle",
-      "source_icon": "bike",
-      "difficulty": 4,
+      "slug": "boss_bicycle",
+      "image_path": "/stimuli/photos/boss_bicycle.jpg",
       "category": "transport",
+      "difficulty": 3,
+      "exercise_types": [
+        "picture_naming"
+      ],
       "target": "bicycle",
       "accepted_answers": [
         "bicycle",
         "bike",
         "cycle"
-      ]
-    },
-    {
-      "slug": "airplane",
-      "source_icon": "plane",
-      "difficulty": 4,
-      "category": "transport",
-      "target": "airplane",
-      "accepted_answers": [
-        "airplane",
-        "plane",
-        "aeroplane",
-        "jet",
-        "aircraft"
-      ]
-    },
-    {
-      "slug": "pencil",
-      "source_icon": "pencil",
-      "difficulty": 4,
-      "category": "household",
-      "target": "pencil",
-      "accepted_answers": [
-        "pencil"
-      ]
-    },
-    {
-      "slug": "anchor",
-      "source_icon": "anchor",
-      "difficulty": 4,
-      "category": "transport",
-      "target": "anchor",
-      "accepted_answers": [
-        "anchor"
-      ]
-    },
-    {
-      "slug": "sofa",
-      "source_icon": "sofa",
-      "difficulty": 4,
-      "category": "household",
-      "target": "sofa",
-      "accepted_answers": [
-        "sofa",
-        "couch",
-        "settee"
-      ]
-    },
-    {
-      "slug": "headphones",
-      "source_icon": "headphones",
-      "difficulty": 4,
-      "category": "music",
-      "target": "headphones",
-      "accepted_answers": [
-        "headphones",
-        "headset",
-        "earphones"
-      ]
-    },
-    {
-      "slug": "toothbrush",
-      "source_icon": "toothbrush",
-      "difficulty": 4,
-      "category": "personal",
-      "target": "toothbrush",
-      "accepted_answers": [
-        "toothbrush"
-      ]
-    },
-    {
-      "slug": "microscope",
-      "source_icon": "microscope",
-      "difficulty": 5,
-      "category": "tools",
-      "target": "microscope",
-      "accepted_answers": [
-        "microscope"
-      ]
-    },
-    {
-      "slug": "telescope",
-      "source_icon": "telescope",
-      "difficulty": 5,
-      "category": "tools",
-      "target": "telescope",
-      "accepted_answers": [
-        "telescope"
-      ]
-    },
-    {
-      "slug": "wrench",
-      "source_icon": "wrench",
-      "difficulty": 5,
-      "category": "tools",
-      "target": "wrench",
-      "accepted_answers": [
-        "wrench",
-        "spanner"
-      ]
-    },
-    {
-      "slug": "refrigerator",
-      "source_icon": "refrigerator",
-      "difficulty": 5,
-      "category": "household",
-      "target": "refrigerator",
-      "accepted_answers": [
-        "refrigerator",
-        "fridge"
-      ]
-    },
-    {
-      "slug": "microwave",
-      "source_icon": "microwave",
-      "difficulty": 5,
-      "category": "household",
-      "target": "microwave",
-      "accepted_answers": [
-        "microwave",
-        "microwave oven"
-      ]
-    },
-    {
-      "slug": "dumbbell",
-      "source_icon": "dumbbell",
-      "difficulty": 5,
-      "category": "personal",
-      "target": "dumbbell",
-      "accepted_answers": [
-        "dumbbell",
-        "weight",
-        "weights"
-      ]
-    },
-    {
-      "slug": "lightbulb",
-      "source_icon": "lightbulb",
-      "difficulty": 5,
-      "category": "household",
-      "target": "light bulb",
-      "accepted_answers": [
-        "light bulb",
-        "lightbulb",
-        "bulb"
-      ]
-    }
-  ],
-  "photos": [
-    {
-      "slug": "photo_apple_01",
-      "image_path": "/stimuli/photos/apple_01.jpg",
-      "category": "food",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
       ],
-      "target": "apple",
-      "accepted_answers": [
-        "apple"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY 2.0",
-      "license_url": "https://creativecommons.org/licenses/by/2.0",
-      "attribution": "Abhijit Tembhekar from Mumbai, India",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Red_Apple.jpg"
-    },
-    {
-      "slug": "photo_apple_02",
-      "image_path": "/stimuli/photos/apple_02.jpg",
-      "category": "food",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "apple",
-      "accepted_answers": [
-        "apple"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "HaJunkiyada",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Red_Apple_(Whole_Fruit).jpg"
-    },
-    {
-      "slug": "photo_banana_01",
-      "image_path": "/stimuli/photos/banana_01.jpg",
-      "category": "food",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "banana",
-      "accepted_answers": [
-        "banana",
-        "bananas"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC0",
-      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-      "attribution": "Wilfredor",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Bunch_of_bananas_on_sale.jpg"
-    },
-    {
-      "slug": "photo_banana_02",
-      "image_path": "/stimuli/photos/banana_02.jpg",
-      "category": "food",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "banana",
-      "accepted_answers": [
-        "banana",
-        "bananas"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Samsule2",
-      "source_url": "https://commons.wikimedia.org/wiki/File:A_Bunch_of_Bananas_displayed_by_a_roadside_seller_02.jpg"
-    },
-    {
-      "slug": "photo_egg_01",
-      "image_path": "/stimuli/photos/egg_01.jpg",
-      "category": "food",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "egg",
-      "accepted_answers": [
-        "egg",
-        "eggs"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "Public domain",
-      "license_url": "",
-      "attribution": "Batholith (talk)",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Chicken_eggs_20101113.jpg"
-    },
-    {
-      "slug": "photo_orange_01",
-      "image_path": "/stimuli/photos/orange_01.jpg",
-      "category": "food",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "orange",
-      "accepted_answers": [
-        "orange",
-        "oranges"
-      ],
-      "source": "Wikimedia Commons",
+      "source": "Bank of Standardized Stimuli (BOSS)",
       "license": "CC BY-SA 3.0",
       "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
-      "attribution": "Evan-Amos",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Orange-Fruit-Pieces.jpg"
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1B1f3ThJtlljiwdud7MJGJlYZLq73vev_/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "bicycle",
+        "modal_name": "bike",
+        "name_agreement": 0.43
+      }
     },
     {
-      "slug": "photo_tomato_01",
-      "image_path": "/stimuli/photos/tomato_01.jpg",
-      "category": "food",
+      "slug": "boss_bird",
+      "image_path": "/stimuli/photos/boss_tern.jpg",
+      "category": "animals",
       "difficulty": 2,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "tomato",
+      "target": "bird",
       "accepted_answers": [
-        "tomato",
-        "tomatoes"
+        "bird",
+        "sparrow"
       ],
-      "source": "Wikimedia Commons",
+      "source": "Bank of Standardized Stimuli (BOSS)",
       "license": "CC BY-SA 3.0",
-      "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
-      "attribution": "Softeis",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Tomato_je.jpg"
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1kCk_R1O4uzQh_X6yjYhKm4b2csJrihh2/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "tern",
+        "modal_name": "bird",
+        "name_agreement": 0.88
+      }
     },
     {
-      "slug": "photo_carrot_01",
-      "image_path": "/stimuli/photos/carrot_01.jpg",
-      "category": "food",
-      "difficulty": 3,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "carrot",
-      "accepted_answers": [
-        "carrot",
-        "carrots"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC0",
-      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-      "attribution": "W.carter",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Preparing_and_slicing_carrots.jpg"
-    },
-    {
-      "slug": "photo_cup_01",
-      "image_path": "/stimuli/photos/cup_01.jpg",
+      "slug": "boss_book",
+      "image_path": "/stimuli/photos/boss_book01b.jpg",
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "cup",
+      "target": "book",
       "accepted_answers": [
-        "cup",
-        "mug",
-        "coffee cup"
+        "book"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC0",
-      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-      "attribution": "PedanticNarrativeController",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Coffee_steaming_in_a_mug.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1Vpv7x_3iM0-zRpwW3Aqy5urlsMQR1UgP/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "book01b",
+        "modal_name": "book",
+        "name_agreement": 0.9
+      }
     },
     {
-      "slug": "photo_bottle_01",
-      "image_path": "/stimuli/photos/bottle_01.jpg",
+      "slug": "boss_bottle",
+      "image_path": "/stimuli/photos/boss_waterbottle03.jpg",
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
@@ -641,148 +215,147 @@
         "bottle",
         "water bottle"
       ],
-      "source": "Wikimedia Commons",
+      "source": "Bank of Standardized Stimuli (BOSS)",
       "license": "CC BY-SA 3.0",
       "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
-      "attribution": "Pranavshivakumar",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Water_bottle_3.jpg"
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/11OJjIz_8ctTOp-BqNH0emc5wA5L2ZKMl/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "waterbottle03",
+        "modal_name": "water bottle",
+        "name_agreement": 0.72
+      }
     },
     {
-      "slug": "photo_knife_01",
-      "image_path": "/stimuli/photos/knife_01.jpg",
-      "category": "household",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "knife",
-      "accepted_answers": [
-        "knife",
-        "knives"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Jacek Halicki",
-      "source_url": "https://commons.wikimedia.org/wiki/File:2020_No%C5%BCe_kuchenne_Gerlach.jpg"
-    },
-    {
-      "slug": "photo_fork_01",
-      "image_path": "/stimuli/photos/fork_01.jpg",
-      "category": "household",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "fork",
-      "accepted_answers": [
-        "fork",
-        "forks"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 3.0 us",
-      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/us/deed.en",
-      "attribution": "See source page",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Assorted_forks.jpg"
-    },
-    {
-      "slug": "photo_plate_01",
-      "image_path": "/stimuli/photos/plate_01.jpg",
-      "category": "household",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "plate",
-      "accepted_answers": [
-        "plate",
-        "dish"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 2.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
-      "attribution": "Haydn Blackey",
-      "source_url": "https://commons.wikimedia.org/wiki/File:The_way_we_like_our_plates_at_the_end_of_dinner-_Dinner_on_New_Year%27s_Day_2024_-_The_Eighth_Day_of_Christmas_-_53435741068.jpg"
-    },
-    {
-      "slug": "photo_kettle_01",
-      "image_path": "/stimuli/photos/kettle_01.jpg",
-      "category": "household",
-      "difficulty": 3,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "kettle",
-      "accepted_answers": [
-        "kettle",
-        "electric kettle"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Jacek Halicki",
-      "source_url": "https://commons.wikimedia.org/wiki/File:2023_Czajnik_elektryczny_N%27OVEEN.jpg"
-    },
-    {
-      "slug": "photo_table_01",
-      "image_path": "/stimuli/photos/table_01.jpg",
-      "category": "household",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "table",
-      "accepted_answers": [
-        "table",
-        "dining table"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Vaibhavratnaparkhi",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Dining_table_brown.jpg"
-    },
-    {
-      "slug": "photo_bed_01",
-      "image_path": "/stimuli/photos/bed_01.jpg",
-      "category": "household",
+      "slug": "boss_bus",
+      "image_path": "/stimuli/photos/boss_bus.jpg",
+      "category": "transport",
       "difficulty": 1,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "bed",
+      "target": "bus",
       "accepted_answers": [
-        "bed"
+        "bus",
+        "double decker",
+        "double decker bus"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Basile Morin",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Canopy_bed_of_Amantaka_Suite_in_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1OeAupAcxuu0832iEeDuBSaTa7Ukgzszy/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "bus",
+        "modal_name": "bus",
+        "name_agreement": 0.57
+      }
     },
     {
-      "slug": "photo_sofa_01",
-      "image_path": "/stimuli/photos/sofa_01.jpg",
-      "category": "household",
-      "difficulty": 2,
+      "slug": "boss_camera",
+      "image_path": "/stimuli/photos/boss_camera01a.jpg",
+      "category": "personal",
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "sofa",
+      "target": "camera",
       "accepted_answers": [
-        "sofa",
-        "couch",
-        "settee"
+        "camera"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC0",
-      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-      "attribution": "www.Pixel.la Free Stock Photos",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Couch-furniture-living-room-sofa_(24300293356).jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1LOCTILqOqjYMrpagU43BecodWoH_XUs7/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "camera01a",
+        "modal_name": "camera",
+        "name_agreement": 0.82
+      }
     },
     {
-      "slug": "photo_clock_01",
-      "image_path": "/stimuli/photos/clock_01.jpg",
+      "slug": "boss_car",
+      "image_path": "/stimuli/photos/boss_car.jpg",
+      "category": "transport",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "car",
+      "accepted_answers": [
+        "automobile",
+        "car",
+        "old car"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1a_5sXzg0GhPv2pkgZVX7K3izA-mEuYZa/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "car",
+        "modal_name": "car",
+        "name_agreement": 0.81
+      }
+    },
+    {
+      "slug": "boss_carrot",
+      "image_path": "/stimuli/photos/boss_carrot01.jpg",
+      "category": "food",
+      "difficulty": 3,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "carrot",
+      "accepted_answers": [
+        "carrot",
+        "carrots"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1K--3gTEhWF4Ah1ghZ5Wfkc5hPEom924d/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "carrot01",
+        "modal_name": "carrot",
+        "name_agreement": 0.97
+      }
+    },
+    {
+      "slug": "boss_cat",
+      "image_path": "/stimuli/photos/boss_cat.jpg",
+      "category": "animals",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "cat",
+      "accepted_answers": [
+        "cat",
+        "kitten"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1s7GhcQT8a1TzxvAfLzZY4EhlH-5sj85R/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "cat",
+        "modal_name": "cat",
+        "name_agreement": 0.88
+      }
+    },
+    {
+      "slug": "boss_clock",
+      "image_path": "/stimuli/photos/boss_clock01a.jpg",
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
@@ -790,35 +363,78 @@
       ],
       "target": "clock",
       "accepted_answers": [
-        "clock"
+        "clock",
+        "watch"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Ermell",
-      "source_url": "https://commons.wikimedia.org/wiki/File:London_Big_Ben_Inner_Clock_Face_1070925-PSD.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1PMoFSPEVkYL1ZGbteqYgLdkcNk3ctgX2/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "clock01a",
+        "modal_name": "clock",
+        "name_agreement": 0.92
+      }
     },
     {
-      "slug": "photo_book_01",
-      "image_path": "/stimuli/photos/book_01.jpg",
+      "slug": "boss_cup",
+      "image_path": "/stimuli/photos/boss_mug01.jpg",
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "book",
+      "target": "cup",
       "accepted_answers": [
-        "book"
+        "coffee",
+        "coffee cup",
+        "coffee mug",
+        "cup",
+        "mug",
+        "tea cup"
       ],
-      "source": "Wikimedia Commons",
-      "license": "Public domain",
-      "license_url": "",
-      "attribution": "Illustrated by Arthur Hawkins, Jr. Published by Viking Press.",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Cannery_Row_(1945_1st_ed_dust_jacket).jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1Jd5REMpRol4seg19Zb48nltMbPMC6ujM/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "mug01",
+        "modal_name": "cup",
+        "name_agreement": 0.62
+      }
     },
     {
-      "slug": "photo_door_01",
-      "image_path": "/stimuli/photos/door_01.jpg",
+      "slug": "boss_dog",
+      "image_path": "/stimuli/photos/boss_saintbernard.jpg",
+      "category": "animals",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "dog",
+      "accepted_answers": [
+        "dog",
+        "puppy"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1WbxCcREunbcOu5e8zWEQsusbaPXDJVPh/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "saintbernard",
+        "modal_name": "dog",
+        "name_agreement": 0.62
+      }
+    },
+    {
+      "slug": "boss_door",
+      "image_path": "/stimuli/photos/boss_doubledoors.jpg",
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
@@ -830,56 +446,298 @@
         "doors",
         "front door"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Brian C Murray",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Front_door_refinishing.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1ptv5iCyv2Gpi048udAm8rfWsIHbFuovb/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "doubledoors",
+        "modal_name": "doors",
+        "name_agreement": 0.55
+      }
     },
     {
-      "slug": "photo_house_01",
-      "image_path": "/stimuli/photos/house_01.jpg",
-      "category": "household",
+      "slug": "boss_dumbbell",
+      "image_path": "/stimuli/photos/boss_weight01.jpg",
+      "category": "personal",
+      "difficulty": 5,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "dumbbell",
+      "accepted_answers": [
+        "dumbbell",
+        "weight",
+        "weights"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1XW7TSsbh0d4y99HgGTID5OEEBN-z8L4o/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "weight01",
+        "modal_name": "weight",
+        "name_agreement": 0.54
+      }
+    },
+    {
+      "slug": "boss_egg",
+      "image_path": "/stimuli/photos/boss_egg01a.jpg",
+      "category": "food",
       "difficulty": 1,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "house",
+      "target": "egg",
       "accepted_answers": [
-        "house",
-        "home"
+        "egg",
+        "eggs"
       ],
-      "source": "Wikimedia Commons",
-      "license": "Public domain",
-      "license_url": "",
-      "attribution": "Boereck",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Newly_developed_single-family_home_in_northern_Germany.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1ZB6bus4WABEl5u_va-CmxKRUEfPVoOxP/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "egg01a",
+        "modal_name": "egg",
+        "name_agreement": 0.4
+      }
     },
     {
-      "slug": "photo_television_01",
-      "image_path": "/stimuli/photos/television_01.jpg",
+      "slug": "boss_fish",
+      "image_path": "/stimuli/photos/boss_rockbass.jpg",
+      "category": "animals",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "fish",
+      "accepted_answers": [
+        "fish"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1pVh77PeE5CrrlAe7mspJIlyVKnQo59Ak/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "rockbass",
+        "modal_name": "fish",
+        "name_agreement": 0.9
+      }
+    },
+    {
+      "slug": "boss_flower",
+      "image_path": "/stimuli/photos/boss_hibiscusflower02.jpg",
+      "category": "nature",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "flower",
+      "accepted_answers": [
+        "flower",
+        "rose"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1i2k3tWcf5N6PWDxQgnaCJPfeN3yBUFLt/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "hibiscusflower02",
+        "modal_name": "flower",
+        "name_agreement": 0.89
+      }
+    },
+    {
+      "slug": "boss_fork",
+      "image_path": "/stimuli/photos/boss_fork03c.jpg",
+      "category": "household",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "fork",
+      "accepted_answers": [
+        "fork",
+        "forks"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1lg9EuUf-VyVCzg2m7ooaA_qxkKYfEhIf/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "fork03c",
+        "modal_name": "fork",
+        "name_agreement": 0.97
+      }
+    },
+    {
+      "slug": "boss_glasses",
+      "image_path": "/stimuli/photos/boss_glasses01a.jpg",
+      "category": "personal",
+      "difficulty": 3,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "glasses",
+      "accepted_answers": [
+        "eyeglasses",
+        "glasses",
+        "spectacles"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1msDgHQdy_JHfn5RGHn1IsC_tN1EwzEJ7/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "glasses01a",
+        "modal_name": "glasses",
+        "name_agreement": 0.72
+      }
+    },
+    {
+      "slug": "boss_guitar",
+      "image_path": "/stimuli/photos/boss_acousticguitar02.jpg",
+      "category": "music",
+      "difficulty": 3,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "guitar",
+      "accepted_answers": [
+        "guitar"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1Kwcfv8-Mj6DvXra4Ok8YlliykOcGQXHU/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "acousticguitar02",
+        "modal_name": "guitar",
+        "name_agreement": 0.71
+      }
+    },
+    {
+      "slug": "boss_hammer",
+      "image_path": "/stimuli/photos/boss_hammer01.jpg",
+      "category": "tools",
+      "difficulty": 4,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "hammer",
+      "accepted_answers": [
+        "hammer"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1zCj6-y6TK_LtfOqxM_OdV96SLptZHZNp/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "hammer01",
+        "modal_name": "hammer",
+        "name_agreement": 1.0
+      }
+    },
+    {
+      "slug": "boss_headphones",
+      "image_path": "/stimuli/photos/boss_headphones02b.jpg",
+      "category": "music",
+      "difficulty": 4,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "headphones",
+      "accepted_answers": [
+        "earphones",
+        "headphones",
+        "headset"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1Jk7KyMocatV1ow_uJ593xfype0DSDJbB/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "headphones02b",
+        "modal_name": "headphones",
+        "name_agreement": 0.71
+      }
+    },
+    {
+      "slug": "boss_horse",
+      "image_path": "/stimuli/photos/boss_horse.jpg",
+      "category": "animals",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "horse",
+      "accepted_answers": [
+        "horse",
+        "pony"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1adfE82Z4GzZkkoukpyI5IzcFBFOfKZMB/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "horse",
+        "modal_name": "horse",
+        "name_agreement": 1.0
+      }
+    },
+    {
+      "slug": "boss_kettle",
+      "image_path": "/stimuli/photos/boss_kettle01.jpg",
       "category": "household",
       "difficulty": 3,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "television",
+      "target": "kettle",
       "accepted_answers": [
-        "television",
-        "tv",
-        "telly"
+        "electric kettle",
+        "kettle"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY 4.0",
-      "license_url": "https://creativecommons.org/licenses/by/4.0",
-      "attribution": "Svetlov Artem",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Polytechnical_Museum_television_set_Volna_20150214_164839.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1U9F0e3vusm_pSjD6RjujbHvqzw1pxZOw/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "kettle01",
+        "modal_name": "kettle",
+        "name_agreement": 0.68
+      }
     },
     {
-      "slug": "photo_key_01",
-      "image_path": "/stimuli/photos/key_01.jpg",
+      "slug": "boss_key",
+      "image_path": "/stimuli/photos/boss_key01.jpg",
       "category": "household",
-      "difficulty": 2,
+      "difficulty": 1,
       "exercise_types": [
         "picture_naming"
       ],
@@ -887,15 +745,299 @@
       "accepted_answers": [
         "key"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY 4.0",
-      "license_url": "https://creativecommons.org/licenses/by/4.0",
-      "attribution": "J G Bissell &amp; Co.",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Lock_and_key_(AM_1965.78.577-5).jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1paXQJ5uSWssfTTmTUv7yKQ1X6e0I-6bw/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "key01",
+        "modal_name": "key",
+        "name_agreement": 0.97
+      }
     },
     {
-      "slug": "photo_scissors_01",
-      "image_path": "/stimuli/photos/scissors_01.jpg",
+      "slug": "boss_knife",
+      "image_path": "/stimuli/photos/boss_tableknife02.jpg",
+      "category": "household",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "knife",
+      "accepted_answers": [
+        "knife",
+        "knives"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/12xy43P_vim5cOGb4dUmvCpMQPJH8FCIV/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "tableknife02",
+        "modal_name": "knife",
+        "name_agreement": 0.87
+      }
+    },
+    {
+      "slug": "boss_lamp",
+      "image_path": "/stimuli/photos/boss_lamp04a.jpg",
+      "category": "household",
+      "difficulty": 3,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "lamp",
+      "accepted_answers": [
+        "lamp"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1N1FAsUKP6E__kfGebVuNd4iM4b1YkMC-/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "lamp04a",
+        "modal_name": "lamp",
+        "name_agreement": 0.92
+      }
+    },
+    {
+      "slug": "boss_light_bulb",
+      "image_path": "/stimuli/photos/boss_lightbulb01.jpg",
+      "category": "household",
+      "difficulty": 5,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "light bulb",
+      "accepted_answers": [
+        "bulb",
+        "light bulb",
+        "lightbulb"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/10yrvEyW3TB_TBwpDhK1mhgj-cIOUr0Aj/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "lightbulb01",
+        "modal_name": "light bulb",
+        "name_agreement": 0.83
+      }
+    },
+    {
+      "slug": "boss_microscope",
+      "image_path": "/stimuli/photos/boss_microscope.jpg",
+      "category": "tools",
+      "difficulty": 5,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "microscope",
+      "accepted_answers": [
+        "microscope"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/102zYklnknWYgGGaixUjLqhWn6MyWKZtv/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "microscope",
+        "modal_name": "microscope",
+        "name_agreement": 0.97
+      }
+    },
+    {
+      "slug": "boss_microwave",
+      "image_path": "/stimuli/photos/boss_microwave.jpg",
+      "category": "household",
+      "difficulty": 5,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "microwave",
+      "accepted_answers": [
+        "microwave",
+        "microwave oven"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/18RbagdqoQnF97NRBxfMCNRGd-3xR8_dq/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "microwave",
+        "modal_name": "microwave",
+        "name_agreement": 0.81
+      }
+    },
+    {
+      "slug": "boss_orange",
+      "image_path": "/stimuli/photos/boss_orange.jpg",
+      "category": "food",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "orange",
+      "accepted_answers": [
+        "orange",
+        "oranges"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1t_pWj0DXH1ffywhr7_fZrX10QWkMZoO4/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "orange",
+        "modal_name": "orange",
+        "name_agreement": 1.0
+      }
+    },
+    {
+      "slug": "boss_pencil",
+      "image_path": "/stimuli/photos/boss_pencil01.jpg",
+      "category": "household",
+      "difficulty": 4,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "pencil",
+      "accepted_answers": [
+        "pencil"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1du8g9CcF8Z9sQp5yd3qqOV0qiMHWDdOW/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "pencil01",
+        "modal_name": "pencil",
+        "name_agreement": 0.97
+      }
+    },
+    {
+      "slug": "boss_phone",
+      "image_path": "/stimuli/photos/boss_cellphone.jpg",
+      "category": "personal",
+      "difficulty": 1,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "phone",
+      "accepted_answers": [
+        "cell phone",
+        "cellphone",
+        "mobile",
+        "mobile phone",
+        "phone",
+        "smartphone",
+        "telephone"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1Sl2X7ZOfXBDlkczNyq_Rb15McUOK3kG-/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "cellphone",
+        "modal_name": "cell phone",
+        "name_agreement": 0.85
+      }
+    },
+    {
+      "slug": "boss_piano",
+      "image_path": "/stimuli/photos/boss_uprightpiano01.jpg",
+      "category": "music",
+      "difficulty": 3,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "piano",
+      "accepted_answers": [
+        "keyboard",
+        "piano"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1BWWIZX3pmmWGhG7OliBbSfL21q4jTWNQ/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "uprightpiano01",
+        "modal_name": "piano",
+        "name_agreement": 0.88
+      }
+    },
+    {
+      "slug": "boss_plate",
+      "image_path": "/stimuli/photos/boss_plate01b.jpg",
+      "category": "household",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "plate",
+      "accepted_answers": [
+        "dish",
+        "plate"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1EcN9kRGLbeSjkk04a5jAIx69AhbEjeB7/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "plate01b",
+        "modal_name": "plate",
+        "name_agreement": 0.92
+      }
+    },
+    {
+      "slug": "boss_refrigerator",
+      "image_path": "/stimuli/photos/boss_fridge.jpg",
+      "category": "household",
+      "difficulty": 5,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "refrigerator",
+      "accepted_answers": [
+        "fridge",
+        "refrigerator"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1IPu7TjLS7a4mHB3IkEWb3hM2I2q0Wo7M/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "fridge",
+        "modal_name": "fridge",
+        "name_agreement": 0.71
+      }
+    },
+    {
+      "slug": "boss_scissors",
+      "image_path": "/stimuli/photos/boss_scissors01.jpg",
       "category": "household",
       "difficulty": 3,
       "exercise_types": [
@@ -905,58 +1047,21 @@
       "accepted_answers": [
         "scissors"
       ],
-      "source": "Wikimedia Commons",
+      "source": "Bank of Standardized Stimuli (BOSS)",
       "license": "CC BY-SA 3.0",
       "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
-      "attribution": "ZooFari",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Small_pair_of_blue_scissors.jpg"
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1HCubyqBfih0Hw1k9v4fIqGacbMSjx-5a/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "scissors01",
+        "modal_name": "scissors",
+        "name_agreement": 1.0
+      }
     },
     {
-      "slug": "photo_phone_01",
-      "image_path": "/stimuli/photos/phone_01.jpg",
-      "category": "personal",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "phone",
-      "accepted_answers": [
-        "phone",
-        "mobile",
-        "mobile phone",
-        "smartphone",
-        "cellphone",
-        "cell phone",
-        "telephone"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Acabashi",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Blackview_A60_Smartphone_Android_mobile_phone_and_folio_case.jpg"
-    },
-    {
-      "slug": "photo_umbrella_01",
-      "image_path": "/stimuli/photos/umbrella_01.jpg",
-      "category": "personal",
-      "difficulty": 3,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "umbrella",
-      "accepted_answers": [
-        "umbrella",
-        "parasol"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Basile Morin",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Beige_and_brown_oil-paper_umbrella_on_the_edge_of_a_wooden_house_in_Luang_Prabang_Laos.jpg"
-    },
-    {
-      "slug": "photo_shoe_01",
-      "image_path": "/stimuli/photos/shoe_01.jpg",
+      "slug": "boss_shoe",
+      "image_path": "/stimuli/photos/boss_manshoe.jpg",
       "category": "personal",
       "difficulty": 2,
       "exercise_types": [
@@ -969,15 +1074,147 @@
         "trainer",
         "trainers"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Petar Milošević",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Reebok_Royal_Glide_Ripple_Clip_shoe.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1cVkOg5kzrLEQW4q1Taea9w5aYuupLGXL/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "manshoe",
+        "modal_name": "shoe",
+        "name_agreement": 0.77
+      }
     },
     {
-      "slug": "photo_toothbrush_01",
-      "image_path": "/stimuli/photos/toothbrush_01.jpg",
+      "slug": "boss_sofa",
+      "image_path": "/stimuli/photos/boss_couch02.jpg",
+      "category": "household",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "sofa",
+      "accepted_answers": [
+        "couch",
+        "settee",
+        "sofa"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1YpFaHyNhtmds-jNT9Z25WRi5HwrQyp64/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "couch02",
+        "modal_name": "couch",
+        "name_agreement": 0.5
+      }
+    },
+    {
+      "slug": "boss_table",
+      "image_path": "/stimuli/photos/boss_table01.jpg",
+      "category": "household",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "table",
+      "accepted_answers": [
+        "dining table",
+        "table"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1fCM_dwdEfeH3y0N4r0x2G6QE9gym9Ajo/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "table01",
+        "modal_name": "table",
+        "name_agreement": 0.81
+      }
+    },
+    {
+      "slug": "boss_telescope",
+      "image_path": "/stimuli/photos/boss_telescope.jpg",
+      "category": "tools",
+      "difficulty": 5,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "telescope",
+      "accepted_answers": [
+        "telescope"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1xl8iKX3jmWrOng_qQjJi0EEApob5IctA/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "telescope",
+        "modal_name": "telescope",
+        "name_agreement": 0.95
+      }
+    },
+    {
+      "slug": "boss_television",
+      "image_path": "/stimuli/photos/boss_television.jpg",
+      "category": "household",
+      "difficulty": 3,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "television",
+      "accepted_answers": [
+        "television",
+        "telly",
+        "tv"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1eobM0kbJrvnRzFfHeRztDxQOqI5xldGU/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "television",
+        "modal_name": "tv",
+        "name_agreement": 0.24
+      }
+    },
+    {
+      "slug": "boss_tomato",
+      "image_path": "/stimuli/photos/boss_tomato01.jpg",
+      "category": "food",
+      "difficulty": 2,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "tomato",
+      "accepted_answers": [
+        "tomato",
+        "tomatoes"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1UJGJIaP5gKRUfBMRlIiHO4m1m_-ZSnEm/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "tomato01",
+        "modal_name": "tomato",
+        "name_agreement": 1.0
+      }
+    },
+    {
+      "slug": "boss_toothbrush",
+      "image_path": "/stimuli/photos/boss_toothbrush03b.jpg",
       "category": "personal",
       "difficulty": 4,
       "exercise_types": [
@@ -988,209 +1225,21 @@
         "toothbrush",
         "toothbrushes"
       ],
-      "source": "Wikimedia Commons",
-      "license": "Public domain",
-      "license_url": "",
-      "attribution": "Jonas Bergsten",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Toothbrush_x3_20050716_002.jpg"
-    },
-    {
-      "slug": "photo_car_01",
-      "image_path": "/stimuli/photos/car_01.jpg",
-      "category": "transport",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "car",
-      "accepted_answers": [
-        "car",
-        "old car",
-        "automobile"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Dietmar Rabich",
-      "source_url": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Merfeld,_Volvo_PV_544_B18_--_2021_--_0075-9.jpg"
-    },
-    {
-      "slug": "photo_bus_01",
-      "image_path": "/stimuli/photos/bus_01.jpg",
-      "category": "transport",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "bus",
-      "accepted_answers": [
-        "bus",
-        "double decker",
-        "double decker bus"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Grendelkhan",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Double_decker_7_bus_in_Edinburgh.jpg"
-    },
-    {
-      "slug": "photo_bus_02",
-      "image_path": "/stimuli/photos/bus_02.jpg",
-      "category": "transport",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "bus",
-      "accepted_answers": [
-        "bus",
-        "double decker",
-        "double decker bus"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but please mention me as the author.  I would",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Double_Decker_SMRT_Bus_Singapore_Feb23_R16_06977.jpg"
-    },
-    {
-      "slug": "photo_bicycle_01",
-      "image_path": "/stimuli/photos/bicycle_01.jpg",
-      "category": "transport",
-      "difficulty": 3,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "bicycle",
-      "accepted_answers": [
-        "bicycle",
-        "bike",
-        "cycle"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Basile Morin",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Parked_bicycle_with_graffitied_building_facade_and_doors_in_Amsterdam.jpg"
-    },
-    {
-      "slug": "photo_dog_01",
-      "image_path": "/stimuli/photos/dog_01.jpg",
-      "category": "animals",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "dog",
-      "accepted_answers": [
-        "dog",
-        "puppy"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY 4.0",
-      "license_url": "https://creativecommons.org/licenses/by/4.0",
-      "attribution": "Aciarium",
-      "source_url": "https://commons.wikimedia.org/wiki/File:DSC09611a_Search_and_Rescue_Dog,_Austrian_Red_Cross_Perchtoldsdorf,_2024-10.jpg"
-    },
-    {
-      "slug": "photo_cat_01",
-      "image_path": "/stimuli/photos/cat_01.jpg",
-      "category": "animals",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "cat",
-      "accepted_answers": [
-        "cat",
-        "kitten"
-      ],
-      "source": "Wikimedia Commons",
+      "source": "Bank of Standardized Stimuli (BOSS)",
       "license": "CC BY-SA 3.0",
       "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
-      "attribution": "Alvesgaspar",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Cat_November_2010-1a.jpg"
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1mpfjsAgB_07alrLpJ7f_tdlYWTSyAJyN/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "toothbrush03b",
+        "modal_name": "toothbrush",
+        "name_agreement": 1.0
+      }
     },
     {
-      "slug": "photo_cat_02",
-      "image_path": "/stimuli/photos/cat_02.jpg",
-      "category": "animals",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "cat",
-      "accepted_answers": [
-        "cat",
-        "kitten"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 3.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
-      "attribution": "Von.grzanka",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Felis_catus-cat_on_snow.jpg"
-    },
-    {
-      "slug": "photo_bird_01",
-      "image_path": "/stimuli/photos/bird_01.jpg",
-      "category": "animals",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "bird",
-      "accepted_answers": [
-        "bird",
-        "sparrow"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Rhododendrites",
-      "source_url": "https://commons.wikimedia.org/wiki/File:House_sparrow_male_in_Prospect_Park_(53532).jpg"
-    },
-    {
-      "slug": "photo_bird_02",
-      "image_path": "/stimuli/photos/bird_02.jpg",
-      "category": "animals",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "bird",
-      "accepted_answers": [
-        "bird",
-        "sparrow"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Terragio67",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Passer_domesticus_(female),_Geneve,_Switzerland.jpg"
-    },
-    {
-      "slug": "photo_horse_01",
-      "image_path": "/stimuli/photos/horse_01.jpg",
-      "category": "animals",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "horse",
-      "accepted_answers": [
-        "horse",
-        "pony"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Shadow Ayush",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Domestic_horse_at_Suryachaur_and_the_mountains_in_the_back1.jpg"
-    },
-    {
-      "slug": "photo_tree_01",
-      "image_path": "/stimuli/photos/tree_01.jpg",
+      "slug": "boss_tree",
+      "image_path": "/stimuli/photos/boss_tree.jpg",
       "category": "nature",
       "difficulty": 1,
       "exercise_types": [
@@ -1198,87 +1247,73 @@
       ],
       "target": "tree",
       "accepted_answers": [
+        "christmas tree",
+        "fir tree",
+        "pine",
+        "pine tree",
         "tree"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 2.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
-      "attribution": "N Chadwick",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Single_tree_in_field_-_geograph.org.uk_-_6700175.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1LUBfV2afy3Zpg9kvZBjPzxhgEgGEsus4/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "tree",
+        "modal_name": "tree",
+        "name_agreement": 0.95
+      }
     },
     {
-      "slug": "photo_tree_02",
-      "image_path": "/stimuli/photos/tree_02.jpg",
-      "category": "nature",
-      "difficulty": 1,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "tree",
-      "accepted_answers": [
-        "tree"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 2.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
-      "attribution": "N Chadwick",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Single_tree_in_field_-_geograph.org.uk_-_6964772.jpg"
-    },
-    {
-      "slug": "photo_flower_01",
-      "image_path": "/stimuli/photos/flower_01.jpg",
-      "category": "nature",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "flower",
-      "accepted_answers": [
-        "flower",
-        "rose"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Laitche",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Red_rose_with_black_background.jpg"
-    },
-    {
-      "slug": "photo_flower_02",
-      "image_path": "/stimuli/photos/flower_02.jpg",
-      "category": "nature",
-      "difficulty": 2,
-      "exercise_types": [
-        "picture_naming"
-      ],
-      "target": "flower",
-      "accepted_answers": [
-        "flower",
-        "rose"
-      ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but please mention me as the author.  I would",
-      "source_url": "https://commons.wikimedia.org/wiki/File:Red_Rose_Flower_IITMandi_Himachal_Aug19_D72_11473.jpg"
-    },
-    {
-      "slug": "photo_guitar_01",
-      "image_path": "/stimuli/photos/guitar_01.jpg",
-      "category": "music",
+      "slug": "boss_umbrella",
+      "image_path": "/stimuli/photos/boss_umbrella04.jpg",
+      "category": "personal",
       "difficulty": 3,
       "exercise_types": [
         "picture_naming"
       ],
-      "target": "guitar",
+      "target": "umbrella",
       "accepted_answers": [
-        "guitar"
+        "parasol",
+        "umbrella"
       ],
-      "source": "Wikimedia Commons",
-      "license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-      "attribution": "Elmschrat",
-      "source_url": "https://commons.wikimedia.org/wiki/File:00_Walden_Acoustic_Guitar_D310e_01.jpg"
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1fDS3wRFy6wJ3luC9Bv5nilmS3moVCpX0/view",
+      "norms": {
+        "dataset": "BOSS-2010 (v.1)",
+        "boss_file": "umbrella04",
+        "modal_name": "umbrella",
+        "name_agreement": 1.0
+      }
+    },
+    {
+      "slug": "boss_wrench",
+      "image_path": "/stimuli/photos/boss_stubbywrench01a.jpg",
+      "category": "tools",
+      "difficulty": 5,
+      "exercise_types": [
+        "picture_naming"
+      ],
+      "target": "wrench",
+      "accepted_answers": [
+        "spanner",
+        "wrench"
+      ],
+      "source": "Bank of Standardized Stimuli (BOSS)",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "attribution": "Mathieu B. Brodeur et al., Bank of Standardized Stimuli (BOSS)",
+      "source_url": "https://drive.google.com/file/d/1bH2BoamjHHaKF2LiMRweHMcFkm_isBEA/view",
+      "norms": {
+        "dataset": "BOSS-2014 (v.2)",
+        "boss_file": "stubbywrench01a",
+        "modal_name": "wrench",
+        "name_agreement": 1.0
+      }
     },
     {
       "slug": "photo_scene_cycling",

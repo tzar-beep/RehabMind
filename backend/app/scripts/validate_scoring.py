@@ -29,9 +29,17 @@ SETS = {
 REPORT = Path(__file__).parents[3] / "docs" / "validation" / "results" / "scoring.md"
 
 
+class _Answers(dict):
+    """Accepted answers per word; a benchmark word not (or no longer) in the picture library
+    is accepted only as itself."""
+
+    def __missing__(self, word: str) -> list[str]:
+        return [word]
+
+
 def accepted_answers() -> dict[str, list[str]]:
     catalog = load_catalog()
-    out: dict[str, list[str]] = {}
+    out: dict[str, list[str]] = _Answers()
     for e in catalog["stimuli"] + catalog.get("photos", []):
         if "picture_naming" in e.get("exercise_types", ["picture_naming"]):
             out.setdefault(e["target"], [])

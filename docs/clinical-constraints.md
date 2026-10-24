@@ -39,13 +39,19 @@ categories, trigger bypass attempts) and a Hypothesis property test on progressi
 
 | Kind | Count | Used for | Licence |
 |---|---|---|---|
-| Real-world photos (`frontend/public/stimuli/photos/`) | 61 (43 objects, 18 scenes) | picture naming; picture description and sentence construction (scenes) | CC0 / public domain / CC BY / CC BY-SA, from Wikimedia Commons; see [photo-credits.md](photo-credits.md) |
-| Lucide line drawings | 41 | picture naming (fallback) | ISC |
+| Object photos from the Bank of Standardized Stimuli (BOSS), a normed research set | 52 | picture naming | CC BY-SA 3.0 (Brodeur et al.) |
+| Scene photos from Wikimedia Commons | 18 | picture description and sentence construction | CC0 / public domain / CC BY / CC BY-SA |
+
+All pictures are real photographs (`frontend/public/stimuli/photos/`); there are no drawings
+or icons. Credits: [photo-credits.md](photo-credits.md) and the app's `/credits` page. Each
+BOSS entry also stores its published norms (most common name and name agreement). The earlier
+line drawings and Wikimedia object photos are retired: new exercises never use them, but the
+files stay in `frontend/public/stimuli/` so past session records still show the picture the
+patient actually saw.
 
 Each entry has category, difficulty (1–5), the exercise types it supports, the canonical
 answer and accepted variants, and, for scenes, description concepts and sentence words.
-Photos are preferred whenever one exists inside the clinician's limits; drawings remain the
-fallback. The AI only picks a catalogue entry by slug: it never supplies image paths, and an
+Every difficulty level from 1 to 5 has naming photos. The AI only picks a catalogue entry by slug: it never supplies image paths, and an
 entry without content for the exercise type is rejected.
 
 ## Exercise types (implemented)

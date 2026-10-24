@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { BrandMark } from "@/components/BrandMark";
@@ -12,7 +13,7 @@ import { LoginForm } from "./LoginForm";
 export const metadata: Metadata = { title: "Sign in" };
 
 const FACTS = [
-  { value: "61", label: "real-world photos" },
+  { value: "70", label: "real photographs" },
   { value: "3", label: "exercise types" },
   { value: "0", label: "recordings kept" },
 ];
@@ -50,7 +51,10 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
         <p className="text-sm text-brand-muted">
           {FACTS.map((f) => `${f.value} ${f.label}`).join(" · ")} · Research
-          prototype
+          prototype ·{" "}
+          <Link href="/credits" className="underline underline-offset-4">
+            Photo credits
+          </Link>
         </p>
       </div>
 

@@ -225,7 +225,7 @@ class AlwaysTooHard(FakeAIProvider):
     async def generate(self, request):
         result = await super().generate(request)
         data = json.loads(result.raw_output)
-        data.update(stimulus_slug="microscope", difficulty=5)
+        data.update(stimulus_slug="boss_microscope", difficulty=5)
         return result.__class__(json.dumps(data), result.provider, result.model)
 
 

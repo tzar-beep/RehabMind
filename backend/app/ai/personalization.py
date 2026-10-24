@@ -93,7 +93,7 @@ async def build_input(
                 break
     if not pool:
         raise NoSafeExercise("no candidates for AI personalization")
-    # Real-world photos only when any exist at this level (drawings are the fallback),
+    # Photos are preferred (all current stimuli are photos; drawings were retired),
     # unseen first.
     pool = sorted(prefer_photos(pool), key=lambda s: (s.id in recent, s.slug))
     pool = pool[:MAX_CANDIDATES]

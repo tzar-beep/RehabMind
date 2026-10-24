@@ -22,6 +22,7 @@ from app.clinicians.patient_router import router as clinician_patient_router
 from app.clinicians.router import router as clinicians_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging, request_id_var
+from app.exercises.router import router as stimuli_router
 from app.health.router import router as health_router
 from app.patients.router import router as patients_router
 from app.sessions.router import router as practice_router
@@ -67,6 +68,7 @@ for r in (
     practice_router,
     speech_router,
     admin_router,
+    stimuli_router,
 ):
     api.include_router(r)
 app.include_router(api)

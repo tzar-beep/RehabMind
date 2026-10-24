@@ -38,7 +38,7 @@ DOG = Stimulus(
     },
 )
 CUP = Stimulus(
-    slug="photo_cup_01",
+    slug="boss_cup",
     target="cup",
     accepted_answers=["cup", "mug"],
     category="household",

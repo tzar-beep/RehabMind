@@ -2,7 +2,7 @@
 `Proposal` contract; every proposal, whatever its source, goes through the issuer.
 
 Stimuli come only from the curated catalogue (`stimuli` table). Real-world photos are
-preferred; Lucide line drawings remain as the fallback for picture naming.
+used throughout (no drawings): BOSS object photos for naming, Wikimedia scenes otherwise.
 """
 
 import secrets

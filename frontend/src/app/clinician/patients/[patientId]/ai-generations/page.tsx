@@ -48,10 +48,10 @@ const RESULT: Record<
   },
 };
 
-/** "photo_cat_02" → "cat", "photo_scene_dog_running" → "dog running" (catalogue slugs). */
+/** "boss_light_bulb" → "light bulb", "photo_scene_dog_running" → "dog running" (catalogue slugs). */
 function pictureName(slug: string) {
   return slug
-    .replace(/^photo_(scene_)?/, "")
+    .replace(/^(photo_(scene_)?|boss_)/, "")
     .replace(/_\d+$/, "")
     .replaceAll("_", " ");
 }

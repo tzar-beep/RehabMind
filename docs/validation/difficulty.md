@@ -19,21 +19,27 @@ is cut into five equal levels. Agreement with the catalogue is Spearman's ρ.
 
 ## Results
 
-| Comparison | Spearman ρ |
-|---|---|
-| All 84 naming items | 0.80 |
-| Line drawings | 0.91 |
-| Photos | 0.68 |
+The picture library is now real photographs only: 52 object photos from the Bank of
+Standardized Stimuli (BOSS), each with published name agreement.
 
-Six items differ by two or more levels and are listed for clinician review, for example the
-banana photos (catalogue level 1, norm level 4: a three-syllable word, but a very
-recognisable photo) and the tomato photo (2 vs 5). Photos agree less than drawings because a
-clear photo makes a word easier than its norms suggest: visual recognisability is not in the
-estimate. Nothing in the catalogue was changed automatically.
+| Catalogue level compared with | Items | Spearman ρ |
+|---|---|---|
+| Word frequency and length (norm level) | 52 | 0.84 |
+| BOSS name agreement (reversed) | 52 | -0.08 |
+
+The hand-assigned levels follow word frequency and length closely, but they ignore name
+agreement: pictures that people name inconsistently are spread across all levels. The
+lowest-agreement photos are the television (24% call it "TV", the most common name),
+airplane (38%), egg (40%), bicycle (43%, most say "bike") and sofa (50%, most say
+"couch"). Low name agreement makes naming harder and scoring less certain, so these are the
+first items for the clinician panel to review: raise their level, or replace the photo with
+another BOSS exemplar that has higher agreement. Four items also differ from the norm level by
+two or more (banana, tomato, sofa, umbrella). Nothing in the catalogue was changed
+automatically.
 
 ## Next steps
 
 - Add Kuperman age-of-acquisition and Glasgow imageability norms (both freely available;
   check the licences before redistributing the data) and re-run the audit.
-- Ask the Phase 1 panel to rate name agreement for the 6 flagged items.
+- Ask the Phase 1 panel to review the low-name-agreement and flagged items above.
 - No Hindi picture-naming norms were found; a Hindi version would need local norming first.

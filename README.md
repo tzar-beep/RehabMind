@@ -87,7 +87,7 @@ Everything runs locally at **$0**: no paid APIs and no API keys.
 
 | 🧑‍🦽 Patients | 🩺 Clinicians | 🛡️ Safety by design |
 |---|---|---|
-| Real-world photos (61, openly licensed) plus line drawings | Dashboard of assigned patients (real data only) | `MAX_DIFFICULTY` enforced in 4 independent layers, incl. a DB trigger |
+| Real photographs only: 52 normed object photos (BOSS research set) and 18 scenes | Dashboard of assigned patients (real data only) | `MAX_DIFFICULTY` enforced in 4 independent layers, incl. a DB trigger |
 | Answer by **voice or typing**; naming, sentence building, picture description | Accuracy & difficulty trends, session history | Generative AI is bounded: schema → clinical → safety validation |
 | Hints: meaning first, then first sound | **Versioned practice limits** (never edited, only superseded) | Retry + deterministic fallback; patients are never blocked |
 | Warm, honest feedback with the correct word | **AI audit log**: suggestion, verdict, what the patient got | Audio **encrypted → transcribed locally → deleted** |

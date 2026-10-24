@@ -1,48 +1,79 @@
 # Photo credits
 
-Real-world photographs used as exercise stimuli. All come from
-[Wikimedia Commons](https://commons.wikimedia.org) under the licence shown; each was
-resized to at most 640 px and re-encoded (metadata removed). No other changes were made.
-Generated from `backend/app/exercises/stimuli_catalog.json` by
+Every picture in RehabMind is a real photograph. Each was resized to at most 640 px
+and re-encoded (metadata removed); no other changes were made. Generated from
+`backend/app/exercises/stimuli_catalog.json` by
 `uv run python -m app.scripts.photo_credits`.
+The same credits are shown in the app at `/credits`.
 
-Line drawings: [Lucide](https://lucide.dev) icons, ISC licence.
+## Objects: Bank of Standardized Stimuli (BOSS)
+
+52 photos from the BOSS, a research set of normed object photos made for
+picture-naming studies: Brodeur, Dionne-Dostie, Montreuil & Lepage (2010), *PLOS ONE*
+5(5): e10773; Brodeur, Guérard & Bouras (2014), *PLOS ONE* 9(9): e106953. Copyright
+Mathieu B. Brodeur; licence [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0).
+Downloaded from the authors' public folder. Name agreement is the share of BOSS
+participants who gave the photo its most common name.
+
+| File | Word | BOSS file | Most common name | Name agreement | Source |
+|---|---|---|---|---|---|
+| `boss_acousticguitar02.jpg` | guitar | acousticguitar02 | guitar | 71% | [BOSS](https://drive.google.com/file/d/1Kwcfv8-Mj6DvXra4Ok8YlliykOcGQXHU/view) |
+| `boss_anchor.jpg` | anchor | anchor | anchor | 93% | [BOSS](https://drive.google.com/file/d/18Ly4Ul0iC3aKuq0LwoHyfguv56LBYKbE/view) |
+| `boss_apple07.jpg` | apple | apple07 | apple | 95% | [BOSS](https://drive.google.com/file/d/1FC2DXuSZpYMXKHEQtTjzYaqd7u2ieaY7/view) |
+| `boss_banana01.jpg` | banana | banana01 | banana | 100% | [BOSS](https://drive.google.com/file/d/1LalEV_2wGjzA7EKiCb4gp_lmpfigzZpZ/view) |
+| `boss_bed.jpg` | bed | bed | bed | 81% | [BOSS](https://drive.google.com/file/d/18krzjSaDy5AeV2g2xUa3x-iUSBgn8VGV/view) |
+| `boss_bicycle.jpg` | bicycle | bicycle | bike | 43% | [BOSS](https://drive.google.com/file/d/1B1f3ThJtlljiwdud7MJGJlYZLq73vev_/view) |
+| `boss_book01b.jpg` | book | book01b | book | 90% | [BOSS](https://drive.google.com/file/d/1Vpv7x_3iM0-zRpwW3Aqy5urlsMQR1UgP/view) |
+| `boss_bus.jpg` | bus | bus | bus | 57% | [BOSS](https://drive.google.com/file/d/1OeAupAcxuu0832iEeDuBSaTa7Ukgzszy/view) |
+| `boss_camera01a.jpg` | camera | camera01a | camera | 82% | [BOSS](https://drive.google.com/file/d/1LOCTILqOqjYMrpagU43BecodWoH_XUs7/view) |
+| `boss_car.jpg` | car | car | car | 81% | [BOSS](https://drive.google.com/file/d/1a_5sXzg0GhPv2pkgZVX7K3izA-mEuYZa/view) |
+| `boss_carrot01.jpg` | carrot | carrot01 | carrot | 97% | [BOSS](https://drive.google.com/file/d/1K--3gTEhWF4Ah1ghZ5Wfkc5hPEom924d/view) |
+| `boss_cat.jpg` | cat | cat | cat | 88% | [BOSS](https://drive.google.com/file/d/1s7GhcQT8a1TzxvAfLzZY4EhlH-5sj85R/view) |
+| `boss_cellphone.jpg` | phone | cellphone | cell phone | 85% | [BOSS](https://drive.google.com/file/d/1Sl2X7ZOfXBDlkczNyq_Rb15McUOK3kG-/view) |
+| `boss_cessna.jpg` | airplane | cessna | airplane | 38% | [BOSS](https://drive.google.com/file/d/1gz9UJ-Q8_Fp_crHUjkufkoc9Lcibz2Au/view) |
+| `boss_clock01a.jpg` | clock | clock01a | clock | 92% | [BOSS](https://drive.google.com/file/d/1PMoFSPEVkYL1ZGbteqYgLdkcNk3ctgX2/view) |
+| `boss_couch02.jpg` | sofa | couch02 | couch | 50% | [BOSS](https://drive.google.com/file/d/1YpFaHyNhtmds-jNT9Z25WRi5HwrQyp64/view) |
+| `boss_doubledoors.jpg` | door | doubledoors | doors | 55% | [BOSS](https://drive.google.com/file/d/1ptv5iCyv2Gpi048udAm8rfWsIHbFuovb/view) |
+| `boss_egg01a.jpg` | egg | egg01a | egg | 40% | [BOSS](https://drive.google.com/file/d/1ZB6bus4WABEl5u_va-CmxKRUEfPVoOxP/view) |
+| `boss_fork03c.jpg` | fork | fork03c | fork | 97% | [BOSS](https://drive.google.com/file/d/1lg9EuUf-VyVCzg2m7ooaA_qxkKYfEhIf/view) |
+| `boss_fridge.jpg` | refrigerator | fridge | fridge | 71% | [BOSS](https://drive.google.com/file/d/1IPu7TjLS7a4mHB3IkEWb3hM2I2q0Wo7M/view) |
+| `boss_glasses01a.jpg` | glasses | glasses01a | glasses | 72% | [BOSS](https://drive.google.com/file/d/1msDgHQdy_JHfn5RGHn1IsC_tN1EwzEJ7/view) |
+| `boss_hammer01.jpg` | hammer | hammer01 | hammer | 100% | [BOSS](https://drive.google.com/file/d/1zCj6-y6TK_LtfOqxM_OdV96SLptZHZNp/view) |
+| `boss_headphones02b.jpg` | headphones | headphones02b | headphones | 71% | [BOSS](https://drive.google.com/file/d/1Jk7KyMocatV1ow_uJ593xfype0DSDJbB/view) |
+| `boss_hibiscusflower02.jpg` | flower | hibiscusflower02 | flower | 89% | [BOSS](https://drive.google.com/file/d/1i2k3tWcf5N6PWDxQgnaCJPfeN3yBUFLt/view) |
+| `boss_horse.jpg` | horse | horse | horse | 100% | [BOSS](https://drive.google.com/file/d/1adfE82Z4GzZkkoukpyI5IzcFBFOfKZMB/view) |
+| `boss_kettle01.jpg` | kettle | kettle01 | kettle | 68% | [BOSS](https://drive.google.com/file/d/1U9F0e3vusm_pSjD6RjujbHvqzw1pxZOw/view) |
+| `boss_key01.jpg` | key | key01 | key | 97% | [BOSS](https://drive.google.com/file/d/1paXQJ5uSWssfTTmTUv7yKQ1X6e0I-6bw/view) |
+| `boss_lamp04a.jpg` | lamp | lamp04a | lamp | 92% | [BOSS](https://drive.google.com/file/d/1N1FAsUKP6E__kfGebVuNd4iM4b1YkMC-/view) |
+| `boss_lightbulb01.jpg` | light bulb | lightbulb01 | light bulb | 83% | [BOSS](https://drive.google.com/file/d/10yrvEyW3TB_TBwpDhK1mhgj-cIOUr0Aj/view) |
+| `boss_manshoe.jpg` | shoe | manshoe | shoe | 77% | [BOSS](https://drive.google.com/file/d/1cVkOg5kzrLEQW4q1Taea9w5aYuupLGXL/view) |
+| `boss_microscope.jpg` | microscope | microscope | microscope | 97% | [BOSS](https://drive.google.com/file/d/102zYklnknWYgGGaixUjLqhWn6MyWKZtv/view) |
+| `boss_microwave.jpg` | microwave | microwave | microwave | 81% | [BOSS](https://drive.google.com/file/d/18RbagdqoQnF97NRBxfMCNRGd-3xR8_dq/view) |
+| `boss_mug01.jpg` | cup | mug01 | cup | 62% | [BOSS](https://drive.google.com/file/d/1Jd5REMpRol4seg19Zb48nltMbPMC6ujM/view) |
+| `boss_orange.jpg` | orange | orange | orange | 100% | [BOSS](https://drive.google.com/file/d/1t_pWj0DXH1ffywhr7_fZrX10QWkMZoO4/view) |
+| `boss_pencil01.jpg` | pencil | pencil01 | pencil | 97% | [BOSS](https://drive.google.com/file/d/1du8g9CcF8Z9sQp5yd3qqOV0qiMHWDdOW/view) |
+| `boss_plate01b.jpg` | plate | plate01b | plate | 92% | [BOSS](https://drive.google.com/file/d/1EcN9kRGLbeSjkk04a5jAIx69AhbEjeB7/view) |
+| `boss_rockbass.jpg` | fish | rockbass | fish | 90% | [BOSS](https://drive.google.com/file/d/1pVh77PeE5CrrlAe7mspJIlyVKnQo59Ak/view) |
+| `boss_saintbernard.jpg` | dog | saintbernard | dog | 62% | [BOSS](https://drive.google.com/file/d/1WbxCcREunbcOu5e8zWEQsusbaPXDJVPh/view) |
+| `boss_scissors01.jpg` | scissors | scissors01 | scissors | 100% | [BOSS](https://drive.google.com/file/d/1HCubyqBfih0Hw1k9v4fIqGacbMSjx-5a/view) |
+| `boss_stubbywrench01a.jpg` | wrench | stubbywrench01a | wrench | 100% | [BOSS](https://drive.google.com/file/d/1bH2BoamjHHaKF2LiMRweHMcFkm_isBEA/view) |
+| `boss_table01.jpg` | table | table01 | table | 81% | [BOSS](https://drive.google.com/file/d/1fCM_dwdEfeH3y0N4r0x2G6QE9gym9Ajo/view) |
+| `boss_tableknife02.jpg` | knife | tableknife02 | knife | 87% | [BOSS](https://drive.google.com/file/d/12xy43P_vim5cOGb4dUmvCpMQPJH8FCIV/view) |
+| `boss_telescope.jpg` | telescope | telescope | telescope | 95% | [BOSS](https://drive.google.com/file/d/1xl8iKX3jmWrOng_qQjJi0EEApob5IctA/view) |
+| `boss_television.jpg` | television | television | tv | 24% | [BOSS](https://drive.google.com/file/d/1eobM0kbJrvnRzFfHeRztDxQOqI5xldGU/view) |
+| `boss_tern.jpg` | bird | tern | bird | 88% | [BOSS](https://drive.google.com/file/d/1kCk_R1O4uzQh_X6yjYhKm4b2csJrihh2/view) |
+| `boss_tomato01.jpg` | tomato | tomato01 | tomato | 100% | [BOSS](https://drive.google.com/file/d/1UJGJIaP5gKRUfBMRlIiHO4m1m_-ZSnEm/view) |
+| `boss_toothbrush03b.jpg` | toothbrush | toothbrush03b | toothbrush | 100% | [BOSS](https://drive.google.com/file/d/1mpfjsAgB_07alrLpJ7f_tdlYWTSyAJyN/view) |
+| `boss_tree.jpg` | tree | tree | tree | 95% | [BOSS](https://drive.google.com/file/d/1LUBfV2afy3Zpg9kvZBjPzxhgEgGEsus4/view) |
+| `boss_umbrella04.jpg` | umbrella | umbrella04 | umbrella | 100% | [BOSS](https://drive.google.com/file/d/1fDS3wRFy6wJ3luC9Bv5nilmS3moVCpX0/view) |
+| `boss_uprightpiano01.jpg` | piano | uprightpiano01 | piano | 88% | [BOSS](https://drive.google.com/file/d/1BWWIZX3pmmWGhG7OliBbSfL21q4jTWNQ/view) |
+| `boss_waterbottle03.jpg` | bottle | waterbottle03 | water bottle | 72% | [BOSS](https://drive.google.com/file/d/11OJjIz_8ctTOp-BqNH0emc5wA5L2ZKMl/view) |
+| `boss_weight01.jpg` | dumbbell | weight01 | weight | 54% | [BOSS](https://drive.google.com/file/d/1XW7TSsbh0d4y99HgGTID5OEEBN-z8L4o/view) |
+
+## Scenes: Wikimedia Commons
 
 | File | Author | Licence | Source |
 |---|---|---|---|
-| `apple_01.jpg` | Abhijit Tembhekar from Mumbai, India | CC BY 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Red_Apple.jpg) |
-| `apple_02.jpg` | HaJunkiyada | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Red_Apple_(Whole_Fruit).jpg) |
-| `banana_01.jpg` | Wilfredor | CC0 | [Commons](https://commons.wikimedia.org/wiki/File:Bunch_of_bananas_on_sale.jpg) |
-| `banana_02.jpg` | Samsule2 | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:A_Bunch_of_Bananas_displayed_by_a_roadside_seller_02.jpg) |
-| `bed_01.jpg` | Basile Morin | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Canopy_bed_of_Amantaka_Suite_in_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg) |
-| `bicycle_01.jpg` | Basile Morin | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Parked_bicycle_with_graffitied_building_facade_and_doors_in_Amsterdam.jpg) |
-| `bird_01.jpg` | Rhododendrites | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:House_sparrow_male_in_Prospect_Park_(53532).jpg) |
-| `bird_02.jpg` | Terragio67 | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Passer_domesticus_(female),_Geneve,_Switzerland.jpg) |
-| `book_01.jpg` | Illustrated by Arthur Hawkins, Jr. Published by Viking Press. | Public domain | [Commons](https://commons.wikimedia.org/wiki/File:Cannery_Row_(1945_1st_ed_dust_jacket).jpg) |
-| `bottle_01.jpg` | Pranavshivakumar | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Water_bottle_3.jpg) |
-| `bus_01.jpg` | Grendelkhan | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Double_decker_7_bus_in_Edinburgh.jpg) |
-| `bus_02.jpg` | This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but please mention me as the author.  I would | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Double_Decker_SMRT_Bus_Singapore_Feb23_R16_06977.jpg) |
-| `car_01.jpg` | Dietmar Rabich | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Merfeld,_Volvo_PV_544_B18_--_2021_--_0075-9.jpg) |
-| `carrot_01.jpg` | W.carter | CC0 | [Commons](https://commons.wikimedia.org/wiki/File:Preparing_and_slicing_carrots.jpg) |
-| `cat_01.jpg` | Alvesgaspar | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Cat_November_2010-1a.jpg) |
-| `cat_02.jpg` | Von.grzanka | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Felis_catus-cat_on_snow.jpg) |
-| `clock_01.jpg` | Ermell | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:London_Big_Ben_Inner_Clock_Face_1070925-PSD.jpg) |
-| `cup_01.jpg` | PedanticNarrativeController | CC0 | [Commons](https://commons.wikimedia.org/wiki/File:Coffee_steaming_in_a_mug.jpg) |
-| `dog_01.jpg` | Aciarium | CC BY 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:DSC09611a_Search_and_Rescue_Dog,_Austrian_Red_Cross_Perchtoldsdorf,_2024-10.jpg) |
-| `door_01.jpg` | Brian C Murray | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Front_door_refinishing.jpg) |
-| `egg_01.jpg` | Batholith (talk) | Public domain | [Commons](https://commons.wikimedia.org/wiki/File:Chicken_eggs_20101113.jpg) |
-| `flower_01.jpg` | Laitche | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Red_rose_with_black_background.jpg) |
-| `flower_02.jpg` | This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but please mention me as the author.  I would | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Red_Rose_Flower_IITMandi_Himachal_Aug19_D72_11473.jpg) |
-| `fork_01.jpg` | See source page | CC BY-SA 3.0 us | [Commons](https://commons.wikimedia.org/wiki/File:Assorted_forks.jpg) |
-| `guitar_01.jpg` | Elmschrat | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:00_Walden_Acoustic_Guitar_D310e_01.jpg) |
-| `horse_01.jpg` | Shadow Ayush | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Domestic_horse_at_Suryachaur_and_the_mountains_in_the_back1.jpg) |
-| `house_01.jpg` | Boereck | Public domain | [Commons](https://commons.wikimedia.org/wiki/File:Newly_developed_single-family_home_in_northern_Germany.jpg) |
-| `kettle_01.jpg` | Jacek Halicki | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:2023_Czajnik_elektryczny_N%27OVEEN.jpg) |
-| `key_01.jpg` | J G Bissell &amp; Co. | CC BY 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Lock_and_key_(AM_1965.78.577-5).jpg) |
-| `knife_01.jpg` | Jacek Halicki | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:2020_No%C5%BCe_kuchenne_Gerlach.jpg) |
-| `orange_01.jpg` | Evan-Amos | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Orange-Fruit-Pieces.jpg) |
-| `phone_01.jpg` | Acabashi | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Blackview_A60_Smartphone_Android_mobile_phone_and_folio_case.jpg) |
-| `plate_01.jpg` | Haydn Blackey | CC BY-SA 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:The_way_we_like_our_plates_at_the_end_of_dinner-_Dinner_on_New_Year%27s_Day_2024_-_The_Eighth_Day_of_Christmas_-_53435741068.jpg) |
 | `scene_bird_flying.jpg` | Matthew T Rader | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Bird_silhouette_flying_in_the_sky.jpg) |
 | `scene_boy_eating.jpg` | Isabella Lucy Bird | Public domain | [Commons](https://commons.wikimedia.org/wiki/File:Child_Eating_Rice_with_Chopsticks.jpg) |
 | `scene_bus_stop.jpg` | Frank Hank | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:People_waiting_at_bus_stop.jpg) |
@@ -61,13 +92,3 @@ Line drawings: [Lucide](https://lucide.dev) icons, ISC licence.
 | `scene_phone.jpg` | Shixart1985 | CC BY 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Woman_smiling_while_talking_on_the_phone_by_the_window.jpg) |
 | `scene_reading.jpg` | Jean-Louis Debaize / European Communities, 1979 / EC - Audiovisual Service | CC BY 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Man_reading_a_newspaper_at_a_caf%C3%A9_terrace_in_Athens,_Greece_-_1979.jpg) |
 | `scene_vegetables.jpg` | F. D. Neal | CC0 | [Commons](https://commons.wikimedia.org/wiki/File:Vegetables_on_Cutting_Board.jpg) |
-| `scissors_01.jpg` | ZooFari | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Small_pair_of_blue_scissors.jpg) |
-| `shoe_01.jpg` | Petar Milošević | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Reebok_Royal_Glide_Ripple_Clip_shoe.jpg) |
-| `sofa_01.jpg` | www.Pixel.la Free Stock Photos | CC0 | [Commons](https://commons.wikimedia.org/wiki/File:Couch-furniture-living-room-sofa_(24300293356).jpg) |
-| `table_01.jpg` | Vaibhavratnaparkhi | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Dining_table_brown.jpg) |
-| `television_01.jpg` | Svetlov Artem | CC BY 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Polytechnical_Museum_television_set_Volna_20150214_164839.jpg) |
-| `tomato_01.jpg` | Softeis | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Tomato_je.jpg) |
-| `toothbrush_01.jpg` | Jonas Bergsten | Public domain | [Commons](https://commons.wikimedia.org/wiki/File:Toothbrush_x3_20050716_002.jpg) |
-| `tree_01.jpg` | N Chadwick | CC BY-SA 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Single_tree_in_field_-_geograph.org.uk_-_6700175.jpg) |
-| `tree_02.jpg` | N Chadwick | CC BY-SA 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Single_tree_in_field_-_geograph.org.uk_-_6964772.jpg) |
-| `umbrella_01.jpg` | Basile Morin | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Beige_and_brown_oil-paper_umbrella_on_the_edge_of_a_wooden_house_in_Luang_Prabang_Laos.jpg) |

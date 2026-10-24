@@ -203,7 +203,7 @@ export function ContextVisual({ ctx }: { ctx: Record<string, unknown> }) {
               key={c.slug}
               className="rounded-full bg-surface px-3 py-1 font-mono text-xs border border-line"
             >
-              {c.slug.replace("photo_", "")}
+              {c.slug.replace(/^(photo_|boss_)/, "")}
             </span>
           ))}
         </div>

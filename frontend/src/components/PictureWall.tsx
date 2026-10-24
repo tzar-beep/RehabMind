@@ -3,20 +3,21 @@ import { cn } from "@/lib/utils";
 export type WallPicture = { src: string; word: string };
 
 /**
- * Pictures from the practice library, each labelled with the word a patient names it by
- * (all openly licensed; credits in docs/photo-credits.md). Shared by the sign-in page and
+ * Pictures from the practice library, each labelled with the word a patient names it by.
+ * Object photos come from the Bank of Standardized Stimuli (BOSS, CC BY-SA 3.0); credits
+ * are on the /credits page. Shared by the sign-in page and
  * the patient home so both show the same thing: what practice actually looks like.
  *
  * `fill`: the cells stretch to the wall's height (the parent sets the rows and height);
  * otherwise every cell is square.
  */
 export const PRACTICE_PICTURES: WallPicture[] = [
-  { src: "/stimuli/photos/apple_01.jpg", word: "apple" },
-  { src: "/stimuli/photos/dog_01.jpg", word: "dog" },
-  { src: "/stimuli/photos/kettle_01.jpg", word: "kettle" },
-  { src: "/stimuli/photos/bicycle_01.jpg", word: "bicycle" },
-  { src: "/stimuli/photos/flower_01.jpg", word: "flower" },
-  { src: "/stimuli/photos/guitar_01.jpg", word: "guitar" },
+  { src: "/stimuli/photos/boss_apple07.jpg", word: "apple" },
+  { src: "/stimuli/photos/boss_saintbernard.jpg", word: "dog" },
+  { src: "/stimuli/photos/boss_kettle01.jpg", word: "kettle" },
+  { src: "/stimuli/photos/boss_bicycle.jpg", word: "bicycle" },
+  { src: "/stimuli/photos/boss_hibiscusflower02.jpg", word: "flower" },
+  { src: "/stimuli/photos/boss_acousticguitar02.jpg", word: "guitar" },
 ];
 
 export function PictureWall({
@@ -44,7 +45,7 @@ export function PictureWall({
         <li
           key={p.src}
           className={cn(
-            "relative bg-white/5",
+            "relative bg-white",
             fill ? "min-h-0" : "aspect-square",
           )}
         >
@@ -52,11 +53,12 @@ export function PictureWall({
           <img
             src={p.src}
             alt={label ? p.word : ""}
-            className="absolute inset-0 size-full object-cover"
+            // BOSS photos are objects on white: show the whole object, never crop it.
+            className="absolute inset-0 size-full object-contain p-3"
           />
           <span
             aria-hidden="true"
-            className="absolute bottom-2 left-2 rounded-md bg-white px-2 py-0.5 text-base font-bold text-ink"
+            className="absolute bottom-2 left-2 rounded-md bg-brand-deep px-2 py-0.5 text-base font-bold text-white"
           >
             {p.word}
           </span>

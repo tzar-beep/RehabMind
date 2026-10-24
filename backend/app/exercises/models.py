@@ -21,7 +21,7 @@ class Stimulus(TimestampMixin, Base):
     category: Mapped[str] = mapped_column(String(40), index=True)
     difficulty: Mapped[int] = mapped_column(SmallInteger, index=True)
     image_path: Mapped[str] = mapped_column(String(200))
-    # "icon" (Lucide line drawing) or "photo" (real-world photograph).
+    # "photo" (real photograph). "icon" remains for retired line drawings in old exercises.
     kind: Mapped[str] = mapped_column(String(10), default="icon", server_default="icon")
     # Exercise types this stimulus has content for.
     exercise_types: Mapped[list[str]] = mapped_column(

@@ -48,7 +48,14 @@ def test_photo_catalogue_loads_with_required_metadata():
         assert required <= set(p), p["slug"]
         assert p["image_path"].startswith("/stimuli/photos/") and p["image_path"].endswith(".jpg")
         assert OPEN_LICENSE.match(p["license"]), (p["slug"], p["license"])
-        assert p["source_url"].startswith("https://commons.wikimedia.org/wiki/File:")
+        if p["slug"].startswith("boss_"):
+            # Object photos: the BOSS research set, with its published naming norms.
+            assert p["source_url"].startswith("https://drive.google.com/file/d/")
+            assert p["license"] == "CC BY-SA 3.0"
+            assert 0 < p["norms"]["name_agreement"] <= 1 and p["norms"]["modal_name"]
+            assert p["norms"]["modal_name"] in {p["target"], *p["accepted_answers"]}
+        else:
+            assert p["source_url"].startswith("https://commons.wikimedia.org/wiki/File:")
         assert 1 <= p["difficulty"] <= 5 and set(p["exercise_types"]) <= set(PHOTO_TYPES)
     assert len({p["slug"] for p in photos}) == len(photos)
 
@@ -79,7 +86,9 @@ def test_scene_photos_have_scoring_content():
 async def test_photos_are_synced_into_the_stimulus_table():
     async with SessionLocal() as db:
         photos = (
-            (await db.execute(select(Stimulus).where(Stimulus.kind == "photo"))).scalars().all()
+            (await db.execute(select(Stimulus).where(Stimulus.kind == "photo", Stimulus.is_active)))
+            .scalars()
+            .all()
         )
     assert len(photos) == len(load_catalog()["photos"])
     assert all(p.is_active and p.license and p.source_url for p in photos)
@@ -195,13 +204,19 @@ async def test_mixed_plan_rotates_types_and_prefers_photos(care):  # noqa: F811
     assert max(ex.difficulty for ex, _ in rows) <= 3
 
 
-async def test_line_drawings_remain_available_as_fallback(care):  # noqa: F811
-    """No photo at difficulty 5 for naming → the Lucide drawings are still used."""
+def test_every_picture_is_a_real_photo_and_every_level_has_one():
+    catalog = load_catalog()
+    assert catalog["stimuli"] == []  # no drawings or icons: real photographs only
+    naming = [p for p in catalog["photos"] if "picture_naming" in p["exercise_types"]]
+    assert {p["difficulty"] for p in naming} == {1, 2, 3, 4, 5}
+
+
+async def test_hardest_level_still_uses_photos(care):  # noqa: F811
     patient, clinician, pid = care
     await set_plan(clinician, pid, min_difficulty=5, max_difficulty=5, max_exercises_per_session=2)
     state = (await patient.post(START)).json()
     assert state["exercise"]["type"] == "picture_naming"
-    assert state["exercise"]["image_kind"] == "icon"
+    assert state["exercise"]["image_kind"] == "photo"
 
 
 async def test_new_exercises_do_not_reveal_answers(care):  # noqa: F811
@@ -299,7 +314,7 @@ class WrongTypeAI(FakeAIProvider):
     async def generate(self, request):
         result = await super().generate(request)
         data = json.loads(result.raw_output)
-        data.update(stimulus_slug="photo_apple_01", difficulty=1)
+        data.update(stimulus_slug="boss_apple", difficulty=1)
         return result.__class__(json.dumps(data), result.provider, result.model)
 
 
@@ -314,3 +329,14 @@ async def test_ai_cannot_use_a_photo_without_content_for_the_type(care):  # noqa
     gens = await generations(pid)
     assert gens and all(g.failed_stage == "clinical" for g in gens)
     assert all(e.exercise_type == "picture_description" for e in await issued(pid))
+
+
+async def test_photo_credits_are_public_and_complete():
+    from tests.conftest import make_client
+
+    r = await make_client().get("/api/v1/stimuli/credits")
+    assert r.status_code == 200
+    credits = r.json()
+    assert len(credits) == len(load_catalog()["photos"])
+    assert all(c["attribution"] and c["license"] and c["source_url"] for c in credits)
+    assert any(c["name_agreement"] for c in credits)  # BOSS norms are included

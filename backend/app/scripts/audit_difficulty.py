@@ -19,13 +19,12 @@ REPORT = Path(__file__).parents[3] / "docs" / "validation" / "results" / "diffic
 
 def naming_items() -> list[dict]:
     catalog = load_catalog()
-    items = [{**e, "kind": "drawing"} for e in catalog["stimuli"]]
-    items += [
-        {**p, "kind": "photo"}
-        for p in catalog.get("photos", [])
-        if "picture_naming" in p["exercise_types"]
-    ]
-    return items
+    return [p for p in catalog.get("photos", []) if "picture_naming" in p["exercise_types"]]
+
+
+def agreement(item: dict) -> str:
+    norms = item.get("norms")
+    return f"{norms['name_agreement']:.0%}" if norms else "—"
 
 
 def main() -> None:
@@ -35,13 +34,11 @@ def main() -> None:
     hand = [i["difficulty"] for i in items]
     norm = [est[i["target"]][1] for i in items]
     rho_all = spearman(hand, norm)
-    by_kind = {
-        kind: spearman(
-            [i["difficulty"] for i in items if i["kind"] == kind],
-            [est[i["target"]][1] for i in items if i["kind"] == kind],
-        )
-        for kind in ("drawing", "photo")
-    }
+    # BOSS name agreement: lower agreement predicts harder naming (Nickels & Howard 1995).
+    normed = [i for i in items if i.get("norms")]
+    rho_agreement = spearman(
+        [i["difficulty"] for i in normed], [-i["norms"]["name_agreement"] for i in normed]
+    )
     flagged = sorted(
         (i for i in items if abs(i["difficulty"] - est[i["target"]][1]) >= 2),
         key=lambda i: -abs(i["difficulty"] - est[i["target"]][1]),
@@ -54,21 +51,22 @@ def main() -> None:
         "",
         f"{len(items)} picture-naming items ({len(est)} distinct target words).",
         "",
-        "| Comparison | Spearman ρ |",
-        "|---|---|",
-        f"| All items | {rho_all:.2f} |",
-        f"| Line drawings | {by_kind['drawing']:.2f} |",
-        f"| Photos | {by_kind['photo']:.2f} |",
+        "| Catalogue level compared with | Items | Spearman ρ |",
+        "|---|---|---|",
+        f"| Word frequency and length (norm level) | {len(items)} | {rho_all:.2f} |",
+        f"| BOSS name agreement (reversed: lower agreement = harder) | {len(normed)} "
+        f"| {rho_agreement:.2f} |",
         "",
         f"## Items to review ({len(flagged)}: levels differ by 2 or more)",
         "",
-        "| Picture | Kind | Target | Zipf frequency | Syllables | Catalogue level | Norm level |",
+        "| Picture | Name agreement | Target | Zipf frequency | Syllables | Catalogue level "
+        "| Norm level |",
         "|---|---|---|---|---|---|---|",
     ]
     for i in flagged:
         w, level = est[i["target"]]
         lines.append(
-            f"| {i['slug']} | {i['kind']} | {i['target']} | {w.zipf:.2f} | {w.syllables} | "
+            f"| {i['slug']} | {agreement(i)} | {i['target']} | {w.zipf:.2f} | {w.syllables} | "
             f"{i['difficulty']} | {level} |"
         )
     lines += [

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { BrandMark } from "@/components/BrandMark";
@@ -50,6 +51,14 @@ export function AppShell({
       >
         {children}
       </main>
+      <footer className={`mx-auto w-full ${width} px-6 pb-6 text-sm text-ink-muted`}>
+        <Link
+          href="/credits"
+          className="underline underline-offset-4 hover:text-ink"
+        >
+          Photo credits
+        </Link>
+      </footer>
     </>
   );
 }
