@@ -384,3 +384,30 @@ async def test_patient_rates_a_finished_session(care):
     assert overview["difficulty_ratings"] == {"too_hard": 1}
     page = (await clinician.get(f"/api/v1/patients/{pid}/sessions")).json()
     assert page["items"][0]["difficulty_rating"] == "too_hard"
+
+
+async def test_deferred_answer_returns_at_once_and_next_comes_from_resume(care):
+    patient, clinician, pid = care
+    await set_plan(clinician, pid, max_exercises_per_session=2)
+    state = (await patient.post(START)).json()
+    ex = state["exercise"]
+    r = await patient.post(
+        f"/api/v1/practice/exercises/{ex['id']}/responses",
+        json={"text": await target_of(ex["id"]), "defer_next": True},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["outcome"] == "correct"
+    assert body["state"]["exercise"] is None and body["state"]["status"] == "active"
+    nxt = (await patient.post(START)).json()
+    assert nxt["exercise"]["position"] == 2
+    assert (await patient.post(START)).json()["exercise"]["id"] == nxt["exercise"]["id"]
+    # After the last answer, resuming completes the session (the finished screen).
+    await patient.post(
+        f"/api/v1/practice/exercises/{nxt['exercise']['id']}/responses",
+        json={"skipped": True, "defer_next": True},
+    )
+    done = (await patient.post(START)).json()
+    assert done["status"] == "completed" and done["exercise"] is None
+    assert done["summary"]["practiced"] == 2
+    assert len(await issued(pid)) == 2

@@ -58,7 +58,6 @@ export function AiTip({ exerciseId }: { exerciseId: string }) {
       <div className="flex flex-col gap-1">
         <p className="text-sm font-bold text-accent-hover">A tip for you</p>
         <p className="text-xl">{tip.feedback}</p>
-        {tip.hint && <p className="text-lg text-ink-muted">{tip.hint}</p>}
       </div>
     </div>
   );

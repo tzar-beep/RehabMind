@@ -46,6 +46,13 @@ blind on relevance, clarity, tone and difficulty fit
 
 ## Findings to act on
 
+- **Done:** patients now always see the same fixed question ("What is this?"). A walkthrough
+  found an AI question that was safe and short but wrong for its picture ("Name the object
+  in this room" for a house), and a predictable question suits people with aphasia better.
+  The AI still chooses the picture and writes the cues and feedback.
+- **Done:** feedback that calls a different word "close" or "nearly right" is now rejected,
+  and the tip appears only after a missed answer.
+
 - **About 30% of exercise requests fall back to rule-based text.** The fallback is safe, so
   this is a cost (less varied wording), not a risk. Most rejections are answer leaks and long
   prompts, so a prompt revision that states the word limits and forbids naming the target

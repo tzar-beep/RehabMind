@@ -132,6 +132,12 @@ test("sentence building can switch to speaking and back", async ({ page }) => {
     await page
       .getByRole("button", { name: /Next picture|See how you did/ })
       .click();
+    // The next picture is prepared while feedback shows; wait for it to appear.
+    await expect(
+      page
+        .getByRole("button", { name: "I’m not sure" })
+        .or(page.getByRole("heading", { name: "Practice complete" })),
+    ).toBeVisible();
     if (
       await page.getByRole("heading", { name: "Practice complete" }).isVisible()
     )

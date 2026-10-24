@@ -57,6 +57,8 @@ class ResponseIn(BaseModel):
     skipped: bool = False
     hints_used: int = Field(default=0, ge=0, le=2)
     latency_ms: int | None = Field(default=None, ge=0, le=3_600_000)
+    # Return the score without preparing the next exercise (the client fetches it next).
+    defer_next: bool = False
 
 
 class ResponseResult(BaseModel):
@@ -244,6 +246,7 @@ async def respond(
             None if body.skipped else body.text,
             body.latency_ms,
             hints_used=body.hints_used,
+            issue_next_exercise=not body.defer_next,
         )
     except LookupError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found.") from None

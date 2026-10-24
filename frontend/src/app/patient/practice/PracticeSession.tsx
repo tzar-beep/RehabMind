@@ -45,7 +45,8 @@ type View =
       target: string;
       heard: string | null;
       imageUrl: string | null;
-      next: SessionState;
+      /** The answer was the session's last picture. */
+      last: boolean;
     };
 
 /** One picture, one question, one primary action at a time. */
@@ -67,6 +68,8 @@ export function PracticeSession() {
   const [micNotice, setMicNotice] = useState<string | null>(null);
   const shownAt = useRef(0);
   const nextButton = useRef<HTMLButtonElement>(null);
+  // The next exercise, fetched while the patient reads their feedback.
+  const nextState = useRef<Promise<SessionState | undefined> | null>(null);
 
   useEffect(() => {
     apiFetch("/practice/sessions", { method: "POST" }, SessionStateSchema)
@@ -85,6 +88,17 @@ export function PracticeSession() {
   }, [view]);
 
   function showFeedback(exercise: Exercise, result: ResponseResult) {
+    // Answers are scored at once; the next exercise is prepared in the background (the
+    // server issues it on this request), so "Next picture" rarely has to wait.
+    nextState.current =
+      result.state.exercise || result.state.status !== "active"
+        ? Promise.resolve(result.state)
+        : apiFetch(
+            "/practice/sessions",
+            { method: "POST" },
+            SessionStateSchema,
+          );
+    nextState.current.catch(() => undefined);
     setView({
       kind: "feedback",
       exerciseId: exercise.id,
@@ -95,7 +109,7 @@ export function PracticeSession() {
       target: result.target,
       heard: result.heard ?? null,
       imageUrl: exercise.image_url,
-      next: result.state,
+      last: exercise.position >= result.state.total,
     });
   }
 
@@ -114,6 +128,7 @@ export function PracticeSession() {
             ...body,
             hints_used: hints,
             latency_ms: Math.round(performance.now() - shownAt.current),
+            defer_next: true,
           },
         },
         ResponseResultSchema,
@@ -175,7 +190,7 @@ export function PracticeSession() {
   if (view.kind === "feedback") {
     const fb = feedbackFor(view.exerciseType, view.outcome);
     const isWord = view.exerciseType === "picture_naming";
-    const done = view.next.exercise === null;
+    const done = view.last;
     return (
       <div className="flex flex-col items-center gap-8 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
         <div role="status" className="flex flex-col items-center gap-4">
@@ -215,11 +230,28 @@ export function PracticeSession() {
             </p>
           )}
         </div>
-        <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
+        {/* A tip helps after a miss; after a correct answer the praise is enough. */}
+        {view.outcome !== "correct" && (
+          <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
+        )}
         <Button
           ref={nextButton}
           size="lg"
-          onClick={() => setView({ kind: "answering", state: view.next })}
+          busy={busy}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              const next = await nextState.current;
+              setView({ kind: "answering", state: next! });
+            } catch (e) {
+              setView({
+                kind: "error",
+                message: e instanceof ApiError ? e.message : String(e),
+              });
+            } finally {
+              setBusy(false);
+            }
+          }}
         >
           {done ? "See how you did" : "Next picture"}
         </Button>
@@ -289,7 +321,7 @@ export function PracticeSession() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-5 sm:gap-8">
       <div className="flex items-center justify-between gap-4">
         <p className="text-lg text-ink-muted">
           Picture {ex.position} of {state.total}
@@ -322,164 +354,177 @@ export function PracticeSession() {
         ))}
       </div>
 
+      {/* Picture beside the question and answer on wide screens, so nothing needs scrolling. */}
       <section
         aria-labelledby="prompt"
-        className="flex flex-col items-center gap-6"
+        className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-center lg:gap-12"
       >
-        {ex.image_url && (
-          // Alt text must not name the object: that would give the answer away.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={ex.image_url}
-            alt={IMAGE_ALT[ex.type] ?? IMAGE_ALT.picture_naming}
-            width={isPhoto ? 480 : 240}
-            height={isPhoto ? 360 : 240}
-            className={
-              isPhoto
-                ? "max-h-80 w-auto max-w-full rounded-card border-8 border-surface bg-surface object-contain shadow-card ring-1 ring-line"
-                : "rounded-card border border-line bg-surface p-8 shadow-card"
-            }
-          />
-        )}
-        <h1 id="prompt" className="text-4xl font-bold">
-          {ex.prompt}
-        </h1>
-      </section>
+        <div className="flex justify-center">
+          {ex.image_url && (
+            // Alt text must not name the object: that would give the answer away.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={ex.image_url}
+              alt={IMAGE_ALT[ex.type] ?? IMAGE_ALT.picture_naming}
+              width={isPhoto ? 480 : 240}
+              height={isPhoto ? 360 : 240}
+              className={
+                isPhoto
+                  ? "max-h-[26vh] w-auto max-w-full rounded-card border-8 border-surface bg-surface object-contain lg:max-h-[58vh]"
+                  : "max-h-[26vh] w-auto rounded-card border border-line bg-surface p-8 lg:max-h-[50vh]"
+              }
+            />
+          )}
+        </div>
+        <div className="flex flex-col gap-4 sm:gap-6">
+          <h1
+            id="prompt"
+            className="text-center text-2xl font-bold tracking-tight sm:text-4xl lg:text-left"
+          >
+            {ex.prompt}
+          </h1>
 
-      {ex.cues.length > 0 && (
-        <div className="flex flex-col items-center gap-3">
-          {hints > 0 && (
-            <div
-              role="status"
-              className="flex w-full gap-4 rounded-card border border-accent/20 bg-accent-soft px-6 py-5"
-            >
-              <span
-                aria-hidden="true"
-                className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning"
-              >
-                <Lightbulb size={22} />
-              </span>
-              <ul className="flex flex-col gap-2 self-center text-xl">
-                {ex.cues.slice(0, hints).map((cue) => (
-                  <li key={cue}>
-                    <Cue text={cue} />
-                  </li>
-                ))}
-              </ul>
+          {ex.cues.length > 0 && (
+            <div className="flex flex-col items-center gap-3 lg:items-start">
+              {hints > 0 && (
+                <div
+                  role="status"
+                  className="flex w-full gap-4 rounded-card border border-accent/20 bg-accent-soft px-6 py-5"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning"
+                  >
+                    <Lightbulb size={22} />
+                  </span>
+                  <ul className="flex flex-col gap-2 self-center text-xl">
+                    {ex.cues.slice(0, hints).map((cue) => (
+                      <li key={cue}>
+                        <Cue text={cue} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {hints < ex.cues.length && (
+                <Button
+                  variant="quiet"
+                  onClick={() =>
+                    setHintState({ exerciseId: ex.id, count: hints + 1 })
+                  }
+                >
+                  {hints === 0 ? "Show a hint" : "Show another hint"}
+                </Button>
+              )}
             </div>
           )}
-          {hints < ex.cues.length && (
-            <Button
-              variant="quiet"
-              onClick={() =>
-                setHintState({ exerciseId: ex.id, count: hints + 1 })
-              }
+
+          {micNotice && <Alert tone="info">{micNotice}</Alert>}
+
+          {useSpeech ? (
+            <div className="flex flex-col gap-4 sm:gap-6">
+              <p className="hidden text-center text-lg text-ink-muted sm:block lg:text-left">
+                {ex.instructions}
+              </p>
+              <SpeechRecorder
+                key={ex.id}
+                exerciseId={ex.id}
+                hintsUsed={hints}
+                latencyMs={() => performance.now() - shownAt.current}
+                onResult={(result) => showFeedback(ex, result)}
+                onUnavailable={(message) => {
+                  setMicNotice(message);
+                  setInputMode("manual");
+                }}
+              />
+              <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-center lg:justify-start">
+                {ex.response_modes.includes("text") && (
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    onClick={() => setInputMode("manual")}
+                  >
+                    {isSentence ? "Tap words instead" : "Type instead"}
+                  </Button>
+                )}
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => submit(ex, { skipped: true })}
+                >
+                  I&rsquo;m not sure
+                </Button>
+              </div>
+            </div>
+          ) : isSentence && ex.words ? (
+            <>
+              <WordBank
+                key={ex.id}
+                words={ex.words}
+                busy={busy}
+                error={answerError}
+                onCheck={(sentence) =>
+                  sentence
+                    ? void submit(ex, { text: sentence })
+                    : setAnswerError(EMPTY_ANSWER.sentence_construction)
+                }
+                onSkip={() => submit(ex, { skipped: true })}
+              />
+              {canSpeak && (
+                <Button variant="quiet" onClick={() => setInputMode("speech")}>
+                  Speak instead
+                </Button>
+              )}
+            </>
+          ) : (
+            <form
+              key={ex.id}
+              onSubmit={onSubmit}
+              noValidate
+              className="flex flex-col gap-5"
             >
-              {hints === 0 ? "Show a hint" : "Show another hint"}
-            </Button>
+              <TextField
+                label={
+                  ex.type === "picture_description"
+                    ? "Your description"
+                    : "Your answer"
+                }
+                hint={TYPE_HINT[ex.type] ?? TYPE_HINT.picture_naming}
+                name="answer"
+                autoComplete="off"
+                autoCapitalize="none"
+                spellCheck={false}
+                autoFocus
+                error={answerError ?? undefined}
+                className="text-2xl"
+              />
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button
+                  type="submit"
+                  size="lg"
+                  busy={busy}
+                  className="sm:flex-1"
+                >
+                  Check
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  disabled={busy}
+                  onClick={() => submit(ex, { skipped: true })}
+                >
+                  I&rsquo;m not sure
+                </Button>
+              </div>
+              {canSpeak && (
+                <Button variant="quiet" onClick={() => setInputMode("speech")}>
+                  Speak instead
+                </Button>
+              )}
+            </form>
           )}
         </div>
-      )}
-
-      {micNotice && <Alert tone="info">{micNotice}</Alert>}
-
-      {useSpeech ? (
-        <div className="flex flex-col gap-6">
-          <p className="text-center text-lg text-ink-muted">
-            {ex.instructions}
-          </p>
-          <SpeechRecorder
-            key={ex.id}
-            exerciseId={ex.id}
-            hintsUsed={hints}
-            latencyMs={() => performance.now() - shownAt.current}
-            onResult={(result) => showFeedback(ex, result)}
-            onUnavailable={(message) => {
-              setMicNotice(message);
-              setInputMode("manual");
-            }}
-          />
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            {ex.response_modes.includes("text") && (
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={() => setInputMode("manual")}
-              >
-                {isSentence ? "Tap words instead" : "Type instead"}
-              </Button>
-            )}
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => submit(ex, { skipped: true })}
-            >
-              I&rsquo;m not sure
-            </Button>
-          </div>
-        </div>
-      ) : isSentence && ex.words ? (
-        <>
-          <WordBank
-            key={ex.id}
-            words={ex.words}
-            busy={busy}
-            error={answerError}
-            onCheck={(sentence) =>
-              sentence
-                ? void submit(ex, { text: sentence })
-                : setAnswerError(EMPTY_ANSWER.sentence_construction)
-            }
-            onSkip={() => submit(ex, { skipped: true })}
-          />
-          {canSpeak && (
-            <Button variant="quiet" onClick={() => setInputMode("speech")}>
-              Speak instead
-            </Button>
-          )}
-        </>
-      ) : (
-        <form
-          key={ex.id}
-          onSubmit={onSubmit}
-          noValidate
-          className="flex flex-col gap-5"
-        >
-          <TextField
-            label={
-              ex.type === "picture_description"
-                ? "Your description"
-                : "Your answer"
-            }
-            hint={TYPE_HINT[ex.type] ?? TYPE_HINT.picture_naming}
-            name="answer"
-            autoComplete="off"
-            autoCapitalize="none"
-            spellCheck={false}
-            autoFocus
-            error={answerError ?? undefined}
-            className="text-2xl"
-          />
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button type="submit" size="lg" busy={busy} className="sm:flex-1">
-              Check
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              disabled={busy}
-              onClick={() => submit(ex, { skipped: true })}
-            >
-              I&rsquo;m not sure
-            </Button>
-          </div>
-          {canSpeak && (
-            <Button variant="quiet" onClick={() => setInputMode("speech")}>
-              Speak instead
-            </Button>
-          )}
-        </form>
-      )}
+      </section>
     </div>
   );
 }

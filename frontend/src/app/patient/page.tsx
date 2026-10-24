@@ -94,11 +94,23 @@ export default async function PatientHome() {
           )}
         </div>
 
-        <PictureWall className="hidden md:grid" />
-        <PictureWall
-          pictures={PRACTICE_PICTURES.slice(0, 3)}
-          className="md:hidden"
-        />
+        {/* A second, larger way into practice (the button stays the accessible one). */}
+        <Link
+          href={status?.has_plan ? "/patient/practice" : "#"}
+          aria-hidden="true"
+          tabIndex={-1}
+          className={
+            status?.has_plan
+              ? "block transition-opacity hover:opacity-90"
+              : "pointer-events-none block"
+          }
+        >
+          <PictureWall className="hidden md:grid" />
+          <PictureWall
+            pictures={PRACTICE_PICTURES.slice(0, 3)}
+            className="md:hidden"
+          />
+        </Link>
       </section>
 
       {activity && <WeekActivity activity={activity} />}

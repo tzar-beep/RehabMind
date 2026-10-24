@@ -46,7 +46,7 @@ export function AppShell({
       <main
         id="main"
         tabIndex={-1}
-        className={`mx-auto w-full ${width} flex-1 px-6 py-10`}
+        className={`mx-auto w-full ${width} flex-1 px-6 py-6 sm:py-10`}
       >
         {children}
       </main>

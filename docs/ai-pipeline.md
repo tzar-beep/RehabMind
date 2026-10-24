@@ -37,7 +37,7 @@ The patient is never blocked by AI failure.
 | AI may | AI may not |
 |---|---|
 | choose one picture from the clinician-bounded candidate list | invent pictures or words |
-| phrase the question (≤ 8 words) | change difficulty range, types, modes or categories |
+| propose question wording (validated and audited, but patients always see the fixed question, e.g. "What is this?") | change difficulty range, types, modes or categories |
 | write a meaning cue and a first-sound cue (naming) or one hint (sentence, description) | diagnose, predict recovery, or give advice |
 | write feedback on an answer after it is scored | change, restate or contradict the score |
 | draft a clinician summary from supplied figures | invent numbers (rejected by validation) |

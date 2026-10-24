@@ -183,7 +183,11 @@ async def submit_response(
     hints_used: int = 0,
     mode: ResponseMode = ResponseMode.TEXT,
     extra_analysis: dict[str, object] | None = None,
+    issue_next_exercise: bool = True,
 ) -> tuple[Exercise, ScoreResult, PracticeSession]:
+    """Score an answer and update progression. With `issue_next_exercise=False` the next
+    exercise is not generated here: the patient sees their result at once, and the client
+    fetches the next exercise (start_or_resume issues it) while the feedback is on screen."""
     stmt = (
         select(Exercise)
         .where(Exercise.id == exercise_id, Exercise.patient_id == patient_id)
@@ -248,7 +252,8 @@ async def submit_response(
         est = (await ability.estimates(db, patient_id))[objective.value]
         if est.attempts >= MIN_ANSWERS_FOR_ABILITY:
             profile.target_difficulty = ability_guided_level(est.ability, cs)
-    await issue_next(db, session)
+    if issue_next_exercise:
+        await issue_next(db, session)
     await db.commit()
     return exercise, result, session
 

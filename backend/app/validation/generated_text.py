@@ -34,6 +34,8 @@ _CLAIMS_CORRECT = (
     r"|\b(you got it|got it right|perfect|exactly right|spot on|well done, correct)\b"
 )
 _CLAIMS_WRONG = r"\b(wrong|incorrect|mistake|not quite|not right)\b"
+# Claims the answer was close, when the scorer found a different word altogether.
+_CLAIMS_CLOSE = r"\b(close|closer|nearly|nearing|almost|so near)\b"
 # Clinician summaries may name the condition but never diagnose, predict or prescribe.
 _SUMMARY_UNSAFE = {
     "medical_claim": r"\b(diagnos\w*|prognos\w*|medicat\w*|prescri\w*|cure\w*|heal\w*|"
@@ -77,6 +79,8 @@ def check_feedback(
         if outcome != "correct" and re.search(_CLAIMS_CORRECT, text, re.IGNORECASE):
             reasons.append(f"contradicts_score:{name}")
         if outcome == "correct" and re.search(_CLAIMS_WRONG, text, re.IGNORECASE):
+            reasons.append(f"contradicts_score:{name}")
+        if outcome == "incorrect" and re.search(_CLAIMS_CLOSE, text, re.IGNORECASE):
             reasons.append(f"contradicts_score:{name}")
         reasons += plain_language.check(text, name, task_words)
     return Verdict(not reasons, None if not reasons else "safety", reasons), out

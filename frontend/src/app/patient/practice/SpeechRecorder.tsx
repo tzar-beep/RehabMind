@@ -178,7 +178,7 @@ export function SpeechRecorder({
 
   if (phase.kind === "recording") {
     return (
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-4 lg:items-start">
         <p role="status" className="text-xl font-bold">
           Listening…{" "}
           <span className="tabular-nums">
@@ -199,7 +199,7 @@ export function SpeechRecorder({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 lg:items-start">
       {phase.kind === "retry" && <Alert tone="warning">{phase.message}</Alert>}
       <button
         type="button"

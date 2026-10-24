@@ -194,7 +194,10 @@ def _proposal(
         stim,
         allowed_modes(cs),
         "ai",
-        prompt=out.prompt,
+        # The question stays the same fixed wording every time (predictable for people with
+        # aphasia, and never wrong for the picture). The AI chooses the picture and writes
+        # the cues; its question text is still validated and audited but not shown.
+        prompt=None,
         cues=cues,
         generator_version=f"{model}:{PROMPT_VERSION}",
     )

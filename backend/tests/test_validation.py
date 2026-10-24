@@ -149,3 +149,13 @@ def test_study_analysis_compares_conditions(tmp_path):
                 )
     report = analyse(path)
     assert "| P-x | ability | 3 | 15 | 100% |" in report and "| 1.00 |" in report
+
+
+def test_feedback_never_calls_a_different_word_close():
+    import json
+
+    from app.validation.generated_text import check_feedback
+
+    raw = json.dumps({"feedback": "You are nearing the right word."})
+    assert "contradicts_score:feedback" in check_feedback(raw, "incorrect")[0].reasons
+    assert check_feedback(raw, "near_miss")[0].ok
