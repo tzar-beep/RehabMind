@@ -26,6 +26,7 @@ import {
 } from "@/lib/api/schemas";
 
 import { AiTip } from "./AiTip";
+import { ChoiceGrid, WordCard } from "./Choices";
 import { DifficultyRating } from "./DifficultyRating";
 import { EMPTY_ANSWER, IMAGE_ALT, TYPE_HINT, feedbackFor } from "./messages";
 import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
@@ -108,7 +109,11 @@ export function PracticeSession() {
       outcome: result.outcome,
       target: result.target,
       heard: result.heard ?? null,
-      imageUrl: exercise.image_url,
+      // Picture choices have no single picture: show the one that was right.
+      imageUrl:
+        exercise.image_url ??
+        exercise.options?.find((o) => o.word === result.target)?.image_url ??
+        null,
       last: exercise.position >= result.state.total,
     });
   }
@@ -300,6 +305,8 @@ export function PracticeSession() {
       (inputMode === "auto" &&
         (!isSentence || !ex.response_modes.includes("text"))));
   const isPhoto = ex.image_kind === "photo";
+  const options = ex.options ?? [];
+  const isChoice = options.length > 0;
   if (!ex.response_modes.includes("text") && !canSpeak) {
     return (
       <Alert tone="error">
@@ -360,8 +367,31 @@ export function PracticeSession() {
         aria-labelledby="prompt"
         className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-center lg:gap-12"
       >
-        <div className="flex justify-center">
-          {ex.image_url && (
+        <div
+          className={
+            isChoice ? "order-last lg:order-none" : "flex justify-center"
+          }
+        >
+          {isChoice && (
+            <div className="flex flex-col gap-4">
+              <ChoiceGrid
+                options={options}
+                busy={busy}
+                onPick={(word) => void submit(ex, { text: word })}
+              />
+              {/* On a phone the choices come first, then the way out. */}
+              <Button
+                variant="secondary"
+                size="lg"
+                disabled={busy}
+                className="lg:hidden"
+                onClick={() => submit(ex, { skipped: true })}
+              >
+                I&rsquo;m not sure
+              </Button>
+            </div>
+          )}
+          {!isChoice && ex.image_url && (
             // Alt text must not name the object: that would give the answer away.
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -384,6 +414,7 @@ export function PracticeSession() {
           >
             {ex.prompt}
           </h1>
+          {ex.word && <WordCard word={ex.word} />}
 
           {ex.cues.length > 0 && (
             <div className="flex flex-col items-center gap-3 lg:items-start">
@@ -422,7 +453,19 @@ export function PracticeSession() {
 
           {micNotice && <Alert tone="info">{micNotice}</Alert>}
 
-          {useSpeech ? (
+          {isChoice ? (
+            <div className="hidden flex-col gap-3 lg:flex lg:items-start">
+              {answerError && <Alert tone="error">{answerError}</Alert>}
+              <Button
+                variant="secondary"
+                size="lg"
+                disabled={busy}
+                onClick={() => submit(ex, { skipped: true })}
+              >
+                I&rsquo;m not sure
+              </Button>
+            </div>
+          ) : useSpeech ? (
             <div className="flex flex-col gap-4 sm:gap-6">
               <p className="hidden text-center text-lg text-ink-muted sm:block lg:text-left">
                 {ex.instructions}

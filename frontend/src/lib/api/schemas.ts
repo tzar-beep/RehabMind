@@ -57,6 +57,13 @@ export const ExerciseSchema = z.object({
   cues: z.array(z.string()),
   words: z.array(z.string()).nullable().optional(),
   image_kind: z.string().optional(),
+  // Word repetition and word recognition: the word to say or to find.
+  word: z.string().nullable().optional(),
+  // Picture-choice types: tapping a picture answers with its word.
+  options: z
+    .array(z.object({ word: z.string(), image_url: z.string() }))
+    .nullable()
+    .optional(),
 });
 export type Exercise = z.infer<typeof ExerciseSchema>;
 

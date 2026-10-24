@@ -16,6 +16,13 @@ const LEADS: Record<string, { correct: string; other: string }> = {
   picture_naming: { correct: "You named it", other: "The word is" },
   picture_description: { correct: "You described it", other: "For example" },
   sentence_construction: { correct: "You built it", other: "The sentence is" },
+  sentence_completion: {
+    correct: "You found it",
+    other: "The missing word is",
+  },
+  word_repetition: { correct: "You said it", other: "The word is" },
+  word_recognition: { correct: "You found it", other: "The picture shows" },
+  category_naming: { correct: "You found it", other: "The answer is" },
 };
 
 export function feedbackFor(exerciseType: string, outcome: Outcome) {
@@ -31,11 +38,15 @@ export const IMAGE_ALT: Record<string, string> = {
   picture_naming: "Picture to name",
   picture_description: "Picture to describe",
   sentence_construction: "Picture for the sentence",
+  sentence_completion: "Picture for the sentence",
+  word_repetition: "Picture of the word",
 };
 
 export const TYPE_HINT: Record<string, string> = {
   picture_naming: "Type the word for this picture.",
   picture_description: "Type a few words about the picture.",
+  sentence_completion: "Type the missing word.",
+  word_repetition: "Type the word you see.",
 };
 
 export const EMPTY_ANSWER: Record<string, string> = {
@@ -43,4 +54,6 @@ export const EMPTY_ANSWER: Record<string, string> = {
   picture_description: "Type a few words, or choose “I’m not sure”.",
   sentence_construction:
     "Tap the words to build a sentence, or choose “I’m not sure”.",
+  sentence_completion: "Type the missing word, or choose “I’m not sure”.",
+  word_repetition: "Type the word, or choose “I’m not sure”.",
 };
