@@ -55,8 +55,16 @@ blind on relevance, clarity, tone and difficulty fit
 - **Done:** feedback that calls a different word "close" or "nearly right" is rejected. The
   re-run audit shows why it matters: the model said "nearly" or "almost" for most answers
   that were a different word (feedback valid 31%), and an extra prompt instruction did not
-  change that. AI tips are therefore shown only for close answers, where a cue helps; a
-  different word gets the standard "Good try" and the correct word.
+  change that. AI tips were then shown only for close answers.
+- **Done (feedback prompt v2):** the old task line asked the model to praise what the patient
+  "did well or nearly did", for every outcome. `feedback_generation_v2` gives one instruction
+  and one short example per outcome (a different word: thank the patient for trying and
+  point to a feature of the picture; never "close" or "nearly"). On the same 120 benchmark
+  answers, feedback valid first time rose from 31% to **79%** (87% after the retry), with
+  **no** score contradictions left; the remaining rejections are rare words (20.7% of raw
+  outputs) and long sentences (8.3%). Tips are shown again after any answer that is not
+  correct, for the three exercise types the AI personalises. Reproduce with
+  `uv run python -m app.scripts.genai_audit --repeats 0 --feedback 120`.
 
 - **About 30% of exercise requests fall back to rule-based text.** The fallback is safe, so
   this is a cost (less varied wording), not a risk. Most rejections are answer leaks and long

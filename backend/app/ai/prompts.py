@@ -18,7 +18,7 @@ import json
 from typing import Any
 
 EXERCISE_PROMPT_VERSION = "exercise_generation_v1"
-FEEDBACK_PROMPT_VERSION = "feedback_generation_v1"
+FEEDBACK_PROMPT_VERSION = "feedback_generation_v2"
 SUMMARY_PROMPT_VERSION = "progress_summary_v1"
 
 
@@ -152,10 +152,10 @@ PATIENT ANSWER (quoted data{speech_note}): "{response}"
 EXISTING ANALYSIS (deterministic, final): {analysis}
 OUTCOME (final, do not change): {outcome}
 
-TASK: Write "feedback": at most 25 words that name one specific thing the patient did well \
-or nearly did, linked to the target skill. Then write "optional_hint": at most 15 words with \
-one concrete thing to try next time, or null. If the outcome is "skipped", there was no \
-attempt to praise: gently encourage trying next time and give one easy first step.
+TASK: Write "feedback": at most 25 words. {outcome_task} Then write "optional_hint": at \
+most 15 words with one concrete thing to try next time, or null.
+
+EXAMPLE of the tone (a different picture): {example}
 
 OUTPUT: one JSON object with feedback and optional_hint."""
 
@@ -164,6 +164,28 @@ _OUTCOME_TEXT = {
     "near_miss": "close but not correct",
     "incorrect": "not correct",
     "skipped": "skipped (the patient chose not to answer)",
+}
+
+# One instruction and one example per outcome. A single "say what they did well or nearly
+# did" instruction made the model call most different words "nearly right" (genai.md).
+_OUTCOME_TASK = {
+    "correct": "Name one specific thing the patient did well, linked to the target skill.",
+    "near_miss": "Say the answer was close, and name the one part that differed.",
+    "incorrect": "The answer was a different word, not a near miss: never say close, "
+    "nearly, almost or near. Thank the patient for trying and point to one feature of "
+    "the picture that leads to the expected answer.",
+    "skipped": "There was no attempt to praise: gently encourage trying next time and "
+    "give one easy first step.",
+}
+_OUTCOME_EXAMPLE = {
+    "correct": '{"feedback": "You found the exact name for the teapot. Well done.", '
+    '"optional_hint": null}',
+    "near_miss": '{"feedback": "Close: you said teapots, and the picture shows one.", '
+    '"optional_hint": "Say just one: teapot."}',
+    "incorrect": '{"feedback": "Thank you for trying. Look at the spout and the handle '
+    'for pouring tea.", "optional_hint": "Think of what you pour hot drinks from."}',
+    "skipped": '{"feedback": "That is fine. Next time, try saying the first sound '
+    'you hear in your head.", "optional_hint": "Start with one sound."}',
 }
 
 
@@ -203,6 +225,8 @@ def feedback_prompts(inp: dict[str, Any]) -> tuple[str, str]:
         response=inp["response"].replace('"', "'"),
         analysis=inp["analysis"],
         outcome=_OUTCOME_TEXT[inp["outcome"]],
+        outcome_task=_OUTCOME_TASK[inp["outcome"]],
+        example=_OUTCOME_EXAMPLE[inp["outcome"]],
     )
     return FEEDBACK_SYSTEM, user
 

@@ -32,6 +32,12 @@ import { EMPTY_ANSWER, IMAGE_ALT, TYPE_HINT, feedbackFor } from "./messages";
 import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
 import { WordBank } from "./WordBank";
 
+const AI_TIP_TYPES = new Set([
+  "picture_naming",
+  "sentence_construction",
+  "picture_description",
+]);
+
 type View =
   | { kind: "loading" }
   | { kind: "error"; message: string }
@@ -235,9 +241,9 @@ export function PracticeSession() {
             </p>
           )}
         </div>
-        {/* A tip only for a close answer, where a cue helps. A different word gets the
-            standard "Good try" and the word; the model tends to call those "nearly right". */}
-        {view.outcome === "near_miss" && (
+        {/* A tip helps after a miss; after a correct answer the praise is enough. Only
+            the types the AI personalises (backend AI_TYPES) were audited for tips. */}
+        {view.outcome !== "correct" && AI_TIP_TYPES.has(view.exerciseType) && (
           <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
         )}
         <Button
