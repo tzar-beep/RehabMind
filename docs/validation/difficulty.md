@@ -37,6 +37,17 @@ another BOSS exemplar that has higher agreement. Four items also differ from the
 two or more (banana, tomato, sofa, umbrella). Nothing in the catalogue was changed
 automatically.
 
+## Rebalance (applied)
+
+Following the finding above, each BOSS picture's level was set halfway between its
+hand-assigned level and a new norm level that adds name agreement to frequency and length
+(`estimate_levels(..., agreement=...)` in `app/exercises/norms.py`; halves round up).
+23 of 52 levels changed; every level from 1 to 5 still has pictures. The low-agreement
+pictures moved up: television 3 to 4, sofa 2 to 4, egg 1 to 3, bicycle 3 to 4, bus and door
+1 to 2. Each entry keeps `norms.level_before_rebalance`, so the clinician panel can review
+or reverse any change. The table in [results/difficulty.md](results/difficulty.md) is
+regenerated against the new levels.
+
 ## Next steps
 
 - Add Kuperman age-of-acquisition and Glasgow imageability norms (both freely available;

@@ -17,6 +17,9 @@ from wordfreq import zipf_frequency
 W_FREQUENCY = 1.0
 W_SYLLABLES = 0.7
 W_MULTIWORD = 0.3
+# Name agreement (BOSS norms): pictures that people name inconsistently are harder to name
+# and harder to score. Weighted like frequency (Nickels & Howard 1995 rank it above it).
+W_AGREEMENT = 1.0
 
 
 def syllables(word: str) -> int:
@@ -52,16 +55,24 @@ def _standardise(values: list[float]) -> list[float]:
     return [(v - m) / sd for v in values]
 
 
-def estimate_levels(targets: list[str], levels: int = 5) -> dict[str, tuple[WordNorms, int]]:
-    """Rank targets by the combined score and cut the ranking into equal-sized levels."""
+def estimate_levels(
+    targets: list[str], levels: int = 5, agreement: dict[str, float] | None = None
+) -> dict[str, tuple[WordNorms, int]]:
+    """Rank targets by the combined score and cut the ranking into equal-sized levels.
+
+    `agreement`: name agreement (0-1) per target; when given, lower agreement ranks harder.
+    """
     unique = sorted(set(targets))
     n = [norms(t) for t in unique]
     freq = _standardise([-x.zipf for x in n])
     syl = _standardise([float(x.syllables) for x in n])
     multi = [1.0 if x.words > 1 else 0.0 for x in n]
+    agree = (
+        _standardise([-agreement[t] for t in unique]) if agreement else [0.0] * len(unique)
+    )
     scores = [
-        W_FREQUENCY * f + W_SYLLABLES * s + W_MULTIWORD * m
-        for f, s, m in zip(freq, syl, multi, strict=True)
+        W_FREQUENCY * f + W_SYLLABLES * s + W_MULTIWORD * m + W_AGREEMENT * a
+        for f, s, m, a in zip(freq, syl, multi, agree, strict=True)
     ]
     order = sorted(range(len(unique)), key=lambda i: scores[i])
     out: dict[str, tuple[WordNorms, int]] = {}

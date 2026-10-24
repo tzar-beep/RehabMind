@@ -1,12 +1,12 @@
 {
-  "version": 4,
+  "version": 5,
   "stimuli": [],
   "photos": [
     {
       "slug": "boss_airplane",
       "image_path": "/stimuli/photos/boss_cessna.jpg",
       "category": "transport",
-      "difficulty": 4,
+      "difficulty": 5,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -31,7 +31,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "cessna",
         "modal_name": "airplane",
-        "name_agreement": 0.38
+        "name_agreement": 0.38,
+        "level_before_rebalance": 4
       },
       "cloze": "You fly to another country in an ___.",
       "group": "vehicle"
@@ -60,7 +61,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "anchor",
         "modal_name": "anchor",
-        "name_agreement": 0.93
+        "name_agreement": 0.93,
+        "level_before_rebalance": 4
       },
       "cloze": "The ship drops its ___."
     },
@@ -68,7 +70,7 @@
       "slug": "boss_apple",
       "image_path": "/stimuli/photos/boss_apple07.jpg",
       "category": "food",
-      "difficulty": 1,
+      "difficulty": 2,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -89,7 +91,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "apple07",
         "modal_name": "apple",
-        "name_agreement": 0.95
+        "name_agreement": 0.95,
+        "level_before_rebalance": 1
       },
       "cloze": "You can bake an ___ pie.",
       "group": "food"
@@ -98,7 +101,7 @@
       "slug": "boss_banana",
       "image_path": "/stimuli/photos/boss_banana01.jpg",
       "category": "food",
-      "difficulty": 1,
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -120,7 +123,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "banana01",
         "modal_name": "banana",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 1
       },
       "cloze": "A monkey peels a yellow ___.",
       "group": "food"
@@ -150,7 +154,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "bed",
         "modal_name": "bed",
-        "name_agreement": 0.81
+        "name_agreement": 0.81,
+        "level_before_rebalance": 1
       },
       "cloze": "At night you sleep in a ___.",
       "group": "furniture"
@@ -159,7 +164,7 @@
       "slug": "boss_bicycle",
       "image_path": "/stimuli/photos/boss_bicycle.jpg",
       "category": "transport",
-      "difficulty": 3,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -182,7 +187,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "bicycle",
         "modal_name": "bike",
-        "name_agreement": 0.43
+        "name_agreement": 0.43,
+        "level_before_rebalance": 3
       },
       "cloze": "You pedal a ___.",
       "group": "vehicle"
@@ -213,7 +219,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "tern",
         "modal_name": "bird",
-        "name_agreement": 0.88
+        "name_agreement": 0.88,
+        "level_before_rebalance": 2
       },
       "cloze": "A ___ sings in the tree.",
       "group": "animal"
@@ -242,7 +249,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "book01b",
         "modal_name": "book",
-        "name_agreement": 0.9
+        "name_agreement": 0.9,
+        "level_before_rebalance": 1
       },
       "cloze": "You read a ___."
     },
@@ -250,7 +258,7 @@
       "slug": "boss_bottle",
       "image_path": "/stimuli/photos/boss_waterbottle03.jpg",
       "category": "household",
-      "difficulty": 2,
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -271,7 +279,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "waterbottle03",
         "modal_name": "water bottle",
-        "name_agreement": 0.72
+        "name_agreement": 0.72,
+        "level_before_rebalance": 2
       },
       "cloze": "You fill a ___ with water."
     },
@@ -279,7 +288,7 @@
       "slug": "boss_bus",
       "image_path": "/stimuli/photos/boss_bus.jpg",
       "category": "transport",
-      "difficulty": 1,
+      "difficulty": 2,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -302,7 +311,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "bus",
         "modal_name": "bus",
-        "name_agreement": 0.57
+        "name_agreement": 0.57,
+        "level_before_rebalance": 1
       },
       "cloze": "You wait at the stop for the ___.",
       "group": "vehicle"
@@ -331,7 +341,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "camera01a",
         "modal_name": "camera",
-        "name_agreement": 0.82
+        "name_agreement": 0.82,
+        "level_before_rebalance": 3
       },
       "cloze": "You take a photo with a ___."
     },
@@ -362,7 +373,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "car",
         "modal_name": "car",
-        "name_agreement": 0.81
+        "name_agreement": 0.81,
+        "level_before_rebalance": 1
       },
       "cloze": "You drive a ___.",
       "group": "vehicle"
@@ -371,7 +383,7 @@
       "slug": "boss_carrot",
       "image_path": "/stimuli/photos/boss_carrot01.jpg",
       "category": "food",
-      "difficulty": 3,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -393,7 +405,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "carrot01",
         "modal_name": "carrot",
-        "name_agreement": 0.97
+        "name_agreement": 0.97,
+        "level_before_rebalance": 3
       },
       "cloze": "A rabbit eats a ___.",
       "group": "food"
@@ -424,7 +437,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "cat",
         "modal_name": "cat",
-        "name_agreement": 0.88
+        "name_agreement": 0.88,
+        "level_before_rebalance": 1
       },
       "cloze": "The ___ says meow.",
       "group": "animal"
@@ -454,7 +468,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "clock01a",
         "modal_name": "clock",
-        "name_agreement": 0.92
+        "name_agreement": 0.92,
+        "level_before_rebalance": 2
       },
       "cloze": "You tell the time with a ___."
     },
@@ -462,7 +477,7 @@
       "slug": "boss_cup",
       "image_path": "/stimuli/photos/boss_mug01.jpg",
       "category": "household",
-      "difficulty": 1,
+      "difficulty": 2,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -488,7 +503,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "mug01",
         "modal_name": "cup",
-        "name_agreement": 0.62
+        "name_agreement": 0.62,
+        "level_before_rebalance": 1
       },
       "cloze": "You drink tea from a ___.",
       "group": "tableware"
@@ -497,7 +513,7 @@
       "slug": "boss_dog",
       "image_path": "/stimuli/photos/boss_saintbernard.jpg",
       "category": "animals",
-      "difficulty": 1,
+      "difficulty": 2,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -519,7 +535,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "saintbernard",
         "modal_name": "dog",
-        "name_agreement": 0.62
+        "name_agreement": 0.62,
+        "level_before_rebalance": 1
       },
       "cloze": "The ___ wags its tail.",
       "group": "animal"
@@ -528,7 +545,7 @@
       "slug": "boss_door",
       "image_path": "/stimuli/photos/boss_doubledoors.jpg",
       "category": "household",
-      "difficulty": 1,
+      "difficulty": 2,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -550,7 +567,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "doubledoors",
         "modal_name": "doors",
-        "name_agreement": 0.55
+        "name_agreement": 0.55,
+        "level_before_rebalance": 1
       },
       "cloze": "You knock on the ___."
     },
@@ -580,7 +598,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "weight01",
         "modal_name": "weight",
-        "name_agreement": 0.54
+        "name_agreement": 0.54,
+        "level_before_rebalance": 5
       },
       "cloze": "At the gym you lift a ___."
     },
@@ -588,7 +607,7 @@
       "slug": "boss_egg",
       "image_path": "/stimuli/photos/boss_egg01a.jpg",
       "category": "food",
-      "difficulty": 1,
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -610,7 +629,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "egg01a",
         "modal_name": "egg",
-        "name_agreement": 0.4
+        "name_agreement": 0.4,
+        "level_before_rebalance": 1
       },
       "cloze": "A hen lays an ___.",
       "group": "food"
@@ -640,7 +660,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "rockbass",
         "modal_name": "fish",
-        "name_agreement": 0.9
+        "name_agreement": 0.9,
+        "level_before_rebalance": 1
       },
       "cloze": "A ___ swims in the sea.",
       "group": "animal"
@@ -649,7 +670,7 @@
       "slug": "boss_flower",
       "image_path": "/stimuli/photos/boss_hibiscusflower02.jpg",
       "category": "nature",
-      "difficulty": 2,
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -671,7 +692,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "hibiscusflower02",
         "modal_name": "flower",
-        "name_agreement": 0.89
+        "name_agreement": 0.89,
+        "level_before_rebalance": 2
       },
       "cloze": "A bee sits on a ___.",
       "group": "plant"
@@ -702,7 +724,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "fork03c",
         "modal_name": "fork",
-        "name_agreement": 0.97
+        "name_agreement": 0.97,
+        "level_before_rebalance": 2
       },
       "cloze": "You eat with a knife and ___.",
       "group": "tableware"
@@ -711,7 +734,7 @@
       "slug": "boss_glasses",
       "image_path": "/stimuli/photos/boss_glasses01a.jpg",
       "category": "personal",
-      "difficulty": 3,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -734,7 +757,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "glasses01a",
         "modal_name": "glasses",
-        "name_agreement": 0.72
+        "name_agreement": 0.72,
+        "level_before_rebalance": 3
       },
       "cloze": "You read with your ___.",
       "group": "clothing"
@@ -743,7 +767,7 @@
       "slug": "boss_guitar",
       "image_path": "/stimuli/photos/boss_acousticguitar02.jpg",
       "category": "music",
-      "difficulty": 3,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -764,7 +788,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "acousticguitar02",
         "modal_name": "guitar",
-        "name_agreement": 0.71
+        "name_agreement": 0.71,
+        "level_before_rebalance": 3
       },
       "cloze": "You strum a ___.",
       "group": "instrument"
@@ -773,7 +798,7 @@
       "slug": "boss_hammer",
       "image_path": "/stimuli/photos/boss_hammer01.jpg",
       "category": "tools",
-      "difficulty": 4,
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -794,7 +819,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "hammer01",
         "modal_name": "hammer",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 4
       },
       "cloze": "You hit a nail with a ___.",
       "group": "tool"
@@ -803,7 +829,7 @@
       "slug": "boss_headphones",
       "image_path": "/stimuli/photos/boss_headphones02b.jpg",
       "category": "music",
-      "difficulty": 4,
+      "difficulty": 5,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -825,7 +851,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "headphones02b",
         "modal_name": "headphones",
-        "name_agreement": 0.71
+        "name_agreement": 0.71,
+        "level_before_rebalance": 4
       },
       "cloze": "You listen to music with ___."
     },
@@ -855,7 +882,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "horse",
         "modal_name": "horse",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 2
       },
       "cloze": "A cowboy rides a ___.",
       "group": "animal"
@@ -864,7 +892,7 @@
       "slug": "boss_kettle",
       "image_path": "/stimuli/photos/boss_kettle01.jpg",
       "category": "household",
-      "difficulty": 3,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -885,7 +913,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "kettle01",
         "modal_name": "kettle",
-        "name_agreement": 0.68
+        "name_agreement": 0.68,
+        "level_before_rebalance": 3
       },
       "cloze": "You boil water in a ___."
     },
@@ -913,7 +942,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "key01",
         "modal_name": "key",
-        "name_agreement": 0.97
+        "name_agreement": 0.97,
+        "level_before_rebalance": 1
       },
       "cloze": "You open the lock with a ___."
     },
@@ -943,7 +973,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "tableknife02",
         "modal_name": "knife",
-        "name_agreement": 0.87
+        "name_agreement": 0.87,
+        "level_before_rebalance": 2
       },
       "cloze": "You cut bread with a ___.",
       "group": "tableware"
@@ -972,7 +1003,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "lamp04a",
         "modal_name": "lamp",
-        "name_agreement": 0.92
+        "name_agreement": 0.92,
+        "level_before_rebalance": 3
       },
       "cloze": "You switch on the ___ to read."
     },
@@ -1002,7 +1034,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "lightbulb01",
         "modal_name": "light bulb",
-        "name_agreement": 0.83
+        "name_agreement": 0.83,
+        "level_before_rebalance": 5
       },
       "cloze": "When the light goes out, change the ___."
     },
@@ -1030,7 +1063,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "microscope",
         "modal_name": "microscope",
-        "name_agreement": 0.97
+        "name_agreement": 0.97,
+        "level_before_rebalance": 5
       },
       "cloze": "Scientists see tiny things with a ___."
     },
@@ -1059,7 +1093,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "microwave",
         "modal_name": "microwave",
-        "name_agreement": 0.81
+        "name_agreement": 0.81,
+        "level_before_rebalance": 5
       },
       "cloze": "You heat food in the ___."
     },
@@ -1089,7 +1124,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "orange",
         "modal_name": "orange",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 2
       },
       "cloze": "You peel an ___ and eat it.",
       "group": "food"
@@ -1118,7 +1154,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "pencil01",
         "modal_name": "pencil",
-        "name_agreement": 0.97
+        "name_agreement": 0.97,
+        "level_before_rebalance": 4
       },
       "cloze": "You write with a ___."
     },
@@ -1152,7 +1189,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "cellphone",
         "modal_name": "cell phone",
-        "name_agreement": 0.85
+        "name_agreement": 0.85,
+        "level_before_rebalance": 1
       },
       "cloze": "You call a friend on the ___."
     },
@@ -1182,7 +1220,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "uprightpiano01",
         "modal_name": "piano",
-        "name_agreement": 0.88
+        "name_agreement": 0.88,
+        "level_before_rebalance": 3
       },
       "cloze": "You press the keys of a ___.",
       "group": "instrument"
@@ -1213,7 +1252,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "plate01b",
         "modal_name": "plate",
-        "name_agreement": 0.92
+        "name_agreement": 0.92,
+        "level_before_rebalance": 2
       },
       "cloze": "You put your food on a ___.",
       "group": "tableware"
@@ -1243,7 +1283,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "fridge",
         "modal_name": "fridge",
-        "name_agreement": 0.71
+        "name_agreement": 0.71,
+        "level_before_rebalance": 5
       },
       "cloze": "You keep milk cold in the ___."
     },
@@ -1271,7 +1312,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "scissors01",
         "modal_name": "scissors",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 3
       },
       "cloze": "You cut paper with ___."
     },
@@ -1279,7 +1321,7 @@
       "slug": "boss_shoe",
       "image_path": "/stimuli/photos/boss_manshoe.jpg",
       "category": "personal",
-      "difficulty": 2,
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -1303,7 +1345,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "manshoe",
         "modal_name": "shoe",
-        "name_agreement": 0.77
+        "name_agreement": 0.77,
+        "level_before_rebalance": 2
       },
       "cloze": "You tie the laces of your ___.",
       "group": "clothing"
@@ -1312,7 +1355,7 @@
       "slug": "boss_sofa",
       "image_path": "/stimuli/photos/boss_couch02.jpg",
       "category": "household",
-      "difficulty": 2,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -1335,7 +1378,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "couch02",
         "modal_name": "couch",
-        "name_agreement": 0.5
+        "name_agreement": 0.5,
+        "level_before_rebalance": 2
       },
       "cloze": "You sit on the ___ to watch TV.",
       "group": "furniture"
@@ -1366,7 +1410,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "table01",
         "modal_name": "table",
-        "name_agreement": 0.81
+        "name_agreement": 0.81,
+        "level_before_rebalance": 2
       },
       "cloze": "You eat dinner at the ___.",
       "group": "furniture"
@@ -1395,7 +1440,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "telescope",
         "modal_name": "telescope",
-        "name_agreement": 0.95
+        "name_agreement": 0.95,
+        "level_before_rebalance": 5
       },
       "cloze": "You look at the stars with a ___."
     },
@@ -1403,7 +1449,7 @@
       "slug": "boss_television",
       "image_path": "/stimuli/photos/boss_television.jpg",
       "category": "household",
-      "difficulty": 3,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -1425,7 +1471,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "television",
         "modal_name": "tv",
-        "name_agreement": 0.24
+        "name_agreement": 0.24,
+        "level_before_rebalance": 3
       },
       "cloze": "You watch the news on the ___."
     },
@@ -1433,7 +1480,7 @@
       "slug": "boss_tomato",
       "image_path": "/stimuli/photos/boss_tomato01.jpg",
       "category": "food",
-      "difficulty": 2,
+      "difficulty": 3,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -1455,7 +1502,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "tomato01",
         "modal_name": "tomato",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 2
       },
       "cloze": "Ketchup is made from a ___.",
       "group": "food"
@@ -1485,7 +1533,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "toothbrush03b",
         "modal_name": "toothbrush",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 4
       },
       "cloze": "You clean your teeth with a ___."
     },
@@ -1518,7 +1567,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "tree",
         "modal_name": "tree",
-        "name_agreement": 0.95
+        "name_agreement": 0.95,
+        "level_before_rebalance": 1
       },
       "cloze": "Leaves grow on a ___.",
       "group": "plant"
@@ -1527,7 +1577,7 @@
       "slug": "boss_umbrella",
       "image_path": "/stimuli/photos/boss_umbrella04.jpg",
       "category": "personal",
-      "difficulty": 3,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -1548,7 +1598,8 @@
         "dataset": "BOSS-2010 (v.1)",
         "boss_file": "umbrella04",
         "modal_name": "umbrella",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 3
       },
       "cloze": "When it rains, open your ___."
     },
@@ -1556,7 +1607,7 @@
       "slug": "boss_wrench",
       "image_path": "/stimuli/photos/boss_stubbywrench01a.jpg",
       "category": "tools",
-      "difficulty": 5,
+      "difficulty": 4,
       "exercise_types": [
         "picture_naming",
         "word_repetition",
@@ -1578,7 +1629,8 @@
         "dataset": "BOSS-2014 (v.2)",
         "boss_file": "stubbywrench01a",
         "modal_name": "wrench",
-        "name_agreement": 1.0
+        "name_agreement": 1.0,
+        "level_before_rebalance": 5
       },
       "cloze": "You tighten a bolt with a ___.",
       "group": "tool"
