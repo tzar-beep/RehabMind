@@ -241,7 +241,7 @@ async def test_constraint_options_come_from_backend_rules(care):  # noqa: F811
     patient, clinician, _ = care
     opts = (await clinician.get("/api/v1/clinical/constraint-options")).json()
     types = {t["value"]: t["available"] for t in opts["exercise_types"]}
-    assert types["picture_naming"] is True and types["sentence_completion"] is False
+    assert all(types.values()) and set(types) >= {"picture_naming", "sentence_completion"}
     assert opts["response_modes"] == ["text", "speech"]
     assert opts["difficulty"] == [1, 5] and "animals" in opts["categories"]
     assert (await patient.get("/api/v1/clinical/constraint-options")).status_code == 403

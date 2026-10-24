@@ -25,6 +25,7 @@ from app.clinical.models import ConstraintSet
 from app.core.config import get_settings
 from app.core.db import SessionLocal
 from app.exercises.models import Exercise, Stimulus
+from app.exercises.types import Objective
 from app.performance.ability import estimate, fit, p_success
 from app.sessions.models import ExerciseResponse
 from app.users.models import Role
@@ -566,11 +567,7 @@ async def test_demo_pipeline_view_is_development_only(care, ai):  # noqa: F811
     assert first["generation"]["prompt_version"] == EXERCISE_PROMPT_VERSION
     assert "REHABILITATION OBJECTIVE" in first["generation"]["user_prompt"]
     assert first["feedback"]["output"]["feedback"]
-    assert set(body["abilities"]) == {
-        "word_retrieval",
-        "sentence_formation",
-        "descriptive_language",
-    }
+    assert set(body["abilities"]) == {o.value for o in Objective}
 
 
 # ---------- real local LLM (runs only when Ollama and the model are available) ----------

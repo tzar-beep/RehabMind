@@ -36,6 +36,10 @@ class ExerciseOut(BaseModel):
     words: list[str] | None = None
     # "photo" (real-world photograph) or "icon" (line drawing).
     image_kind: str = "icon"
+    # Word repetition and word recognition: the word to say or to find.
+    word: str | None = None
+    # Picture-choice types: the pictures to choose from (word = what a tap answers).
+    options: list[dict[str, str]] | None = None
 
 
 class Summary(BaseModel):
@@ -130,6 +134,8 @@ async def _state(db: DbDep, session: PracticeSession) -> SessionState:
             cues=exercise.content.get("cues", []),
             words=exercise.content.get("words"),
             image_kind=exercise.content.get("image_kind", "icon"),
+            word=exercise.content.get("word"),
+            options=exercise.content.get("options"),
         )
         if exercise
         else None,

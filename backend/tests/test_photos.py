@@ -22,6 +22,13 @@ from tests.test_speech import FakeProvider, InlineQueue, upload
 PUBLIC = Path(__file__).resolve().parents[2] / "frontend" / "public"
 # Rotation order = ExerciseType order.
 PHOTO_TYPES = ["picture_naming", "sentence_construction", "picture_description"]
+ALL_TYPES = [
+    *PHOTO_TYPES,
+    "word_repetition",
+    "word_recognition",
+    "sentence_completion",
+    "category_naming",
+]
 OPEN_LICENSE = re.compile(r"^(CC0|Public domain|CC BY(-SA)? [0-9.]+( us)?)$")
 
 
@@ -56,7 +63,9 @@ def test_photo_catalogue_loads_with_required_metadata():
             assert p["norms"]["modal_name"] in {p["target"], *p["accepted_answers"]}
         else:
             assert p["source_url"].startswith("https://commons.wikimedia.org/wiki/File:")
-        assert 1 <= p["difficulty"] <= 5 and set(p["exercise_types"]) <= set(PHOTO_TYPES)
+        assert 1 <= p["difficulty"] <= 5 and set(p["exercise_types"]) <= set(ALL_TYPES)
+        if "sentence_completion" in p["exercise_types"]:
+            assert "___" in p["cloze"] and p["target"] not in p["cloze"].lower()
     assert len({p["slug"] for p in photos}) == len(photos)
 
 

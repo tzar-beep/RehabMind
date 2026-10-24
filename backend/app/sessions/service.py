@@ -18,7 +18,13 @@ from app.exercises import generator
 from app.exercises.generator import NoSafeExercise
 from app.exercises.issuer import ConstraintViolation, issue
 from app.exercises.models import Exercise
-from app.exercises.types import IMPLEMENTED_TYPES, OBJECTIVES, ExerciseType, ResponseMode
+from app.exercises.types import (
+    IMPLEMENTED_TYPES,
+    NAMING_FAMILY,
+    OBJECTIVES,
+    ExerciseType,
+    ResponseMode,
+)
 from app.performance import ability
 from app.performance.progression import (
     MIN_ANSWERS_FOR_ABILITY,
@@ -76,7 +82,7 @@ async def issue_next(db: AsyncSession, session: PracticeSession) -> Exercise | N
 
     for exercise_type in rotation:
         profile = await get_profile(db, session.patient_id, exercise_type, cs)
-        if provider is not None:
+        if provider is not None and exercise_type in personalization.AI_TYPES:
             try:
                 proposal, ai_row = await personalization.propose(
                     db, provider, session, cs, profile, position, exercise_type
@@ -204,7 +210,7 @@ async def submit_response(
 
     result = score_exercise(exercise.exercise_type, text, exercise.expected)
     clinical: dict[str, object] = {}
-    if exercise.exercise_type == "picture_naming":
+    if exercise.exercise_type in NAMING_FAMILY:
         # PNT-style error type: information for the clinician, never used for scoring.
         clinical["error_type"] = classify_naming(
             text, exercise.expected["target"], exercise.expected["accepted_answers"], result.outcome

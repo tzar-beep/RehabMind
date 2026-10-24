@@ -97,6 +97,8 @@ async def test_exercise_payload_never_reveals_the_answer(care):
         "cues",
         "words",
         "image_kind",
+        "word",
+        "options",
     }
     target = await target_of(ex["id"])
     assert target not in r.text.replace(ex["image_url"], "")
@@ -236,9 +238,74 @@ async def test_allowed_categories_are_respected(care):
         assert set(cats) == {"animals"}
 
 
-async def test_unimplemented_types_issue_nothing(care):
+# ---------- the four newer exercise types ----------
+
+
+def _groups() -> dict[str, str]:
+    from app.exercises.catalog import load_catalog
+
+    return {p["target"]: p.get("group") for p in load_catalog()["photos"]}
+
+
+async def _only(clinician, patient, pid, kind, **plan_overrides):
+    await set_plan(clinician, pid, allowed_exercise_types=[kind], **plan_overrides)
+    r = await patient.post(START)
+    assert r.status_code == 200, r.text
+    return r.json()["exercise"]
+
+
+async def _answer(patient, ex, text):
+    r = await patient.post(f"/api/v1/practice/exercises/{ex['id']}/responses", json={"text": text})
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+async def test_word_repetition_shows_the_word_and_scores_like_naming(care):
     patient, clinician, pid = care
-    await set_plan(clinician, pid, allowed_exercise_types=["sentence_completion"])
+    ex = await _only(clinician, patient, pid, "word_repetition")
+    target = await target_of(ex["id"])
+    assert ex["word"] == target and ex["prompt"] == "Say this word."
+    assert (await _answer(patient, ex, target))["outcome"] == "correct"
+
+
+async def test_sentence_completion_uses_a_frame_without_the_word(care):
+    patient, clinician, pid = care
+    ex = await _only(clinician, patient, pid, "sentence_completion")
+    target = await target_of(ex["id"])
+    assert "___" in ex["prompt"] and target not in ex["prompt"].lower()
+    assert ex["image_url"] and len(ex["cues"]) == 2  # picture support, then meaning and sound
+    assert (await _answer(patient, ex, target))["outcome"] == "correct"
+
+
+async def test_word_recognition_offers_pictures_with_one_right_answer(care):
+    patient, clinician, pid = care
+    ex = await _only(clinician, patient, pid, "word_recognition")
+    target = await target_of(ex["id"])
+    words = [o["word"] for o in ex["options"]]
+    assert ex["word"] == target and ex["image_url"] is None
+    assert len(words) == 4 and len(set(words)) == 4 and words.count(target) == 1
+    wrong = next(w for w in words if w != target)
+    assert (await _answer(patient, ex, wrong))["outcome"] == "incorrect"
+
+
+async def test_category_naming_has_exactly_one_picture_in_the_group(care):
+    patient, clinician, pid = care
+    ex = await _only(clinician, patient, pid, "category_naming")
+    target = await target_of(ex["id"])
+    groups = _groups()
+    in_group = [o["word"] for o in ex["options"] if groups[o["word"]] == groups[target]]
+    assert in_group == [target] and ex["prompt"].startswith("Which one is")
+    assert (await _answer(patient, ex, target))["outcome"] == "correct"
+
+
+async def test_picture_choice_needs_the_typing_or_tapping_method(care):
+    patient, clinician, pid = care
+    await set_plan(
+        clinician,
+        pid,
+        allowed_exercise_types=["word_recognition", "category_naming"],
+        allowed_response_modes=["speech"],
+    )
     assert (await patient.post(START)).status_code == 409
     assert await issued(pid) == []
 

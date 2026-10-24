@@ -143,6 +143,17 @@ async def build_input(
     }, {s.slug: s for s in pool}
 
 
+# Types the AI personalises (picture choice and the cue for it). The newer types are
+# rule-based: their content is fixed by the catalogue (word, sentence frame, choices).
+AI_TYPES = frozenset(
+    {
+        ExerciseType.PICTURE_NAMING,
+        ExerciseType.SENTENCE_CONSTRUCTION,
+        ExerciseType.PICTURE_DESCRIPTION,
+    }
+)
+
+
 def build_request(inp: dict[str, Any]) -> GenerationRequest:
     system, user = exercise_prompts(inp)
     return GenerationRequest(

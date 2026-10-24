@@ -29,7 +29,11 @@ from app.sessions.models import ExerciseResponse, PracticeSession
 from app.validation.generated_text import check_summary
 
 TASK = "progress.summarize"
-_EXERCISE_FOR = {objective: exercise for exercise, objective in OBJECTIVES.items()}
+# Several exercise types can train one objective (naming and sentence completion both
+# train word retrieval), so each objective counts all of its types.
+_EXERCISES_FOR: dict[Objective, list[str]] = {}
+for _exercise, _objective in OBJECTIVES.items():
+    _EXERCISES_FOR.setdefault(_objective, []).append(str(_exercise))
 
 
 async def build_input(db: AsyncSession, patient_id: uuid.UUID) -> dict[str, Any]:
@@ -60,14 +64,14 @@ async def build_input(db: AsyncSession, patient_id: uuid.UUID) -> dict[str, Any]
     estimates = await ability.estimates(db, patient_id)
     objectives = []
     for objective in Objective:
-        exercise = _EXERCISE_FOR[objective]
-        answers = sum(n for (t, _), n in counts.items() if t == exercise)
-        correct = counts.get((exercise, "correct"), 0)
+        exercises = _EXERCISES_FOR[objective]
+        answers = sum(n for (t, _), n in counts.items() if t in exercises)
+        correct = sum(counts.get((t, "correct"), 0) for t in exercises)
         objectives.append(
             {
                 "objective": objective.value,
                 "label": OBJECTIVE_LABELS[objective].removeprefix("Improve ").capitalize(),
-                "exercise": exercise.replace("_", " "),
+                "exercise": " and ".join(t.replace("_", " ") for t in exercises),
                 "answers": answers,
                 "percent_correct": round(100 * correct / answers) if answers else 0,
                 "trend": estimates[objective.value].trend.replace("_", " "),

@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "stimuli": [],
   "photos": [
     {
@@ -8,7 +8,11 @@
       "category": "transport",
       "difficulty": 4,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "airplane",
       "accepted_answers": [
@@ -28,7 +32,9 @@
         "boss_file": "cessna",
         "modal_name": "airplane",
         "name_agreement": 0.38
-      }
+      },
+      "cloze": "You fly to another country in an ___.",
+      "group": "vehicle"
     },
     {
       "slug": "boss_anchor",
@@ -36,7 +42,10 @@
       "category": "transport",
       "difficulty": 4,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "anchor",
       "accepted_answers": [
@@ -52,7 +61,8 @@
         "boss_file": "anchor",
         "modal_name": "anchor",
         "name_agreement": 0.93
-      }
+      },
+      "cloze": "The ship drops its ___."
     },
     {
       "slug": "boss_apple",
@@ -60,7 +70,11 @@
       "category": "food",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "apple",
       "accepted_answers": [
@@ -76,7 +90,9 @@
         "boss_file": "apple07",
         "modal_name": "apple",
         "name_agreement": 0.95
-      }
+      },
+      "cloze": "You can bake an ___ pie.",
+      "group": "food"
     },
     {
       "slug": "boss_banana",
@@ -84,7 +100,11 @@
       "category": "food",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "banana",
       "accepted_answers": [
@@ -101,7 +121,9 @@
         "boss_file": "banana01",
         "modal_name": "banana",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "A monkey peels a yellow ___.",
+      "group": "food"
     },
     {
       "slug": "boss_bed",
@@ -109,7 +131,11 @@
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "bed",
       "accepted_answers": [
@@ -125,7 +151,9 @@
         "boss_file": "bed",
         "modal_name": "bed",
         "name_agreement": 0.81
-      }
+      },
+      "cloze": "At night you sleep in a ___.",
+      "group": "furniture"
     },
     {
       "slug": "boss_bicycle",
@@ -133,7 +161,11 @@
       "category": "transport",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "bicycle",
       "accepted_answers": [
@@ -151,7 +183,9 @@
         "boss_file": "bicycle",
         "modal_name": "bike",
         "name_agreement": 0.43
-      }
+      },
+      "cloze": "You pedal a ___.",
+      "group": "vehicle"
     },
     {
       "slug": "boss_bird",
@@ -159,7 +193,11 @@
       "category": "animals",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "bird",
       "accepted_answers": [
@@ -176,7 +214,9 @@
         "boss_file": "tern",
         "modal_name": "bird",
         "name_agreement": 0.88
-      }
+      },
+      "cloze": "A ___ sings in the tree.",
+      "group": "animal"
     },
     {
       "slug": "boss_book",
@@ -184,7 +224,10 @@
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "book",
       "accepted_answers": [
@@ -200,7 +243,8 @@
         "boss_file": "book01b",
         "modal_name": "book",
         "name_agreement": 0.9
-      }
+      },
+      "cloze": "You read a ___."
     },
     {
       "slug": "boss_bottle",
@@ -208,7 +252,10 @@
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "bottle",
       "accepted_answers": [
@@ -225,7 +272,8 @@
         "boss_file": "waterbottle03",
         "modal_name": "water bottle",
         "name_agreement": 0.72
-      }
+      },
+      "cloze": "You fill a ___ with water."
     },
     {
       "slug": "boss_bus",
@@ -233,7 +281,11 @@
       "category": "transport",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "bus",
       "accepted_answers": [
@@ -251,7 +303,9 @@
         "boss_file": "bus",
         "modal_name": "bus",
         "name_agreement": 0.57
-      }
+      },
+      "cloze": "You wait at the stop for the ___.",
+      "group": "vehicle"
     },
     {
       "slug": "boss_camera",
@@ -259,7 +313,10 @@
       "category": "personal",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "camera",
       "accepted_answers": [
@@ -275,7 +332,8 @@
         "boss_file": "camera01a",
         "modal_name": "camera",
         "name_agreement": 0.82
-      }
+      },
+      "cloze": "You take a photo with a ___."
     },
     {
       "slug": "boss_car",
@@ -283,7 +341,11 @@
       "category": "transport",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "car",
       "accepted_answers": [
@@ -301,7 +363,9 @@
         "boss_file": "car",
         "modal_name": "car",
         "name_agreement": 0.81
-      }
+      },
+      "cloze": "You drive a ___.",
+      "group": "vehicle"
     },
     {
       "slug": "boss_carrot",
@@ -309,7 +373,11 @@
       "category": "food",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "carrot",
       "accepted_answers": [
@@ -326,7 +394,9 @@
         "boss_file": "carrot01",
         "modal_name": "carrot",
         "name_agreement": 0.97
-      }
+      },
+      "cloze": "A rabbit eats a ___.",
+      "group": "food"
     },
     {
       "slug": "boss_cat",
@@ -334,7 +404,11 @@
       "category": "animals",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "cat",
       "accepted_answers": [
@@ -351,7 +425,9 @@
         "boss_file": "cat",
         "modal_name": "cat",
         "name_agreement": 0.88
-      }
+      },
+      "cloze": "The ___ says meow.",
+      "group": "animal"
     },
     {
       "slug": "boss_clock",
@@ -359,7 +435,10 @@
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "clock",
       "accepted_answers": [
@@ -376,7 +455,8 @@
         "boss_file": "clock01a",
         "modal_name": "clock",
         "name_agreement": 0.92
-      }
+      },
+      "cloze": "You tell the time with a ___."
     },
     {
       "slug": "boss_cup",
@@ -384,7 +464,11 @@
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "cup",
       "accepted_answers": [
@@ -405,7 +489,9 @@
         "boss_file": "mug01",
         "modal_name": "cup",
         "name_agreement": 0.62
-      }
+      },
+      "cloze": "You drink tea from a ___.",
+      "group": "tableware"
     },
     {
       "slug": "boss_dog",
@@ -413,7 +499,11 @@
       "category": "animals",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "dog",
       "accepted_answers": [
@@ -430,7 +520,9 @@
         "boss_file": "saintbernard",
         "modal_name": "dog",
         "name_agreement": 0.62
-      }
+      },
+      "cloze": "The ___ wags its tail.",
+      "group": "animal"
     },
     {
       "slug": "boss_door",
@@ -438,7 +530,10 @@
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "door",
       "accepted_answers": [
@@ -456,7 +551,8 @@
         "boss_file": "doubledoors",
         "modal_name": "doors",
         "name_agreement": 0.55
-      }
+      },
+      "cloze": "You knock on the ___."
     },
     {
       "slug": "boss_dumbbell",
@@ -464,7 +560,10 @@
       "category": "personal",
       "difficulty": 5,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "dumbbell",
       "accepted_answers": [
@@ -482,7 +581,8 @@
         "boss_file": "weight01",
         "modal_name": "weight",
         "name_agreement": 0.54
-      }
+      },
+      "cloze": "At the gym you lift a ___."
     },
     {
       "slug": "boss_egg",
@@ -490,7 +590,11 @@
       "category": "food",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "egg",
       "accepted_answers": [
@@ -507,7 +611,9 @@
         "boss_file": "egg01a",
         "modal_name": "egg",
         "name_agreement": 0.4
-      }
+      },
+      "cloze": "A hen lays an ___.",
+      "group": "food"
     },
     {
       "slug": "boss_fish",
@@ -515,7 +621,11 @@
       "category": "animals",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "fish",
       "accepted_answers": [
@@ -531,7 +641,9 @@
         "boss_file": "rockbass",
         "modal_name": "fish",
         "name_agreement": 0.9
-      }
+      },
+      "cloze": "A ___ swims in the sea.",
+      "group": "animal"
     },
     {
       "slug": "boss_flower",
@@ -539,7 +651,11 @@
       "category": "nature",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "flower",
       "accepted_answers": [
@@ -556,7 +672,9 @@
         "boss_file": "hibiscusflower02",
         "modal_name": "flower",
         "name_agreement": 0.89
-      }
+      },
+      "cloze": "A bee sits on a ___.",
+      "group": "plant"
     },
     {
       "slug": "boss_fork",
@@ -564,7 +682,11 @@
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "fork",
       "accepted_answers": [
@@ -581,7 +703,9 @@
         "boss_file": "fork03c",
         "modal_name": "fork",
         "name_agreement": 0.97
-      }
+      },
+      "cloze": "You eat with a knife and ___.",
+      "group": "tableware"
     },
     {
       "slug": "boss_glasses",
@@ -589,7 +713,11 @@
       "category": "personal",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "glasses",
       "accepted_answers": [
@@ -607,7 +735,9 @@
         "boss_file": "glasses01a",
         "modal_name": "glasses",
         "name_agreement": 0.72
-      }
+      },
+      "cloze": "You read with your ___.",
+      "group": "clothing"
     },
     {
       "slug": "boss_guitar",
@@ -615,7 +745,11 @@
       "category": "music",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "guitar",
       "accepted_answers": [
@@ -631,7 +765,9 @@
         "boss_file": "acousticguitar02",
         "modal_name": "guitar",
         "name_agreement": 0.71
-      }
+      },
+      "cloze": "You strum a ___.",
+      "group": "instrument"
     },
     {
       "slug": "boss_hammer",
@@ -639,7 +775,11 @@
       "category": "tools",
       "difficulty": 4,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "hammer",
       "accepted_answers": [
@@ -655,7 +795,9 @@
         "boss_file": "hammer01",
         "modal_name": "hammer",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "You hit a nail with a ___.",
+      "group": "tool"
     },
     {
       "slug": "boss_headphones",
@@ -663,7 +805,10 @@
       "category": "music",
       "difficulty": 4,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "headphones",
       "accepted_answers": [
@@ -681,7 +826,8 @@
         "boss_file": "headphones02b",
         "modal_name": "headphones",
         "name_agreement": 0.71
-      }
+      },
+      "cloze": "You listen to music with ___."
     },
     {
       "slug": "boss_horse",
@@ -689,7 +835,11 @@
       "category": "animals",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "horse",
       "accepted_answers": [
@@ -706,7 +856,9 @@
         "boss_file": "horse",
         "modal_name": "horse",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "A cowboy rides a ___.",
+      "group": "animal"
     },
     {
       "slug": "boss_kettle",
@@ -714,7 +866,10 @@
       "category": "household",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "kettle",
       "accepted_answers": [
@@ -731,7 +886,8 @@
         "boss_file": "kettle01",
         "modal_name": "kettle",
         "name_agreement": 0.68
-      }
+      },
+      "cloze": "You boil water in a ___."
     },
     {
       "slug": "boss_key",
@@ -739,7 +895,10 @@
       "category": "household",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "key",
       "accepted_answers": [
@@ -755,7 +914,8 @@
         "boss_file": "key01",
         "modal_name": "key",
         "name_agreement": 0.97
-      }
+      },
+      "cloze": "You open the lock with a ___."
     },
     {
       "slug": "boss_knife",
@@ -763,7 +923,11 @@
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "knife",
       "accepted_answers": [
@@ -780,7 +944,9 @@
         "boss_file": "tableknife02",
         "modal_name": "knife",
         "name_agreement": 0.87
-      }
+      },
+      "cloze": "You cut bread with a ___.",
+      "group": "tableware"
     },
     {
       "slug": "boss_lamp",
@@ -788,7 +954,10 @@
       "category": "household",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "lamp",
       "accepted_answers": [
@@ -804,7 +973,8 @@
         "boss_file": "lamp04a",
         "modal_name": "lamp",
         "name_agreement": 0.92
-      }
+      },
+      "cloze": "You switch on the ___ to read."
     },
     {
       "slug": "boss_light_bulb",
@@ -812,7 +982,10 @@
       "category": "household",
       "difficulty": 5,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "light bulb",
       "accepted_answers": [
@@ -830,7 +1003,8 @@
         "boss_file": "lightbulb01",
         "modal_name": "light bulb",
         "name_agreement": 0.83
-      }
+      },
+      "cloze": "When the light goes out, change the ___."
     },
     {
       "slug": "boss_microscope",
@@ -838,7 +1012,10 @@
       "category": "tools",
       "difficulty": 5,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "microscope",
       "accepted_answers": [
@@ -854,7 +1031,8 @@
         "boss_file": "microscope",
         "modal_name": "microscope",
         "name_agreement": 0.97
-      }
+      },
+      "cloze": "Scientists see tiny things with a ___."
     },
     {
       "slug": "boss_microwave",
@@ -862,7 +1040,10 @@
       "category": "household",
       "difficulty": 5,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "microwave",
       "accepted_answers": [
@@ -879,7 +1060,8 @@
         "boss_file": "microwave",
         "modal_name": "microwave",
         "name_agreement": 0.81
-      }
+      },
+      "cloze": "You heat food in the ___."
     },
     {
       "slug": "boss_orange",
@@ -887,7 +1069,11 @@
       "category": "food",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "orange",
       "accepted_answers": [
@@ -904,7 +1090,9 @@
         "boss_file": "orange",
         "modal_name": "orange",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "You peel an ___ and eat it.",
+      "group": "food"
     },
     {
       "slug": "boss_pencil",
@@ -912,7 +1100,10 @@
       "category": "household",
       "difficulty": 4,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "pencil",
       "accepted_answers": [
@@ -928,7 +1119,8 @@
         "boss_file": "pencil01",
         "modal_name": "pencil",
         "name_agreement": 0.97
-      }
+      },
+      "cloze": "You write with a ___."
     },
     {
       "slug": "boss_phone",
@@ -936,7 +1128,10 @@
       "category": "personal",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "phone",
       "accepted_answers": [
@@ -958,7 +1153,8 @@
         "boss_file": "cellphone",
         "modal_name": "cell phone",
         "name_agreement": 0.85
-      }
+      },
+      "cloze": "You call a friend on the ___."
     },
     {
       "slug": "boss_piano",
@@ -966,7 +1162,11 @@
       "category": "music",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "piano",
       "accepted_answers": [
@@ -983,7 +1183,9 @@
         "boss_file": "uprightpiano01",
         "modal_name": "piano",
         "name_agreement": 0.88
-      }
+      },
+      "cloze": "You press the keys of a ___.",
+      "group": "instrument"
     },
     {
       "slug": "boss_plate",
@@ -991,7 +1193,11 @@
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "plate",
       "accepted_answers": [
@@ -1008,7 +1214,9 @@
         "boss_file": "plate01b",
         "modal_name": "plate",
         "name_agreement": 0.92
-      }
+      },
+      "cloze": "You put your food on a ___.",
+      "group": "tableware"
     },
     {
       "slug": "boss_refrigerator",
@@ -1016,7 +1224,10 @@
       "category": "household",
       "difficulty": 5,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "refrigerator",
       "accepted_answers": [
@@ -1033,7 +1244,8 @@
         "boss_file": "fridge",
         "modal_name": "fridge",
         "name_agreement": 0.71
-      }
+      },
+      "cloze": "You keep milk cold in the ___."
     },
     {
       "slug": "boss_scissors",
@@ -1041,7 +1253,10 @@
       "category": "household",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "scissors",
       "accepted_answers": [
@@ -1057,7 +1272,8 @@
         "boss_file": "scissors01",
         "modal_name": "scissors",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "You cut paper with ___."
     },
     {
       "slug": "boss_shoe",
@@ -1065,7 +1281,11 @@
       "category": "personal",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "shoe",
       "accepted_answers": [
@@ -1084,7 +1304,9 @@
         "boss_file": "manshoe",
         "modal_name": "shoe",
         "name_agreement": 0.77
-      }
+      },
+      "cloze": "You tie the laces of your ___.",
+      "group": "clothing"
     },
     {
       "slug": "boss_sofa",
@@ -1092,7 +1314,11 @@
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "sofa",
       "accepted_answers": [
@@ -1110,7 +1336,9 @@
         "boss_file": "couch02",
         "modal_name": "couch",
         "name_agreement": 0.5
-      }
+      },
+      "cloze": "You sit on the ___ to watch TV.",
+      "group": "furniture"
     },
     {
       "slug": "boss_table",
@@ -1118,7 +1346,11 @@
       "category": "household",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "table",
       "accepted_answers": [
@@ -1135,7 +1367,9 @@
         "boss_file": "table01",
         "modal_name": "table",
         "name_agreement": 0.81
-      }
+      },
+      "cloze": "You eat dinner at the ___.",
+      "group": "furniture"
     },
     {
       "slug": "boss_telescope",
@@ -1143,7 +1377,10 @@
       "category": "tools",
       "difficulty": 5,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "telescope",
       "accepted_answers": [
@@ -1159,7 +1396,8 @@
         "boss_file": "telescope",
         "modal_name": "telescope",
         "name_agreement": 0.95
-      }
+      },
+      "cloze": "You look at the stars with a ___."
     },
     {
       "slug": "boss_television",
@@ -1167,7 +1405,10 @@
       "category": "household",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "television",
       "accepted_answers": [
@@ -1185,7 +1426,8 @@
         "boss_file": "television",
         "modal_name": "tv",
         "name_agreement": 0.24
-      }
+      },
+      "cloze": "You watch the news on the ___."
     },
     {
       "slug": "boss_tomato",
@@ -1193,7 +1435,11 @@
       "category": "food",
       "difficulty": 2,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "tomato",
       "accepted_answers": [
@@ -1210,7 +1456,9 @@
         "boss_file": "tomato01",
         "modal_name": "tomato",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "Ketchup is made from a ___.",
+      "group": "food"
     },
     {
       "slug": "boss_toothbrush",
@@ -1218,7 +1466,10 @@
       "category": "personal",
       "difficulty": 4,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "toothbrush",
       "accepted_answers": [
@@ -1235,7 +1486,8 @@
         "boss_file": "toothbrush03b",
         "modal_name": "toothbrush",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "You clean your teeth with a ___."
     },
     {
       "slug": "boss_tree",
@@ -1243,7 +1495,11 @@
       "category": "nature",
       "difficulty": 1,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "tree",
       "accepted_answers": [
@@ -1263,7 +1519,9 @@
         "boss_file": "tree",
         "modal_name": "tree",
         "name_agreement": 0.95
-      }
+      },
+      "cloze": "Leaves grow on a ___.",
+      "group": "plant"
     },
     {
       "slug": "boss_umbrella",
@@ -1271,7 +1529,10 @@
       "category": "personal",
       "difficulty": 3,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion"
       ],
       "target": "umbrella",
       "accepted_answers": [
@@ -1288,7 +1549,8 @@
         "boss_file": "umbrella04",
         "modal_name": "umbrella",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "When it rains, open your ___."
     },
     {
       "slug": "boss_wrench",
@@ -1296,7 +1558,11 @@
       "category": "tools",
       "difficulty": 5,
       "exercise_types": [
-        "picture_naming"
+        "picture_naming",
+        "word_repetition",
+        "word_recognition",
+        "sentence_completion",
+        "category_naming"
       ],
       "target": "wrench",
       "accepted_answers": [
@@ -1313,7 +1579,9 @@
         "boss_file": "stubbywrench01a",
         "modal_name": "wrench",
         "name_agreement": 1.0
-      }
+      },
+      "cloze": "You tighten a bolt with a ___.",
+      "group": "tool"
     },
     {
       "slug": "photo_scene_cycling",

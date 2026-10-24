@@ -143,9 +143,21 @@ def score_sentence(response: str | None, target: str, accepted: list[str]) -> Sc
     return ScoreResult("incorrect", 0.0, "none")
 
 
+def score_choice(response: str | None, target: str) -> ScoreResult:
+    """A tapped picture: right or wrong, nothing in between."""
+    answer = normalize(response or "")
+    if answer in _SKIP_PHRASES:
+        return ScoreResult("skipped", 0.0, "skipped")
+    if answer == normalize(target):
+        return ScoreResult("correct", 1.0, "exact", answer)
+    return ScoreResult("incorrect", 0.0, "none", answer)
+
+
 def score_exercise(exercise_type: str, response: str | None, expected: dict) -> ScoreResult:
     if exercise_type == "picture_description":
         return score_description(response, expected["concepts"])
     if exercise_type == "sentence_construction":
         return score_sentence(response, expected["target"], expected.get("accepted_answers", []))
+    if exercise_type in ("word_recognition", "category_naming"):
+        return score_choice(response, expected["target"])
     return score_naming(response, expected["target"], expected["accepted_answers"])

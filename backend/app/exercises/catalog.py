@@ -47,7 +47,7 @@ async def sync_stimuli(db: AsyncSession) -> int:
             "image_path": p["image_path"],
             "kind": "photo",
             "exercise_types": p["exercise_types"],
-            "task": {k: p[k] for k in ("description", "sentence") if k in p},
+            "task": {k: p[k] for k in ("description", "sentence", "cloze", "group") if k in p},
             "license": p["license"],
             "attribution": p["attribution"][:200],
             "source_url": p["source_url"],
