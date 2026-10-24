@@ -38,9 +38,22 @@ do at home, while the clinician stays in charge of every rule that matters.
 
 | Role | What they do |
 |---|---|
-| 🧑‍🦽 **Patient** | Names pictures, builds sentences and describes scenes by typing, tapping word tiles or speaking. Gets hints, honest feedback and a weekly progress view. |
+| 🧑‍🦽 **Patient** | Practises seven exercise types (below) by typing, tapping or speaking. Gets hints, honest feedback and a weekly progress view. |
 | 🩺 **Clinician** | Sets practice limits (difficulty range, picture sets, input modes), reviews accuracy trends and sessions, audits every AI decision and can give a patient a fresh start. |
 | 🛠️ **Admin** | Creates and manages accounts and care-team assignments. Sees no clinical data. |
+
+**Exercise types** (all with real photographs: 52 from the BOSS research dataset and 18
+Wikimedia Commons scenes, see [photo credits](docs/photo-credits.md))
+
+| Exercise | The patient… | Objective |
+|---|---|---|
+| Picture naming | names the object in a photo | Word retrieval |
+| Sentence completion | finishes a sentence with the pictured word | Word retrieval |
+| Word repetition | reads or hears a word and says it back | Repetition |
+| Word recognition | hears or reads a word and picks the matching photo | Word understanding |
+| Category naming | picks the photo that belongs to a category ("an animal") | Word meaning |
+| Sentence building | puts word tiles in order to describe a photo | Sentence formation |
+| Picture description | describes a scene in their own words | Descriptive language |
 
 **Core idea:** the AI writes the content; the application owns the rehabilitation rules.
 Scores are deterministic, difficulty is clamped to the clinician's range, only approved
@@ -59,11 +72,13 @@ Everything runs locally at **$0**: no paid APIs and no API keys.
 
 ## 📸 Screenshots
 
+Retake them with the app running: `SEED_DEV_PASSWORD=... node frontend/scripts/readme-screenshots.mjs`.
+
 | Sign in | Patient home |
 |---|---|
 | ![Sign in](docs/images/login.png) | ![Patient home](docs/images/patient-home.png) |
 
-| Patient: picture naming with a hint | Patient: feedback with an AI tip |
+| Patient: an exercise with a hint | Patient: feedback with an AI tip |
 |---|---|
 | ![Practice with hints](docs/images/practice-hints.png) | ![Feedback](docs/images/practice-feedback.png) |
 
