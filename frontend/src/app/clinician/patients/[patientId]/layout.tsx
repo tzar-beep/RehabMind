@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/clinician/Breadcrumbs";
 import { PatientNav } from "@/components/clinician/PatientNav";
+import { Alert } from "@/components/ui/Alert";
 import { Avatar } from "@/components/ui/Avatar";
 import { AIStatusSchema, PatientOverviewSchema } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
@@ -18,6 +19,10 @@ export default async function PatientLayout({
     backendGet("/ai/status", AIStatusSchema),
   ]);
   if (!patient) notFound();
+  // Only a configured local model can be "offline"; a deliberately AI-free setup is not.
+  const aiOffline =
+    aiStatus?.provider === "ollama" &&
+    !(aiStatus.reachable && aiStatus.model_available);
 
   return (
     <div className="flex flex-col gap-8">
@@ -38,6 +43,14 @@ export default async function PatientLayout({
           showPipeline={aiStatus?.demo_view ?? false}
         />
       </div>
+      {aiOffline && (
+        <Alert tone="warning">
+          <strong>AI is offline.</strong> Exercises, feedback and summaries use
+          the rule-based versions until the local model{" "}
+          {aiStatus?.model ? `(${aiStatus.model}) ` : ""}is running again.
+          Practice is not affected.
+        </Alert>
+      )}
       {children}
       <p className="border-t border-line pt-4 text-sm text-ink-muted">
         Academic prototype. Figures describe recorded practice activity only;

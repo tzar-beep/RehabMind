@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Sign in" };
 
 const FACTS = [
   { value: "70", label: "real photographs" },
-  { value: "3", label: "exercise types" },
+  { value: "7", label: "exercise types" },
   { value: "0", label: "recordings kept" },
 ];
 
