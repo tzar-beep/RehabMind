@@ -195,7 +195,7 @@ Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.p
 - **259** backend tests, including property-based tests of the max-difficulty rule
 - **Clinical validation** ([docs/validation](docs/validation/README.md)): scoring benchmark
   (held-out κ = 0.95, 1.0% false accepts), Philadelphia Naming Test error types, a
-  difficulty audit against word norms (ρ = 0.80), a raw-vs-shipped GenAI audit (17.8% of raw
+  difficulty audit against word norms (ρ = 0.84) and BOSS name agreement, a raw-vs-shipped GenAI audit (14.7% of raw
   outputs leaked the answer; none reached patients), a learner simulation (ability-guided
   progression keeps 71% of practice in the productive band vs 45%), and ready-to-run study
   protocols for clinicians, older adults and people with aphasia

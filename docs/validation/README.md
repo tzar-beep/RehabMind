@@ -15,7 +15,7 @@ evidence. The background literature review is in [research/roadmap.md](research/
 | Question | What we can show now (Phase 0, no participants) | What needs people |
 |---|---|---|
 | Is the **scoring** appropriate? | Right/wrong decisions agree with labelled answers (held-out κ = 0.95, 1.0% false accepts). Errors are classified with the Philadelphia Naming Test categories (held-out κ = 0.77). [scoring.md](scoring.md) | Two speech and language therapists (SLPs) label 200 answers: Phase 1 |
-| Are the **generated exercises** appropriate? | Difficulty levels agree with word-frequency norms (ρ = 0.80). The validators stop every leaked answer, wrong first-sound cue and unsafe text: 17.8% of raw model outputs leaked the answer, none reached a patient. [difficulty.md](difficulty.md), [genai.md](genai.md) | SLP panel rates AI vs rule-based items for content validity (CVI): Phase 1 |
+| Are the **generated exercises** appropriate? | Difficulty levels agree with word-frequency norms (ρ = 0.84) but not with BOSS name agreement. The validators stop every leaked answer, wrong first-sound cue and unsafe text: 14.7% of raw model outputs leaked the answer and 23.3% of feedback called a wrong word "nearly right"; none reached a patient. [difficulty.md](difficulty.md), [genai.md](genai.md) | SLP panel rates AI vs rule-based items for content validity (CVI): Phase 1 |
 | Does **personalization** improve training? | In simulation, the new ability-guided mode keeps 71% of practice in the productive band vs 45% for the step rule and 38-41% for fixed difficulty. [personalization.md](personalization.md) | Healthy older adults (Phase 2), then people with aphasia in a single-case study (Phase 3) |
 
 ## Claims we make, and claims we do not
@@ -27,7 +27,7 @@ recovery.
 
 - "Typed-answer scoring agrees with labelled answers at κ = 0.95 on a held-out set, with a
   false-accept rate of 1.0%" (author-labelled, synthetic answers; SLP labels pending).
-- "The validation layer reduces patient-facing answer leaks from 17.8% of raw model outputs
+- "The validation layer reduces patient-facing answer leaks from 14.7% of raw model outputs
   to 0%."
 - "In simulation, ability-guided progression keeps learners in the productive difficulty band
   more often than the step rule or fixed difficulty, across six scenarios."

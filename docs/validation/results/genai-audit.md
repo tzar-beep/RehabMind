@@ -8,30 +8,30 @@ Model `qwen2.5:3b`, prompts `exercise_generation_v1` / `feedback_generation_v1`,
 
 | Task | Requests | Valid first time | Valid after retry | Fallback used | Median latency |
 |---|---|---|---|---|---|
-| exercise · picture_description | 72 | 54% | 72% | 28% | 0.9 s |
-| exercise · picture_naming | 336 | 55% | 69% | 31% | 1.1 s |
-| exercise · sentence_construction | 72 | 53% | 68% | 32% | 0.9 s |
-| feedback · picture_naming | 120 | 92% | 99% | 1% | 0.6 s |
+| exercise · picture_description | 72 | 57% | 69% | 31% | 0.9 s |
+| exercise · picture_naming | 208 | 56% | 71% | 29% | 1.1 s |
+| exercise · sentence_construction | 72 | 61% | 76% | 24% | 0.9 s |
+| feedback · picture_naming | 120 | 29% | 31% | 69% | 0.5 s |
 
-## What the validators caught (827 raw generations)
+## What the validators caught (707 raw generations)
 
 Share of raw model outputs with each problem. None of these reach a patient: a rejected output is retried once, then replaced by the rule-based version.
 
 | Reason code | Outputs | Share |
 |---|---|---|
-| `answer_leak` | 147 | 17.8% |
-| `too_long` | 144 | 17.4% |
-| `invalid_phonemic_cue` | 120 | 14.5% |
-| `rare_word` | 40 | 4.8% |
-| `long_sentence` | 19 | 2.3% |
-| `contradicts_score` | 3 | 0.4% |
-| `digits` | 2 | 0.2% |
+| `contradicts_score` | 165 | 23.3% |
+| `invalid_phonemic_cue` | 109 | 15.4% |
+| `answer_leak` | 104 | 14.7% |
+| `too_long` | 74 | 10.5% |
+| `rare_word` | 19 | 2.7% |
+| `long_sentence` | 10 | 1.4% |
+| `digits` | 1 | 0.1% |
 
 ## Language of accepted (patient-facing) text
 
 | Measure | Value |
 |---|---|
-| Texts | 906 |
-| Mean words per sentence | 7.1 |
-| Words that are everyday English (Zipf ≥ 4) | 95% |
-| Distinct prompts per picture across repeats (mean) | 2.3 |
+| Texts | 580 |
+| Mean words per sentence | 6.8 |
+| Words that are everyday English (Zipf ≥ 4) | 97% |
+| Distinct prompts per picture across repeats (mean) | 2.4 |

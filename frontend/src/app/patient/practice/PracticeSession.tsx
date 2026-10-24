@@ -230,8 +230,9 @@ export function PracticeSession() {
             </p>
           )}
         </div>
-        {/* A tip helps after a miss; after a correct answer the praise is enough. */}
-        {view.outcome !== "correct" && (
+        {/* A tip only for a close answer, where a cue helps. A different word gets the
+            standard "Good try" and the word; the model tends to call those "nearly right". */}
+        {view.outcome === "near_miss" && (
           <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
         )}
         <Button

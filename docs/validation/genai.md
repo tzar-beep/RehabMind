@@ -8,32 +8,34 @@ Full numbers: [results/genai-audit.md](results/genai-audit.md). Every raw output
 `app/scripts/genai_audit.py` runs the production prompts against the local model
 (`qwen2.5:3b`, production temperature) for every catalogue picture and exercise type, four
 times each, and asks for feedback on 120 benchmark answers. Every output goes through the
-production validators with the app's two-attempt retry. 600 requests, 827 raw generations.
+production validators with the app's two-attempt retry. Re-run after the switch to BOSS
+photos (52 naming pictures): 472 requests, 707 raw generations.
 
 ## Results: raw vs shipped
 
 | Task | Valid first time | Valid after retry | Rule-based fallback |
 |---|---|---|---|
-| Picture naming | 55% | 69% | 31% |
-| Sentence building | 53% | 68% | 32% |
-| Picture description | 54% | 72% | 28% |
-| Feedback | 92% | 99% | 1% |
+| Picture naming | 56% | 71% | 29% |
+| Sentence building | 61% | 76% | 24% |
+| Picture description | 57% | 69% | 31% |
+| Feedback | 29% | 31% | 69% (no tip shown) |
 
 What the validators stopped, as a share of raw outputs. None reached a patient: a rejected
-output is retried once, then replaced by the rule-based version.
+output is retried once, then replaced by the rule-based version (or, for feedback, no tip).
 
 | Problem | Raw outputs | Shipped |
 |---|---|---|
-| Gave away the answer | 17.8% | 0% |
-| Too long | 17.4% | 0% |
-| Wrong first-sound cue | 14.5% | 0% |
-| Uncommon word (new plain-language check) | 4.8% | 0% |
-| Sentence over 12 words (new) | 2.3% | 0% |
-| Feedback contradicting the score | 0.4% | 0% |
+| Feedback contradicting the score (mostly "nearly right" for a different word) | 23.3% | 0% |
+| Wrong first-sound cue | 15.4% | 0% |
+| Gave away the answer | 14.7% | 0% |
+| Too long | 10.5% | 0% |
+| Uncommon word | 2.7% | 0% |
+| Sentence over 12 words | 1.4% | 0% |
 | Picture not in the allowed list (hallucinated content) | 0% | 0% |
 
-Accepted text averages 7.1 words per sentence, and 95% of its words are everyday English
-(Zipf ≥ 4).
+Accepted text averages 6.8 words per sentence, and 97% of its words are everyday English
+(Zipf ≥ 4). The first audit (before the "nearly right" rule and the BOSS photos) found 17.8%
+answer leaks and 99% valid feedback; that rule is why feedback validity fell.
 
 ## What the validators cannot check
 
@@ -50,8 +52,11 @@ blind on relevance, clarity, tone and difficulty fit
   found an AI question that was safe and short but wrong for its picture ("Name the object
   in this room" for a house), and a predictable question suits people with aphasia better.
   The AI still chooses the picture and writes the cues and feedback.
-- **Done:** feedback that calls a different word "close" or "nearly right" is now rejected,
-  and the tip appears only after a missed answer.
+- **Done:** feedback that calls a different word "close" or "nearly right" is rejected. The
+  re-run audit shows why it matters: the model said "nearly" or "almost" for most answers
+  that were a different word (feedback valid 31%), and an extra prompt instruction did not
+  change that. AI tips are therefore shown only for close answers, where a cue helps; a
+  different word gets the standard "Good try" and the correct word.
 
 - **About 30% of exercise requests fall back to rule-based text.** The fallback is safe, so
   this is a cost (less varied wording), not a risk. Most rejections are answer leaks and long

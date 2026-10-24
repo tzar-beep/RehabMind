@@ -1,49 +1,49 @@
 item_id,picture,image,question,meaning_cue,sound_cue
-N001,fork,photo_fork_01,What is this?,You would find this at home.,It starts with “fo…”
-N002,glasses,glasses,Name the item you wear on your face.,These are often used for reading and can be decorative.,It starts with “g…”
-N003,guitar,photo_guitar_01,What is this?,It is used to make or hear music.,It starts with “gu…”
-N004,banana,photo_banana_01,Name the fruit in this photo.,It's yellow and can be used for baking.,It starts with “b…”
-N005,house,photo_house_01,Name the object in this photo,It's used for storing things in a room,It starts with “h…”
-N006,car,photo_car_01,What is this?,It helps people travel.,It starts with “c…”
-N007,apple,photo_apple_01,Name the object in this photo.,It's a round fruit you eat.,It starts with “a…”
-N008,tree,photo_tree_01,Name the object in this photo.,It has leaves and grows in a garden.,It starts with “t…”
-N009,table,photo_table_01,What is this?,You would find this at home.,It starts with “ta…”
-N010,glasses,glasses,What is this?,People use this every day.,It starts with “gl…”
-N011,kettle,photo_kettle_01,Name the object in this photo.,It's used for boiling water.,It starts with “k…”
-N012,tree,photo_tree_01,What is this?,You can see this outdoors.,It starts with “tr…”
-N013,sofa,sofa,Name the object you sit on.,It has arms and a back for sitting.,It starts with “s…”
-N014,key,photo_key_01,Name the object in this photo.,It's used to lock doors and drawers.,It starts with “k…”
-N015,banana,photo_banana_02,Name the fruit in this photo.,It's often used in smoothies or eaten straight.,It starts with “ba…”
-N016,table,photo_table_01,Name the object in this photo.,It has a flat top and is used for storing things.,It starts with “t…”
-N017,tomato,photo_tomato_01,What is this?,It's something you can eat or drink.,It starts with “to…”
-N018,sofa,sofa,What is this?,You would find this at home.,It starts with “so…”
-N019,carrot,photo_carrot_01,What is this?,It's something you can eat or drink.,It starts with “ca…”
-N020,bottle,photo_bottle_01,What is this?,You would find this at home.,It starts with “bo…”
-N021,car,photo_car_01,Name the vehicle in this photo.,It's used for transporting people or goods over long distances.,It starts with “c…”
-N022,house,photo_house_01,What is this?,You would find this at home.,It starts with “ho…”
-N023,phone,photo_phone_01,What is this?,People use this every day.,It starts with “ph…”
-N024,sofa,photo_sofa_01,What is this?,You would find this at home.,It starts with “so…”
-N025,shoe,photo_shoe_01,Name the object in this photo.,This is something you wear on your feet.,It starts with “sh…”
-N026,fork,photo_fork_01,Name the object in this photo.,It's used for eating food.,It starts with “f…”
-N027,carrot,photo_carrot_01,Name the vegetable in this photo.,It's commonly used in salads or as a snack.,It starts with “car…”
-N028,banana,photo_banana_02,What is this?,It's something you can eat or drink.,It starts with “ba…”
-N029,tomato,photo_tomato_01,Name the object in this photo,It's often used in salads or sandwiches.,It starts with “t…”
-N030,book,photo_book_01,What is this?,You would find this at home.,It starts with “bo…”
-N031,apple,photo_apple_01,What is this?,It's something you can eat or drink.,It starts with “ap…”
-N032,banana,photo_banana_01,What is this?,It's something you can eat or drink.,It starts with “ba…”
-N033,bicycle,photo_bicycle_01,What is this?,It helps people travel.,It starts with “bi…”
-N034,guitar,photo_guitar_01,Name the musical instrument in this photo.,It's often played in music classes and concerts.,It starts with “g…”
-N035,scissors,photo_scissors_01,Name the tool used for cutting paper.,It's often found in a craft room or office.,It starts with “sc…”
-N036,phone,photo_phone_01,Name the object in this photo.,It's used for making calls and sending messages.,It starts with “p…”
-N037,book,book,What is this?,You would find this at home.,It starts with “bo…”
-N038,sofa,photo_sofa_01,Name the piece of furniture in this photo.,It's used for sitting and relaxing.,It starts with “so…”
-N039,bicycle,photo_bicycle_01,Name the object in this picture.,It's used for transportation on two wheels.,It starts with “b…”
-N040,key,photo_key_01,What is this?,You would find this at home.,It starts with “k…”
-N041,cup,photo_cup_01,What is this?,You would find this at home.,It starts with “c…”
-N042,shoe,photo_shoe_01,What is this?,People use this every day.,It starts with “sh…”
-N043,scissors,photo_scissors_01,What is this?,You would find this at home.,It starts with “sc…”
-N044,book,photo_book_01,Name the object in this photo.,It's often used for reading and writing.,It starts with “b…”
-N045,bottle,photo_bottle_01,Name the object in this photo.,It's used to store liquids.,It starts with “b…”
-N046,book,book,Name the object in this picture.,It's used for reading and writing.,It starts with “b…”
-N047,cup,photo_cup_01,Name the item in this photo.,It's used for holding hot beverages.,It starts with “c…”
-N048,kettle,photo_kettle_01,What is this?,You would find this at home.,It starts with “ke…”
+N001,book,boss_book,Name the object in this photo.,It's often used for reading and writing.,It starts with “b…”
+N002,glasses,boss_glasses,Name the object in this picture.,These are worn on the face to protect your eyes.,It starts with “g…”
+N003,telescope,boss_telescope,Name the tool used for observing distant objects.,It helps astronomers see stars and planets.,It starts with “te…”
+N004,microscope,boss_microscope,What is this?,People use it to make or fix things.,It starts with “mi…”
+N005,cup,boss_cup,What is this?,You would find this at home.,It starts with “c…”
+N006,sofa,boss_sofa,What is this?,You would find this at home.,It starts with “so…”
+N007,tree,boss_tree,What is this?,You can see this outdoors.,It starts with “tr…”
+N008,guitar,boss_guitar,What is this?,It is used to make or hear music.,It starts with “gu…”
+N009,bottle,boss_bottle,What is this?,You would find this at home.,It starts with “bo…”
+N010,tomato,boss_tomato,Name the red vegetable in the photo.,It's a common ingredient in many dishes.,It starts with “t…”
+N011,lamp,boss_lamp,Name the object in this picture.,It provides light for reading or writing at night.,It starts with “l…”
+N012,banana,boss_banana,Name the yellow fruit in the photo.,It's commonly eaten as a snack.,It starts with “ba…”
+N013,tomato,boss_tomato,What is this?,It's something you can eat or drink.,It starts with “to…”
+N014,telescope,boss_telescope,What is this?,People use it to make or fix things.,It starts with “te…”
+N015,phone,boss_phone,Name the object in your hand.,It's used for making calls.,It starts with “ph…”
+N016,flower,boss_flower,What is this?,You can see this outdoors.,It starts with “fl…”
+N017,egg,boss_egg,What is this?,It's something you can eat or drink.,It starts with “e…”
+N018,key,boss_key,What is this?,You would find this at home.,It starts with “k…”
+N019,sofa,boss_sofa,Name the object in the picture.,You sit on it to relax.,It starts with “so…”
+N020,piano,boss_piano,What is this?,It is used to make or hear music.,It starts with “pi…”
+N021,toothbrush,boss_toothbrush,What is this?,People use this every day.,It starts with “to…”
+N022,scissors,boss_scissors,What is this?,You would find this at home.,It starts with “sc…”
+N023,guitar,boss_guitar,Name the object in this photo.,It's used for playing music.,It starts with “g…”
+N024,book,boss_book,What is this?,You would find this at home.,It starts with “bo…”
+N025,cup,boss_cup,Name the object in this photo.,It's used for holding and pouring drinks.,It starts with “c…”
+N026,toothbrush,boss_toothbrush,Name the object in your hand.,This is something you use to clean your teeth.,It starts with “t…”
+N027,piano,boss_piano,Name the object in this photo.,It has keys and is played by musicians.,It starts with “p…”
+N028,phone,boss_phone,What is this?,People use this every day.,It starts with “ph…”
+N029,flower,boss_flower,Name the pretty plant in the photo.,It can be used to decorate a vase or table.,It starts with “fl…”
+N030,bottle,boss_bottle,Name the object in this photo.,It's used to store liquids.,It starts with “b…”
+N031,scissors,boss_scissors,Can you name this household item?,They are often used for cutting paper or fabric.,It starts with “sc…”
+N032,apple,boss_apple,Name the fruit in the photo.,It's often used for eating dessert.,It starts with “a…”
+N033,plate,boss_plate,Name the object in the picture.,It's used for serving food at the dining table.,It starts with “p…”
+N034,camera,boss_camera,What is this?,People use this every day.,It starts with “ca…”
+N035,table,boss_table,Name the object in front of you.,This is used for placing drinks or documents.,It starts with “t…”
+N036,tree,boss_tree,Name the object in the picture.,It can be used to make paper.,It starts with “t…”
+N037,plate,boss_plate,What is this?,You would find this at home.,It starts with “pl…”
+N038,egg,boss_egg,Name the object in this photo.,It's used for breakfast or baking.,It starts with “e…”
+N039,table,boss_table,What is this?,You would find this at home.,It starts with “ta…”
+N040,lamp,boss_lamp,What is this?,You would find this at home.,It starts with “la…”
+N041,glasses,boss_glasses,What is this?,People use this every day.,It starts with “gl…”
+N042,banana,boss_banana,What is this?,It's something you can eat or drink.,It starts with “ba…”
+N043,apple,boss_apple,What is this?,It's something you can eat or drink.,It starts with “ap…”
+N044,camera,boss_camera,Name the object in this photo.,It has a screen and is used for taking photos.,It starts with “cam…”
+N045,microscope,boss_microscope,Name the object in this photo.,This tool is used in a laboratory setting.,It starts with “m…”
+N046,pencil,boss_pencil,Name the object you write with.,You use it to write letters and numbers.,It starts with “p…”
+N047,pencil,boss_pencil,What is this?,You would find this at home.,It starts with “pe…”
+N048,key,boss_key,Name the object in this photo.,You use it to lock and unlock doors.,It starts with “k…”
