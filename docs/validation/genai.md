@@ -61,8 +61,11 @@ blind on relevance, clarity, tone and difficulty fit
   and one short example per outcome (a different word: thank the patient for trying and
   point to a feature of the picture; never "close" or "nearly"). On the same 120 benchmark
   answers, feedback valid first time rose from 31% to **79%** (87% after the retry), with
-  **no** score contradictions left; the remaining rejections are rare words (20.7% of raw
-  outputs) and long sentences (8.3%). Tips are shown again after any answer that is not
+  no score contradictions. Most remaining rejections were "rare words" that were really
+  possessives ("cup's" is rare in the word-frequency corpus, "cup" is not); the plain-language
+  check now reads a possessive as its noun. Re-run: **89%** valid first time, **96%** after
+  the retry, 4% without a tip; raw outputs flagged for rare words 8.3%, long sentences 4.5%,
+  score contradiction 0.8% (one output, caught). Tips are shown again after any answer that is not
   correct, for the three exercise types the AI personalises. Reproduce with
   `uv run python -m app.scripts.genai_audit --repeats 0 --feedback 120`.
 

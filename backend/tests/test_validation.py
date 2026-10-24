@@ -69,6 +69,8 @@ def test_plain_language_checks():
     assert plain_language.check("What is this?", "prompt") == []
     assert "rare_word:prompt" in plain_language.check("Identify this utensil.", "prompt")
     assert plain_language.check("Name this stethoscope.", "prompt", {"stethoscope"}) == []
+    assert plain_language.check("Look at the cup's handle.", "feedback") == []
+    assert plain_language.check("The kettle's spout.", "feedback", {"kettle"}) == []
     assert "patronising:feedback" in plain_language.check("Good girl, sweetie!", "feedback")
     long = "This is a very long sentence that keeps going on and on for far too long."
     assert "long_sentence:feedback" in plain_language.check(long, "feedback")

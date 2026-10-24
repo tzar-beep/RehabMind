@@ -31,7 +31,9 @@ def _zipf(word: str) -> float:
 def rare_words(text: str, allowed: set[str] = frozenset()) -> list[str]:
     """Words in `text` rarer than everyday English, except names the task itself uses."""
     words = re.findall(r"[a-z]+(?:'[a-z]+)?", normalize(text))
-    return [w for w in words if w not in allowed and _zipf(w) < MIN_EVERYDAY_ZIPF]
+    # A possessive is as everyday as its noun ("cup's" is rare in the corpus, "cup" is not).
+    stems = [w.removesuffix("'s") for w in words]
+    return [w for w in stems if w not in allowed and _zipf(w) < MIN_EVERYDAY_ZIPF]
 
 
 def long_sentences(text: str) -> bool:
