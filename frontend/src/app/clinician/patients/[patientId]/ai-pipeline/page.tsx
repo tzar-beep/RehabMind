@@ -17,6 +17,9 @@ const OBJECTIVE_NAMES: Record<string, string> = {
   word_retrieval: "Word retrieval",
   sentence_formation: "Sentence formation",
   descriptive_language: "Descriptive language",
+  repetition: "Word repetition",
+  comprehension: "Word understanding",
+  word_meaning: "Word meaning",
 };
 
 const SOURCE: Record<string, string> = {

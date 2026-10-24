@@ -347,6 +347,9 @@ const SHORT: Record<string, string> = {
   word_retrieval: "Word retrieval",
   sentence_formation: "Sentences",
   descriptive_language: "Description",
+  repetition: "Repetition",
+  comprehension: "Understanding",
+  word_meaning: "Word meaning",
 };
 
 type Beam = { d: string; state: State };
