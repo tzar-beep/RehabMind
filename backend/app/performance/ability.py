@@ -22,6 +22,7 @@ from dataclasses import asdict, dataclass
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.exercises.models import Exercise
 from app.exercises.types import OBJECTIVES, Objective
 from app.sessions import resets
@@ -34,6 +35,17 @@ HISTORY_LIMIT = 300
 RECENT = 10
 TREND_WINDOW = 5
 OUTCOME_VALUE = {"correct": 1.0, "near_miss": 0.5, "incorrect": 0.0, "skipped": 0.0}
+
+
+def counted_outcome(outcome: str, mode: str, hints_used: int) -> str:
+    """The outcome progression and the ability estimate count. A cued success is real
+    progress but not independent naming, and neither is a spoken match the recogniser may
+    have repaired (unless `speech_counts_for_progression`): both count as close."""
+    if outcome == "correct" and (
+        hints_used or (mode == "speech" and not get_settings().speech_counts_for_progression)
+    ):
+        return "near_miss"
+    return outcome
 
 
 def sigmoid(x: float) -> float:
@@ -104,7 +116,13 @@ async def estimates(db: AsyncSession, patient_id: uuid.UUID) -> dict[str, Object
     reset_at = await resets.cutoff(db, patient_id)
     rows = (
         await db.execute(
-            select(Exercise.exercise_type, Exercise.difficulty, ExerciseResponse.outcome)
+            select(
+                Exercise.exercise_type,
+                Exercise.difficulty,
+                ExerciseResponse.outcome,
+                ExerciseResponse.mode,
+                ExerciseResponse.analysis["hints_used"].astext,
+            )
             .join(ExerciseResponse, ExerciseResponse.exercise_id == Exercise.id)
             .where(
                 Exercise.patient_id == patient_id,
@@ -115,7 +133,8 @@ async def estimates(db: AsyncSession, patient_id: uuid.UUID) -> dict[str, Object
         )
     ).all()
     history: dict[str, list[tuple[str, int]]] = {o.value: [] for o in Objective}
-    for exercise_type, difficulty, outcome in reversed(rows):
+    for exercise_type, difficulty, outcome, mode, hints in reversed(rows):
         if (objective := OBJECTIVES.get(exercise_type)) is not None:
-            history[objective.value].append((outcome, difficulty))
+            counted = counted_outcome(outcome, mode, int(hints or 0))
+            history[objective.value].append((counted, difficulty))
     return {name: estimate(name, h) for name, h in history.items()}

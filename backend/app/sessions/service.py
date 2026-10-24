@@ -248,10 +248,8 @@ async def submit_response(
     if cs is None:
         raise NoPlan
     profile = await get_profile(db, patient_id, exercise.exercise_type, cs)
-    # A cued success is real progress but not independent naming: it holds the level.
-    progression_outcome = (
-        "near_miss" if result.outcome == "correct" and hints_used else result.outcome
-    )
+    # A cued success, or a spoken match the recogniser may have repaired, holds the level.
+    progression_outcome = ability.counted_outcome(result.outcome, mode, hints_used)
     apply_outcome(profile, progression_outcome, cs)
     if cs.progression_mode == "ability" and (objective := OBJECTIVES.get(exercise.exercise_type)):
         # The step rule above still keeps its counters; the level comes from the estimate.

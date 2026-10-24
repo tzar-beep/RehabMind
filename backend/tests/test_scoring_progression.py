@@ -96,3 +96,16 @@ def test_progression_never_leaves_clinician_range(bounds, start, outcomes, adv, 
     for o in outcomes:
         apply_outcome(p, o, cs)
         assert cs.min_difficulty <= p.target_difficulty <= cs.max_difficulty
+
+
+def test_cued_and_spoken_successes_count_as_close(monkeypatch):
+    from app.core.config import get_settings
+    from app.performance.ability import counted_outcome
+
+    assert counted_outcome("correct", "text", 0) == "correct"
+    assert counted_outcome("correct", "text", 1) == "near_miss"
+    assert counted_outcome("incorrect", "speech", 0) == "incorrect"
+    # Spoken matches hold the level until the recogniser passes Phase 2 part B.
+    assert counted_outcome("correct", "speech", 0) == "near_miss"
+    monkeypatch.setattr(get_settings(), "speech_counts_for_progression", True)
+    assert counted_outcome("correct", "speech", 0) == "correct"

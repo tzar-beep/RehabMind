@@ -50,6 +50,11 @@ class Settings(BaseSettings):
     whisper_model: str = "small.en"
     whisper_device: str = "cpu"
     whisper_compute_type: str = "int8"
+    # Whether a spoken answer the recogniser matched to the target counts as independent
+    # naming for progression. Off until the recogniser passes Phase 2 part B: in the
+    # synthetic-voice run it turned 16% of sound errors into the target word
+    # (docs/validation/simulated.md). The patient still sees the answer as correct.
+    speech_counts_for_progression: bool = False
 
     frontend_origins: list[str] = ["http://localhost:3000"]
     # Only trust X-Forwarded-For when a known proxy (the Next.js rewrite) fronts the API.
