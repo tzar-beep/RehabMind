@@ -1,0 +1,49 @@
+item_id,relevance,clarity,tone,difficulty_fit,comment
+N001,4,4,4,4,Fully aligned for aphasia recovery.
+N002,4,4,4,4,Highly relevant and suitable for aphasia practice.
+N003,4,4,4,3,"Highly relevant exercise for aphasia, though cues need refinement."
+N004,4,4,4,3,Highly relevant for aphasia therapy.
+N005,4,4,4,3,Highly relevant for word finding practice.
+N006,4,4,4,3,Highly relevant for aphasia therapy.
+N007,4,4,4,3,"Highly relevant, but slightly advanced cues."
+N008,4,4,4,3,"Highly relevant, clear, respectful, slightly challenging cues."
+N009,4,4,4,3,"Highly relevant and clear, slight difficulty with cue timing."
+N010,4,4,4,3,"Highly relevant, suitable and clear."
+N011,4,4,4,3,Highly relevant for word-finding practice.
+N012,4,4,4,3,Highly relevant for word finding practice.
+N013,4,4,4,4,"Highly relevant and clear, suitable for aphasia exercises."
+N014,4,4,4,3,Highly relevant for aphasia therapy.
+N015,4,4,4,3,Highly relevant to word finding exercises.
+N016,4,4,4,3,"Highly relevant and clear, slight difficulty with cues."
+N017,4,4,4,3,"Highly relevant and clear, but cues are moderate."
+N018,4,4,4,3,Highly relevant to word finding exercises.
+N019,4,4,4,3,"Highly relevant and clear, slight adjustment needed for cues."
+N020,4,4,4,3,"Highly relevant, clear, respectful, and cues are helpful without giving away the word."
+N021,4,4,4,3,Highly relevant but slightly too easy for advanced aphasia therapy.
+N022,4,4,4,3,"Highly relevant for aphasia therapy, slight adjustment for cues needed."
+N023,4,4,4,3,Highly relevant to word finding exercises.
+N024,4,4,4,3,"Highly relevant for word finding, clear, respectful, cues helpful without giving away word."
+N025,4,4,4,3,"Highly relevant for word finding, clear, respectful, cues helpful without giving away answer."
+N026,4,4,4,3,Highly relevant for word finding exercises.
+N027,4,4,4,3,"Highly relevant, but cues are moderate fit for patient stage."
+N028,4,4,4,4,Highly suitable for aphasia therapy
+N029,4,4,4,3,"Good fit for aphasia therapy, slightly challenging."
+N030,4,4,4,3,Highly suitable for aphasia recovery.
+N031,4,4,4,3,"Highly relevant for aphasia therapy, slight difficulty with cues."
+N032,4,4,4,3,"Highly relevant and clear, slight difficulty with cues"
+N033,4,4,4,3,Highly relevant to aphasia recovery.
+N034,4,4,4,3,"Highly relevant, clear, respectful, and cues are helpful but not obvious."
+N035,4,4,4,3,Highly relevant but cues are not overtly helpful.
+N036,4,4,4,3,Good fit for current word-finding exercises.
+N037,4,4,4,3,Highly relevant for aphasia therapy.
+N038,4,4,4,3,"Satisfactory exercise, slightly too easy for word-finding practice."
+N039,4,4,4,3,"Highly relevant for word finding, slightly on the harder side."
+N040,4,4,4,3,Highly relevant to word-finding exercises.
+N041,4,4,4,3,"Highly relevant to word-finding, subtle cues."
+N042,4,4,4,3,"Excellent exercise, slightly above the patient's current needs."
+N043,4,4,4,3,"Highly relevant, clear, respectful, cues assist subtly."
+N044,4,4,4,3,"Good fit for aphasia, slightly advanced."
+N045,4,4,4,3,"Highly relevant, clear, respectful, cues help without giving word away."
+N046,4,4,4,3,Highly relevant for aphasia recovery.
+N047,4,4,4,3,Highly relevant for aphasia recovery.
+N048,4,4,4,3,Highly relevant for aphasia therapy
