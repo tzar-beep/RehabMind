@@ -67,9 +67,7 @@ def estimate_levels(
     freq = _standardise([-x.zipf for x in n])
     syl = _standardise([float(x.syllables) for x in n])
     multi = [1.0 if x.words > 1 else 0.0 for x in n]
-    agree = (
-        _standardise([-agreement[t] for t in unique]) if agreement else [0.0] * len(unique)
-    )
+    agree = _standardise([-agreement[t] for t in unique]) if agreement else [0.0] * len(unique)
     scores = [
         W_FREQUENCY * f + W_SYLLABLES * s + W_MULTIWORD * m + W_AGREEMENT * a
         for f, s, m, a in zip(freq, syl, multi, agree, strict=True)
