@@ -17,6 +17,10 @@ import { daysSince, responseMode } from "@/lib/format";
 export const metadata: Metadata = { title: "Patients" };
 
 const RECENT_DAYS = 7;
+// Below this share correct, practice is mostly frustration (productive band 60-90%,
+// docs/validation/personalization.md). Needs enough answers not to flag one bad day.
+const STRUGGLING_BELOW = 0.4;
+const STRUGGLING_MIN_ANSWERS = 10;
 
 /** Why a patient needs the clinician's attention, if they do (most urgent first). */
 function attention(p: PatientListItem): string | null {
@@ -24,6 +28,11 @@ function attention(p: PatientListItem): string | null {
   const days = daysSince(p.last_session_at);
   if (days === null) return "Has not practised yet";
   if (days >= RECENT_DAYS) return `No practice for ${days} days`;
+  if (
+    p.recent_responses >= STRUGGLING_MIN_ANSWERS &&
+    p.recent_correct / p.recent_responses < STRUGGLING_BELOW
+  )
+    return `Struggling: ${p.recent_correct} of last ${p.recent_responses} answers correct. Consider easier practice limits`;
   return null;
 }
 
@@ -188,7 +197,7 @@ export default async function ClinicianDashboard() {
                     </span>
                     <Link
                       href={`/clinician/patients/${p.id}${p.constraints ? "" : "/constraints"}`}
-                      className="font-bold text-ink underline underline-offset-4"
+                      className="inline-flex min-h-target shrink-0 items-center font-bold text-ink underline underline-offset-4"
                     >
                       {p.constraints ? "Open overview" : "Set practice limits"}
                     </Link>

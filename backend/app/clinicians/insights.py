@@ -7,7 +7,7 @@ All queries are bounded (aggregates, LIMIT, or pagination).
 import uuid
 from collections import defaultdict
 
-from sqlalchemy import Integer, case, cast, func, select, text
+from sqlalchemy import Integer, and_, case, cast, func, not_, select, text
 from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,8 +26,10 @@ from app.clinicians.schemas import (
     SpeechAttempt,
     TranscriptQuality,
     TrendPoint,
+    WordProgress,
 )
 from app.exercises.models import Exercise, Stimulus
+from app.exercises.types import CHOICE_TYPES, NAMING_FAMILY
 from app.patients.models import Patient
 from app.performance.models import PerformanceProfile
 from app.sessions import resets
@@ -37,6 +39,8 @@ from app.users.models import User
 
 RECENT_WINDOW = 20
 TREND_SESSIONS = 20
+RECENT_PER_WORD = 5
+WORD_TYPES = sorted(NAMING_FAMILY | CHOICE_TYPES)  # exercises with a one-word answer
 
 
 def _brief(cs: ConstraintSet | None) -> ConstraintBrief | None:
@@ -201,6 +205,14 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
             ExerciseResponse.analysis["uncertain_speech_match"].astext == "true",
         )
     )
+    # "I heard <word>. Is that what you said?" answered "No": mishearings the patient caught.
+    misheard = await db.scalar(
+        select(func.count()).where(
+            AudioAsset.patient_id == patient.id,
+            AudioAsset.failure_reason == "patient_rejected",
+            resets.after(AudioAsset.created_at, reset_at),
+        )
+    )
 
     ratings = dict(
         (
@@ -244,6 +256,7 @@ async def overview(db: AsyncSession, patient: Patient) -> PatientOverview:
         current_working_difficulty=level,
         error_profile=error_profile,
         uncertain_speech_matches=uncertain or 0,
+        speech_misheard=misheard or 0,
         difficulty_ratings=ratings,
         last_reset=ResetInfo(
             at=last_reset.created_at,
@@ -304,20 +317,33 @@ def _summary(s: PracticeSession, agg, reset_at=None) -> SessionSummary:
 
 
 async def sessions_page(
-    db: AsyncSession, patient_id: uuid.UUID, limit: int, offset: int
-) -> tuple[list[SessionSummary], int]:
+    db: AsyncSession,
+    patient_id: uuid.UUID,
+    limit: int,
+    offset: int,
+    include_empty: bool = False,
+) -> tuple[list[SessionSummary], int, int]:
+    """Newest first. Sessions opened and left without an answer are hidden unless asked
+    for (they are noise in a clinical history); the third value counts them."""
     agg = _session_aggregates()
     reset_at = await resets.cutoff(db, patient_id)
-    total = await db.scalar(select(func.count()).where(PracticeSession.patient_id == patient_id))
-    rows = await db.execute(
+    base = (
         select(PracticeSession, agg)
         .join(agg, agg.c.session_id == PracticeSession.id, isouter=True)
         .where(PracticeSession.patient_id == patient_id)
-        .order_by(PracticeSession.started_at.desc())
-        .limit(limit)
-        .offset(offset)
     )
-    return [_summary(r[0], r, reset_at) for r in rows.all()], total or 0
+    empty = and_(func.coalesce(agg.c.attempted, 0) == 0, PracticeSession.status != "active")
+    hidden = await db.scalar(select(func.count()).select_from(base.where(empty).subquery()))
+    shown = base if include_empty else base.where(not_(empty))
+    total = await db.scalar(select(func.count()).select_from(shown.subquery()))
+    rows = await db.execute(
+        shown.order_by(PracticeSession.started_at.desc()).limit(limit).offset(offset)
+    )
+    return (
+        [_summary(r[0], r, reset_at) for r in rows.all()],
+        total or 0,
+        0 if include_empty else hidden or 0,
+    )
 
 
 async def trends(db: AsyncSession, patient_id: uuid.UUID) -> list[TrendPoint]:
@@ -397,7 +423,16 @@ async def session_detail(
                 status=ex.status,
                 picture=stim.slug if stim else None,
                 category=stim.category if stim else None,
-                image_url=ex.content.get("image_url"),
+                # Picture choices have no single picture: show the one that was right.
+                image_url=ex.content.get("image_url")
+                or next(
+                    (
+                        o["image_url"]
+                        for o in ex.content.get("options") or []
+                        if o["word"] == ex.expected["target"]
+                    ),
+                    None,
+                ),
                 target=ex.expected["target"],
                 prompt=ex.content["prompt"],
                 response_mode=resp.mode if resp else None,
@@ -421,3 +456,64 @@ async def session_detail(
             )
         )
     return SessionDetail(session=_summary(session, agg_row, reset_at), exercises=exercises)
+
+
+async def word_progress(db: AsyncSession, patient_id: uuid.UUID) -> list[WordProgress]:
+    """Per picture: how often it was tried and named, the latest results and the usual
+    error. Words to work on first, then by most recent practice."""
+    reset_at = await resets.cutoff(db, patient_id)
+    rows = (
+        await db.execute(
+            select(
+                ExerciseResponse.outcome,
+                ExerciseResponse.analysis,
+                ExerciseResponse.created_at,
+                Stimulus,
+            )
+            .join(Exercise, Exercise.id == ExerciseResponse.exercise_id)
+            .join(Stimulus, Stimulus.id == Exercise.stimulus_id)
+            .where(
+                ExerciseResponse.patient_id == patient_id,
+                Exercise.exercise_type.in_(WORD_TYPES),
+                resets.after(ExerciseResponse.created_at, reset_at),
+            )
+            .order_by(ExerciseResponse.created_at)
+        )
+    ).all()
+    by_word: dict[str, list] = defaultdict(list)
+    stimuli: dict[str, Stimulus] = {}
+    for outcome, analysis, at, stim in rows:
+        by_word[stim.slug].append((outcome, (analysis or {}).get("error_type"), at))
+        stimuli[stim.slug] = stim
+    words = []
+    for slug, answers in by_word.items():
+        stim = stimuli[slug]
+        outcomes = [o for o, _, _ in answers]
+        correct = outcomes.count("correct")
+        errors = [e for o, e, _ in answers if o != "correct" and e and e != "correct"]
+        if len(outcomes) >= 3 and outcomes[-3:] == ["correct"] * 3:
+            status = "secure"
+        elif len(outcomes) >= 2 and correct / len(outcomes) < 0.5:
+            status = "needs_work"
+        else:
+            status = "learning"
+        words.append(
+            WordProgress(
+                picture=slug,
+                word=stim.target,
+                image_url=stim.image_path,
+                category=stim.category,
+                difficulty=stim.difficulty,
+                attempts=len(outcomes),
+                correct=correct,
+                close=outcomes.count("near_miss"),
+                recent=outcomes[-RECENT_PER_WORD:],
+                common_error=max(set(errors), key=errors.count) if errors else None,
+                last_practised=answers[-1][2],
+                status=status,
+            )
+        )
+    order = {"needs_work": 0, "learning": 1, "secure": 2}
+    words.sort(key=lambda w: w.last_practised, reverse=True)
+    words.sort(key=lambda w: order[w.status])
+    return words

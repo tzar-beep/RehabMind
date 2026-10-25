@@ -58,6 +58,7 @@ export const PatientOverviewSchema = z.object({
   current_working_difficulty: z.number().nullable(),
   error_profile: z.record(z.string(), z.number()).default({}),
   uncertain_speech_matches: z.number().default(0),
+  speech_misheard: z.number().default(0),
   difficulty_ratings: z.record(z.string(), z.number()).default({}),
   last_reset: ResetInfoSchema.nullable().optional(),
 });
@@ -84,6 +85,8 @@ export const SessionPageSchema = z.object({
   total: z.number(),
   limit: z.number(),
   offset: z.number(),
+  // Sessions opened and left without an answer, not listed unless asked for.
+  empty_hidden: z.number().default(0),
 });
 
 export const ExerciseDetailSchema = z.object({
@@ -307,3 +310,21 @@ export const PipelineSchema = z.object({
   ),
 });
 export type Pipeline = z.infer<typeof PipelineSchema>;
+
+/** Per-picture progress across one-word exercises, words to work on first. */
+export const WordProgressSchema = z.object({
+  picture: z.string(),
+  word: z.string(),
+  image_url: z.string(),
+  category: z.string(),
+  difficulty: z.number(),
+  attempts: z.number(),
+  correct: z.number(),
+  close: z.number(),
+  recent: z.array(z.string()),
+  common_error: z.string().nullable(),
+  last_practised: dt,
+  status: z.enum(["needs_work", "learning", "secure"]),
+});
+export type WordProgress = z.infer<typeof WordProgressSchema>;
+export const WordProgressListSchema = z.array(WordProgressSchema);

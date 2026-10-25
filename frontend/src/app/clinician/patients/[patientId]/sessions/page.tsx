@@ -26,18 +26,22 @@ export default async function SessionsPage({
   searchParams,
 }: PageProps<"/clinician/patients/[patientId]/sessions">) {
   const { patientId } = await params;
-  const pageParam = (await searchParams).page;
+  const query = await searchParams;
+  const pageParam = query.page;
+  const showEmpty = query.empty === "1";
   const page = Math.max(
     1,
     Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1,
   );
   const data = await backendGet(
-    `/patients/${patientId}/sessions?limit=${PAGE_SIZE}&offset=${(page - 1) * PAGE_SIZE}`,
+    `/patients/${patientId}/sessions?limit=${PAGE_SIZE}&offset=${(page - 1) * PAGE_SIZE}${showEmpty ? "&include_empty=true" : ""}`,
     SessionPageSchema,
   );
   if (!data) notFound();
   const pages = Math.max(1, Math.ceil(data.total / PAGE_SIZE));
   const base = `/clinician/patients/${patientId}/sessions`;
+  const pageHref = (n: number) =>
+    `${base}?page=${n}${showEmpty ? "&empty=1" : ""}`;
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,6 +50,30 @@ export default async function SessionsPage({
         <p className="text-ink-muted">
           {data.total} {data.total === 1 ? "session" : "sessions"} recorded,
           newest first.
+          {data.empty_hidden > 0 && (
+            <>
+              {" "}
+              {data.empty_hidden} opened without an answer{" "}
+              {data.empty_hidden === 1 ? "is" : "are"} not listed.{" "}
+              <Link
+                href={`${base}?empty=1`}
+                className="font-bold text-accent underline underline-offset-4"
+              >
+                Show them
+              </Link>
+            </>
+          )}
+          {showEmpty && (
+            <>
+              {" "}
+              <Link
+                href={base}
+                className="font-bold text-accent underline underline-offset-4"
+              >
+                Hide sessions without answers
+              </Link>
+            </>
+          )}
         </p>
       </div>
 
@@ -154,7 +182,7 @@ export default async function SessionsPage({
             <nav aria-label="Session pages" className="flex items-center gap-3">
               {page > 1 && (
                 <Link
-                  href={`${base}?page=${page - 1}`}
+                  href={pageHref(page - 1)}
                   className={buttonClasses("secondary")}
                 >
                   Newer
@@ -165,7 +193,7 @@ export default async function SessionsPage({
               </span>
               {page < pages && (
                 <Link
-                  href={`${base}?page=${page + 1}`}
+                  href={pageHref(page + 1)}
                   className={buttonClasses("secondary")}
                 >
                   Older

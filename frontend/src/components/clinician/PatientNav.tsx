@@ -16,6 +16,7 @@ export function PatientNav({
   const tabs = [
     { href: base, label: "Overview", exact: true },
     { href: `${base}/sessions`, label: "Sessions" },
+    { href: `${base}/words`, label: "Words" },
     { href: `${base}/constraints`, label: "Practice limits" },
     { href: `${base}/ai-generations`, label: "AI audit log" },
     ...(showPipeline

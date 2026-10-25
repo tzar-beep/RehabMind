@@ -137,6 +137,7 @@ async def test_speech_answer_is_transcribed_scored_and_audio_deleted(care, stt):
 
 
 async def test_patient_can_reject_what_the_recogniser_heard(care, stt):  # noqa: F811
+    _, clinician, pid = care
     patient, ex = await speech_plan(care)
     stt.text = await target_of(ex["id"])
     rec = (await upload(patient, ex["id"])).json()["recording_id"]
@@ -147,6 +148,8 @@ async def test_patient_can_reject_what_the_recogniser_heard(care, stt):  # noqa:
     async with SessionLocal() as db:
         assert (await db.execute(select(ExerciseResponse))).first() is None
         assert (await db.get(Exercise, uuid.UUID(ex["id"]))).status == "pending"
+    overview = (await clinician.get(f"/api/v1/patients/{pid}/overview")).json()
+    assert overview["speech_misheard"] == 1
     # The exercise stays open: a wrong word is scored at once, with no question.
     stt.text = "zzzz"
     rec2 = (await upload(patient, ex["id"])).json()["recording_id"]

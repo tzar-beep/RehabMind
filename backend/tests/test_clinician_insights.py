@@ -92,6 +92,14 @@ async def test_sessions_trends_and_detail(care):  # noqa: F811
     assert page2["items"][0]["outcomes"]["correct"] == 2 and page2["items"][0]["modes"] == ["text"]
     assert page2["items"][0]["duration_s"] is not None
 
+    # A session opened and left without an answer is hidden, and counted.
+    await patient.post("/api/v1/practice/sessions")
+    await patient.post("/api/v1/practice/sessions/current/end")
+    page = (await clinician.get(f"{base(pid)}/sessions")).json()
+    assert (page["total"], page["empty_hidden"]) == (2, 1)
+    page = (await clinician.get(f"{base(pid)}/sessions?include_empty=true")).json()
+    assert (page["total"], page["empty_hidden"]) == (3, 0)
+
     trend = (await clinician.get(f"{base(pid)}/trends")).json()
     assert [t["session_id"] for t in trend] == [s1, s2]  # oldest first
     assert [t["accuracy"] for t in trend] == [1.0, 0.5]
@@ -163,12 +171,31 @@ async def test_ai_runs_explain_what_the_patient_received(care, ai, plan, result,
         assert r.status_code == 405
 
 
+async def test_word_progress_puts_words_to_work_on_first(care):  # noqa: F811
+    patient, clinician, pid = care
+    await set_plan(clinician, pid, allowed_exercise_types=["picture_naming"])
+    await run_session(patient, [False] * 6 + [True] * 2)
+    await run_session(patient, [True] * 8)
+    words = (await clinician.get(f"{base(pid)}/words")).json()
+    assert sum(w["attempts"] for w in words) == 16
+    assert sum(w["correct"] for w in words) == 10
+    order = {"needs_work": 0, "learning": 1, "secure": 2}
+    assert [order[w["status"]] for w in words] == sorted(order[w["status"]] for w in words)
+    for w in words:
+        assert w["image_url"].startswith("/stimuli/") and len(w["recent"]) <= 5
+        if w["status"] == "needs_work":
+            assert w["attempts"] >= 2 and w["correct"] / w["attempts"] < 0.5
+        if w["common_error"]:
+            assert w["correct"] < w["attempts"]
+
+
 # ---------- isolation ----------
 
 ROUTES = [
     "/overview",
     "/trends",
     "/sessions",
+    "/words",
     "/constraints",
     "/constraints/versions",
     "/ai-generations",

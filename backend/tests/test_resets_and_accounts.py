@@ -51,7 +51,7 @@ async def test_reset_gives_a_fresh_start_without_deleting_anything(care):
     assert listed["sessions_completed"] == 0 and listed["recent_responses"] == 0
 
     # History is kept and labelled, not deleted.
-    page = (await clinician.get(f"/api/v1/patients/{pid}/sessions")).json()
+    page = (await clinician.get(f"/api/v1/patients/{pid}/sessions?include_empty=true")).json()
     assert page["total"] == 2 and all(s["before_reset"] for s in page["items"])
     async with SessionLocal() as db:
         statuses = (

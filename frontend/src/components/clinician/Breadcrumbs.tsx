@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 const SECTIONS: Record<string, string> = {
   sessions: "Sessions",
+  words: "Words",
   constraints: "Practice limits",
   "ai-generations": "AI audit log",
   "ai-pipeline": "AI pipeline",

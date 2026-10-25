@@ -16,6 +16,7 @@ from app.clinicians.schemas import (
     SessionDetail,
     SessionPage,
     TrendPoint,
+    WordProgress,
 )
 from app.patients.access import get_accessible_patient
 from app.patients.models import Patient
@@ -52,15 +53,24 @@ async def patient_trends(patient: AssignedPatient, db: DbDep) -> list[TrendPoint
     return await insights.trends(db, patient.id)
 
 
+@router.get("/words", response_model=list[WordProgress])
+async def patient_words(patient: AssignedPatient, db: DbDep) -> list[WordProgress]:
+    """Per-picture progress since the latest fresh start, words to work on first."""
+    return await insights.word_progress(db, patient.id)
+
+
 @router.get("/sessions", response_model=SessionPage)
 async def patient_sessions(
     patient: AssignedPatient,
     db: DbDep,
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
+    include_empty: bool = False,
 ) -> SessionPage:
-    items, total = await insights.sessions_page(db, patient.id, limit, offset)
-    return SessionPage(items=items, total=total, limit=limit, offset=offset)
+    items, total, hidden = await insights.sessions_page(
+        db, patient.id, limit, offset, include_empty
+    )
+    return SessionPage(items=items, total=total, limit=limit, offset=offset, empty_hidden=hidden)
 
 
 @router.get("/sessions/{session_id}", response_model=SessionDetail)

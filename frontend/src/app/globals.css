@@ -178,3 +178,20 @@ body {
   --color-legend-muted-foreground: var(--color-ink-muted);
   --color-legend-track: var(--color-line);
 }
+
+/* Clinician pages print as case-note summaries: content only, on white. */
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  main section,
+  main li {
+    break-inside: avoid;
+  }
+}

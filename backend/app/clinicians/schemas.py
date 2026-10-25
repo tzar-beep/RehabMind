@@ -1,6 +1,7 @@
 """Clinician-facing read models. Observed activity only: no scores, risks or prognoses."""
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -66,6 +67,8 @@ class PatientOverview(BaseModel):
     # Picture-naming error types (app.analysis.errors), e.g. {"semantic": 4, "formal": 1}.
     error_profile: dict[str, int] = {}
     uncertain_speech_matches: int = 0
+    # Recognised matches the patient said were not what they said (speech confirmation).
+    speech_misheard: int = 0
     # Patients' after-session ratings: too_easy / just_right / too_hard -> count.
     difficulty_ratings: dict[str, int] = {}
     # Figures above count only practice since this fresh start (None: never reset).
@@ -93,6 +96,8 @@ class SessionPage(BaseModel):
     total: int
     limit: int
     offset: int
+    # Sessions opened and left without an answer, not listed (include_empty=true lists them).
+    empty_hidden: int = 0
 
 
 class SpeechAttempt(BaseModel):
@@ -165,3 +170,23 @@ class ConstraintVersion(BaseModel):
     advance_after_correct: int
     step_back_after_incorrect: int
     progression_mode: str = "step"
+
+
+class WordProgress(BaseModel):
+    """One picture's record across all single-word exercises (naming, completion,
+    repetition, recognition, category), since the latest fresh start."""
+
+    picture: str
+    word: str
+    image_url: str
+    category: str
+    difficulty: int
+    attempts: int
+    correct: int
+    close: int
+    recent: list[str]  # last outcomes, oldest first (at most RECENT_PER_WORD)
+    common_error: str | None  # most frequent PNT error type, if any
+    last_practised: datetime
+    # needs_work: right under half the time (2+ tries); secure: last three right;
+    # learning: anything else.
+    status: Literal["needs_work", "learning", "secure"]

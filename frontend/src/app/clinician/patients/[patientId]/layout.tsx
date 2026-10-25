@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/clinician/Breadcrumbs";
 import { PatientNav } from "@/components/clinician/PatientNav";
+import { PrintButton } from "@/components/clinician/PrintButton";
 import { Alert } from "@/components/ui/Alert";
 import { Avatar } from "@/components/ui/Avatar";
 import { AIStatusSchema, PatientOverviewSchema } from "@/lib/api/clinician";
@@ -37,6 +38,9 @@ export default async function PatientLayout({
             Patient since {formatDate(patient.patient_since)} · Care team:{" "}
             {patient.care_team.join(", ")}
           </p>
+          <div className="ml-auto">
+            <PrintButton />
+          </div>
         </div>
         <PatientNav
           patientId={patientId}

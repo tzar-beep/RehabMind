@@ -114,6 +114,14 @@ test("dashboard → patient overview → sessions → session detail", async ({
     path: "test-results/clinician-session.png",
     fullPage: true,
   });
+
+  // Per-word progress: which words to practise next.
+  await page.getByRole("link", { name: "Words", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Words", level: 1 }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Print" })).toBeVisible();
+  await a11y(page);
 });
 
 test("clinician creates a new practice-limits version (and restores)", async ({

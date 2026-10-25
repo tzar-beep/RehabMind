@@ -197,6 +197,9 @@ export default async function PatientOverviewPage({
                       .join(" · ") +
                       (ov.uncertain_speech_matches
                         ? ` · ${ov.uncertain_speech_matches} speech answer(s) to check`
+                        : "") +
+                      (ov.speech_misheard
+                        ? ` · ${ov.speech_misheard} misheard (the patient said no)`
                         : "") || "None yet",
                 },
               ]}
@@ -218,7 +221,7 @@ export default async function PatientOverviewPage({
             <div>
               <Link
                 href={`${base}/sessions`}
-                className={buttonClasses("secondary")}
+                className={`${buttonClasses("secondary")} no-print`}
               >
                 View session history
               </Link>
@@ -234,7 +237,7 @@ export default async function PatientOverviewPage({
         action={
           <Link
             href={`${base}/constraints`}
-            className={buttonClasses("secondary")}
+            className={`${buttonClasses("secondary")} no-print`}
           >
             {active ? "Review or create new version" : "Set practice limits"}
           </Link>
