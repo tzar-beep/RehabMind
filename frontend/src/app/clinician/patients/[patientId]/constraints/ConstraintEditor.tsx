@@ -399,6 +399,13 @@ export function ConstraintEditor({
                 }
               />
             ))}
+            {v.allowed_response_modes.includes("speech") && (
+              <p className="text-sm text-ink-muted">
+                A spoken answer that matches the picture holds the level, like a
+                correct answer after a hint, until speech recognition is checked
+                with real speakers. The patient still sees it as correct.
+              </p>
+            )}
           </Fieldset>
 
           <Fieldset
