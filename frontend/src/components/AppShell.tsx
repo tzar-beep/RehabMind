@@ -65,7 +65,8 @@ export function AppShell({
       </header>
       <main
         id="main"
-        tabIndex={-1}
+        // In the one-screen area main can scroll as a last resort: keyboard users must reach it.
+        tabIndex={fit ? 0 : -1}
         className={
           fit
             ? `mx-auto flex min-h-0 w-full ${width} flex-1 flex-col overflow-y-auto px-4 py-3 sm:px-6 sm:py-4`

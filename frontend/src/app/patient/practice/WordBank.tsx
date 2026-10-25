@@ -29,7 +29,7 @@ export function WordBank({
     .filter(({ i }) => !placed.includes(i));
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 short:gap-2">
       <section aria-labelledby="sentence-label" className="flex flex-col">
         {/* Clear acts on the sentence, so it sits with it. */}
         <div className="flex items-center justify-between gap-3">
