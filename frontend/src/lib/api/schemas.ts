@@ -103,7 +103,17 @@ export type ResponseResult = z.infer<typeof ResponseResultSchema>;
 export const SpeechAcceptedSchema = z.object({ recording_id: z.string() });
 
 export const SpeechStatusSchema = z.object({
-  status: z.enum(["pending", "processing", "done", "no_speech", "failed"]),
+  status: z.enum([
+    "pending",
+    "processing",
+    "confirm",
+    "done",
+    "rejected",
+    "no_speech",
+    "failed",
+  ]),
+  // status "confirm": what the recogniser heard, for "Is that what you said?"
+  heard: z.string().nullable().optional(),
   result: z.lazy(() => ResponseResultSchema).nullable(),
 });
 

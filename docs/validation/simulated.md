@@ -72,8 +72,14 @@ counts as "close" for progression and for the ability estimate, like a correct a
 a hint: it holds the level instead of raising it (`counted_outcome` in
 `app/performance/ability.py`). The patient still sees it as correct, and the practice
 limits page tells the clinician. The setting `SPEECH_COUNTS_FOR_PROGRESSION` turns full
-credit back on once a real Part B run passes. Options to fix the cause: a larger Whisper
-model, or asking the patient to confirm what was heard.
+credit back on once a real Part B run passes.
+
+**Second change: the patient confirms a match.** When a spoken answer would score as
+correct, the app now asks "I heard “door”. Is that what you said?" (with a button to hear
+the word) before scoring it. "No, try again" discards it and keeps the exercise open; the
+count of rejections is a running measure of mishearings in real use. Wrong words are
+scored at once, with no extra question. This relies on the patient noticing the
+difference, which not everyone with aphasia can, so the progression rule above stays.
 
 ### Part C: progression mode comparison
 

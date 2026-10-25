@@ -1,7 +1,9 @@
 import uuid
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, func, text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
@@ -29,8 +31,12 @@ class AudioAsset(Base):
     patient_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("patients.id", ondelete="CASCADE"), index=True
     )
-    # pending | processing | done | no_speech | failed
+    # pending | processing | confirm | done | rejected | no_speech | failed
     status: Mapped[str] = mapped_column(String(16), default="pending")
+    # A recognised match waiting for the patient's "yes, that's what I said" (status
+    # confirm). Cleared once they answer: the scored response keeps the text, as for typing.
+    transcript: Mapped[str | None] = mapped_column(String(200))
+    stt: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     object_key: Mapped[str | None] = mapped_column(String(80))
     content_type: Mapped[str] = mapped_column(String(60))
     size_bytes: Mapped[int] = mapped_column(Integer)

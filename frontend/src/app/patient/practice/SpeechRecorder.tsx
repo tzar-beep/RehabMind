@@ -1,14 +1,18 @@
 "use client";
 
+import { Check, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Alert } from "@/components/ui/Alert";
+import { Button } from "@/components/ui/Button";
 import { ApiError, apiFetch } from "@/lib/api/client";
 import {
   SpeechAcceptedSchema,
   SpeechStatusSchema,
   type ResponseResult,
 } from "@/lib/api/schemas";
+
+import { say, useCanSpeak } from "./Choices";
 
 const MAX_SECONDS = 15;
 const POLL_MS = 700;
@@ -23,7 +27,10 @@ type Phase =
   | { kind: "idle" }
   | { kind: "recording"; seconds: number }
   | { kind: "processing" }
+  | { kind: "confirm"; heard: string; recordingId: string }
   | { kind: "retry"; message: string };
+
+const TRY_AGAIN = "That didn’t work. Please try again, or type your answer.";
 
 export function speechSupported(): boolean {
   return (
@@ -71,6 +78,7 @@ export function SpeechRecorder({
   onUnavailable: (message: string) => void;
 }) {
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
+  const speakable = useCanSpeak();
   const recorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -146,6 +154,12 @@ export function SpeechRecorder({
           SpeechStatusSchema,
         );
         if (s!.status === "done" && s!.result) return onResult(s!.result);
+        if (s!.status === "confirm" && s!.heard)
+          return setPhase({
+            kind: "confirm",
+            heard: s!.heard,
+            recordingId: accepted!.recording_id,
+          });
         if (s!.status === "no_speech")
           return setPhase({
             kind: "retry",
@@ -153,19 +167,82 @@ export function SpeechRecorder({
           });
         if (s!.status === "failed") break;
       }
+      setPhase({ kind: "retry", message: TRY_AGAIN });
+    } catch (e) {
       setPhase({
         kind: "retry",
-        message: "That didn’t work. Please try again, or type your answer.",
+        message:
+          e instanceof ApiError && e.status !== 500 ? e.message : TRY_AGAIN,
+      });
+    }
+  }
+
+  /** "Is that what you said?" Speech recognisers tend to hear the expected word, so a
+   * match only counts once the patient agrees with it. */
+  async function answer(recordingId: string, saidIt: boolean) {
+    setPhase({ kind: "processing" });
+    try {
+      const s = await apiFetch(
+        `/practice/speech/${recordingId}/confirm`,
+        { method: "POST", json: { said_it: saidIt } },
+        SpeechStatusSchema,
+      );
+      if (s!.status === "done" && s!.result) return onResult(s!.result);
+      setPhase({
+        kind: "retry",
+        message: saidIt
+          ? TRY_AGAIN
+          : "Thanks for telling me. Try again, or type your answer.",
       });
     } catch (e) {
       setPhase({
         kind: "retry",
         message:
-          e instanceof ApiError && e.status !== 500
-            ? e.message
-            : "That didn’t work. Please try again, or type your answer.",
+          e instanceof ApiError && e.status !== 500 ? e.message : TRY_AGAIN,
       });
     }
+  }
+
+  if (phase.kind === "confirm") {
+    return (
+      <div
+        role="group"
+        aria-labelledby="heard-question"
+        className="flex flex-col items-center gap-4 lg:items-start"
+      >
+        <p id="heard-question" className="text-xl">
+          I heard{" "}
+          <span lang="en" className="text-3xl font-bold">
+            “{phase.heard}”
+          </span>
+          . Is that what you said?
+        </p>
+        {speakable && (
+          <button
+            type="button"
+            onClick={() => say(phase.heard)}
+            className="inline-flex min-h-target items-center gap-2 rounded-control border-2 border-accent px-4 font-bold text-accent transition-colors hover:bg-accent-soft"
+          >
+            <Volume2 aria-hidden="true" size={22} />
+            Hear it
+          </button>
+        )}
+        <div className="flex flex-wrap gap-3">
+          <Button size="lg" onClick={() => answer(phase.recordingId, true)}>
+            <Check aria-hidden="true" size={24} />
+            Yes
+          </Button>
+          <Button
+            size="lg"
+            variant="secondary"
+            onClick={() => answer(phase.recordingId, false)}
+          >
+            <X aria-hidden="true" size={24} />
+            No, try again
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   if (phase.kind === "processing") {

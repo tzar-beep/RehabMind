@@ -291,6 +291,9 @@ async def test_spoken_picture_description_is_scored(care):  # noqa: F811
     finally:
         app.dependency_overrides.pop(get_job_queue, None)
     status = (await patient.get(f"/api/v1/practice/speech/{rec}")).json()
+    assert status["status"] == "confirm"  # "I heard ... Is that what you said?"
+    await patient.post(f"/api/v1/practice/speech/{rec}/confirm", json={"said_it": True})
+    status = (await patient.get(f"/api/v1/practice/speech/{rec}")).json()
     assert status["status"] == "done" and status["result"]["outcome"] == "correct"
     assert status["result"]["concepts_missing"] == []
 

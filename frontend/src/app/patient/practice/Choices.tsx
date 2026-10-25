@@ -7,8 +7,13 @@ const subscribe = () => () => {};
 const canSpeak = () =>
   typeof window !== "undefined" && "speechSynthesis" in window;
 
+/** Whether this device can read words aloud (false during server rendering). */
+export function useCanSpeak(): boolean {
+  return useSyncExternalStore(subscribe, canSpeak, () => false);
+}
+
 /** Reads a word aloud with the device's own voice (nothing leaves the device). */
-function say(word: string) {
+export function say(word: string) {
   const u = new SpeechSynthesisUtterance(word);
   u.lang = "en-GB";
   u.rate = 0.8; // a little slower than conversation
@@ -18,7 +23,7 @@ function say(word: string) {
 
 /** The word to say or to find, large, with a button to hear it. */
 export function WordCard({ word }: { word: string }) {
-  const speakable = useSyncExternalStore(subscribe, canSpeak, () => false);
+  const speakable = useCanSpeak();
   return (
     <div className="flex flex-wrap items-center justify-center gap-4 rounded-card border border-line bg-surface px-6 py-5 lg:justify-start">
       <span lang="en" className="text-4xl font-bold tracking-tight sm:text-5xl">

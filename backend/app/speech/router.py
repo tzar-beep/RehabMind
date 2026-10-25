@@ -28,8 +28,14 @@ class SpeechAccepted(BaseModel):
 
 
 class SpeechStatus(BaseModel):
-    status: Literal["pending", "processing", "done", "no_speech", "failed"]
+    status: Literal["pending", "processing", "confirm", "done", "rejected", "no_speech", "failed"]
+    # status "confirm": what the recogniser heard, for "Is that what you said?"
+    heard: str | None = None
     result: ResponseResult | None = None
+
+
+class ConfirmIn(BaseModel):
+    said_it: bool
 
 
 @router.post(
@@ -82,8 +88,32 @@ async def speech_status(recording_id: uuid.UUID, user: PatientUser, db: DbDep) -
     asset = await db.get(AudioAsset, recording_id)
     if asset is None or asset.patient_id != patient.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Recording not found.")
+    if asset.status == "confirm":
+        return SpeechStatus(status="confirm", heard=asset.transcript)
     if asset.status != "done" or asset.response_id is None:
         return SpeechStatus(status=asset.status)  # type: ignore[arg-type]
+    return await _done(db, asset)
+
+
+@router.post("/speech/{recording_id}/confirm", response_model=SpeechStatus)
+async def confirm_speech(
+    recording_id: uuid.UUID, body: ConfirmIn, user: PatientUser, db: DbDep
+) -> SpeechStatus:
+    """The patient's answer to "We heard <word>. Is that what you said?"."""
+    patient = await _me(user, db)
+    asset = await db.get(AudioAsset, recording_id)
+    if asset is None or asset.patient_id != patient.id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Recording not found.")
+    try:
+        asset = await speech.confirm(db, asset, body.said_it)
+    except speech.NotAwaitingConfirmation:
+        raise HTTPException(status.HTTP_409_CONFLICT, "This answer is already done.") from None
+    if asset.status != "done" or asset.response_id is None:
+        return SpeechStatus(status=asset.status)  # type: ignore[arg-type]
+    return await _done(db, asset)
+
+
+async def _done(db: DbDep, asset: AudioAsset) -> SpeechStatus:
 
     response = await db.get(ExerciseResponse, asset.response_id)
     exercise = await db.get(Exercise, asset.exercise_id)

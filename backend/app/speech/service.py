@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.analysis.scoring import normalize
+from app.analysis.scoring import normalize, score_exercise
 from app.exercises.models import Exercise
 from app.exercises.types import ResponseMode
 from app.sessions import service as practice
@@ -167,28 +167,69 @@ async def process(
         # Not scored; the exercise stays open so the patient can try again or type.
         asset.status, asset.failure_reason = "no_speech", reason
     else:
-        await db.commit()
-        try:
-            await practice.submit_response(
-                db,
-                asset.patient_id,
-                asset.exercise_id,
-                transcript.text,
-                asset.latency_ms,
-                hints_used=asset.hints_used,
-                mode=ResponseMode.SPEECH,
-                extra_analysis={"stt": stt_metadata(transcript)},
-            )
-            asset.response_id = await db.scalar(
-                select(ExerciseResponse.id).where(ExerciseResponse.exercise_id == asset.exercise_id)
-            )
-            asset.status = "done"
-        except (practice.PracticeConflict, LookupError):
-            await db.rollback()
-            asset = await db.get(AudioAsset, asset_id)
-            asset.status, asset.failure_reason = "failed", "exercise_closed"
+        exercise = await db.get(Exercise, asset.exercise_id)
+        heard = transcript.text
+        if (
+            exercise is not None
+            and score_exercise(exercise.exercise_type, heard, exercise.expected).outcome
+            == "correct"
+        ):
+            # Recognisers tend to hear the expected word: in the Phase 2 part B dry run, 16%
+            # of scripted sound errors came back as the target (docs/validation/simulated.md).
+            # A match is only scored once the patient confirms that is what they said.
+            asset.status = "confirm"
+            asset.transcript, asset.stt = heard.strip()[:200], stt_metadata(transcript)
+        else:
+            return await _submit(db, asset, heard, {"stt": stt_metadata(transcript)})
     await db.commit()
     return asset
+
+
+async def _submit(
+    db: AsyncSession, asset: AudioAsset, text: str, analysis: dict[str, object]
+) -> AudioAsset:
+    asset_id = asset.id
+    await db.commit()
+    try:
+        await practice.submit_response(
+            db,
+            asset.patient_id,
+            asset.exercise_id,
+            text,
+            asset.latency_ms,
+            hints_used=asset.hints_used,
+            mode=ResponseMode.SPEECH,
+            extra_analysis=analysis,
+        )
+        asset.response_id = await db.scalar(
+            select(ExerciseResponse.id).where(ExerciseResponse.exercise_id == asset.exercise_id)
+        )
+        asset.status = "done"
+    except (practice.PracticeConflict, LookupError):
+        await db.rollback()
+        asset = await db.get(AudioAsset, asset_id)
+        asset.status, asset.failure_reason = "failed", "exercise_closed"
+    await db.commit()
+    return asset
+
+
+class NotAwaitingConfirmation(Exception):
+    pass
+
+
+async def confirm(db: AsyncSession, asset: AudioAsset, said_it: bool) -> AudioAsset:
+    """The patient's answer to "We heard <word>. Is that what you said?"."""
+    if asset.status != "confirm" or asset.transcript is None:
+        raise NotAwaitingConfirmation
+    heard, stt = asset.transcript, asset.stt or {}
+    asset.transcript, asset.stt = None, None
+    if not said_it:
+        # Not scored: the exercise stays open to try again or type. Kept as a count of
+        # recogniser mishearings the patient caught (shown to the clinician).
+        asset.status, asset.failure_reason = "rejected", "patient_rejected"
+        await db.commit()
+        return asset
+    return await _submit(db, asset, heard, {"stt": stt, "patient_confirmed": True})
 
 
 async def sweep_stale(db: AsyncSession, store: EphemeralAudioStore) -> int:

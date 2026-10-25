@@ -111,10 +111,17 @@ async def test_speech_answer_is_transcribed_scored_and_audio_deleted(care, stt):
     rec = r.json()["recording_id"]
 
     asset = await asset_row(rec)
-    assert asset.status == "done"
+    assert asset.status == "confirm"  # a match waits for the patient to confirm it
     assert asset.object_key is None and asset.deleted_at is not None
     assert asset.content_type == "audio/webm"
+    waiting = (await patient.get(f"/api/v1/practice/speech/{rec}")).json()
+    assert waiting == {"status": "confirm", "heard": stt.text.strip(), "result": None}
+    async with SessionLocal() as db:
+        assert (await db.execute(select(ExerciseResponse))).first() is None
 
+    confirm = f"/api/v1/practice/speech/{rec}/confirm"
+    assert (await patient.post(confirm, json={"said_it": True})).json()["status"] == "done"
+    assert (await asset_row(rec)).transcript is None
     status = (await patient.get(f"/api/v1/practice/speech/{rec}")).json()
     assert status["status"] == "done"
     assert status["result"]["outcome"] == "correct"
@@ -125,13 +132,33 @@ async def test_speech_answer_is_transcribed_scored_and_audio_deleted(care, stt):
         resp = (await db.execute(select(ExerciseResponse))).scalar_one()
     assert resp.mode == "speech" and resp.latency_ms == 2500
     assert resp.analysis["stt"]["provider"] == "fake"
+    assert resp.analysis["patient_confirmed"] is True
+    assert (await patient.post(confirm, json={"said_it": True})).status_code == 409
+
+
+async def test_patient_can_reject_what_the_recogniser_heard(care, stt):  # noqa: F811
+    patient, ex = await speech_plan(care)
+    stt.text = await target_of(ex["id"])
+    rec = (await upload(patient, ex["id"])).json()["recording_id"]
+    r = await patient.post(f"/api/v1/practice/speech/{rec}/confirm", json={"said_it": False})
+    assert r.json() == {"status": "rejected", "heard": None, "result": None}
+    asset = await asset_row(rec)
+    assert (asset.failure_reason, asset.transcript) == ("patient_rejected", None)
+    async with SessionLocal() as db:
+        assert (await db.execute(select(ExerciseResponse))).first() is None
+        assert (await db.get(Exercise, uuid.UUID(ex["id"]))).status == "pending"
+    # The exercise stays open: a wrong word is scored at once, with no question.
+    stt.text = "zzzz"
+    rec2 = (await upload(patient, ex["id"])).json()["recording_id"]
+    assert (await asset_row(rec2)).status == "done"
 
 
 async def test_correct_match_on_an_uncertain_word_is_flagged(care, stt):  # noqa: F811
     patient, ex = await speech_plan(care)
     target = await target_of(ex["id"])
     stt.text, stt.low_confidence_words = target, [f" {target}."]
-    await upload(patient, ex["id"])
+    rec = (await upload(patient, ex["id"])).json()["recording_id"]
+    await patient.post(f"/api/v1/practice/speech/{rec}/confirm", json={"said_it": True})
     async with SessionLocal() as db:
         resp = (await db.execute(select(ExerciseResponse))).scalar_one()
     assert resp.outcome == "correct"
@@ -145,6 +172,7 @@ async def test_no_speech_keeps_exercise_open_for_retry(care, stt):  # noqa: F811
     rec = (await upload(patient, ex["id"])).json()["recording_id"]
     assert (await patient.get(f"/api/v1/practice/speech/{rec}")).json() == {
         "status": "no_speech",
+        "heard": None,
         "result": None,
     }
     assert (await asset_row(rec)).object_key is None
