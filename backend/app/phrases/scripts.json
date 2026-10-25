@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "scripts": [
+    {
+      "id": "cafe",
+      "title": "At the café",
+      "icon": "coffee",
+      "lines": ["Hello.", "A cup of tea, please.", "With milk, please.", "How much is it?", "Thank you."]
+    },
+    {
+      "id": "phone",
+      "title": "On the phone",
+      "icon": "phone",
+      "lines": ["Hello, it's {name}.", "Can you speak slowly, please?", "I'll call you back.", "Goodbye."]
+    },
+    {
+      "id": "meeting",
+      "title": "Meeting someone",
+      "icon": "hand",
+      "lines": ["Hello, nice to meet you.", "My name is {name}.", "I had a stroke.", "I need a little more time to talk."]
+    },
+    {
+      "id": "doctor",
+      "title": "At the doctor's",
+      "icon": "stethoscope",
+      "lines": ["I have an appointment.", "My name is {name}.", "I feel tired.", "Can you write it down, please?"]
+    },
+    {
+      "id": "shop",
+      "title": "At the shop",
+      "icon": "shopping",
+      "lines": ["Excuse me.", "Where is the bread?", "Can I pay by card?", "Thank you, goodbye."]
+    },
+    {
+      "id": "home",
+      "title": "At home",
+      "icon": "home",
+      "lines": ["Good morning.", "Did you sleep well?", "What shall we have for lunch?", "Let's go for a walk."]
+    }
+  ]
+}

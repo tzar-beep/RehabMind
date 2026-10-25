@@ -29,6 +29,7 @@ import { Alert } from "@/components/ui/Alert";
 import { buttonClasses } from "@/components/ui/Button";
 import {
   AIStatusSchema,
+  ScriptSummarySchema,
   ConstraintVersionSchema,
   PatientOverviewSchema,
   ProgressSummarySchema,
@@ -56,20 +57,27 @@ export default async function PatientOverviewPage({
   params,
 }: PageProps<"/clinician/patients/[patientId]">) {
   const { patientId } = await params;
-  const [ov, trend, versions, aiSummary, aiStatus] = await Promise.all([
-    backendGet(`/patients/${patientId}/overview`, PatientOverviewSchema),
-    backendGet(`/patients/${patientId}/trends`, z.array(TrendPointSchema)),
-    backendGet(
-      `/patients/${patientId}/constraints/versions`,
-      z.array(ConstraintVersionSchema),
-    ),
-    backendGet(
-      `/patients/${patientId}/progress-summary`,
-      ProgressSummarySchema.nullable(),
-    ),
-    backendGet("/ai/status", AIStatusSchema),
-  ]);
+  const [ov, trend, versions, aiSummary, aiStatus, phrases] = await Promise.all(
+    [
+      backendGet(`/patients/${patientId}/overview`, PatientOverviewSchema),
+      backendGet(`/patients/${patientId}/trends`, z.array(TrendPointSchema)),
+      backendGet(
+        `/patients/${patientId}/constraints/versions`,
+        z.array(ConstraintVersionSchema),
+      ),
+      backendGet(
+        `/patients/${patientId}/progress-summary`,
+        ProgressSummarySchema.nullable(),
+      ),
+      backendGet("/ai/status", AIStatusSchema),
+      backendGet(
+        `/patients/${patientId}/phrases`,
+        z.array(ScriptSummarySchema),
+      ),
+    ],
+  );
   if (!ov) notFound();
+  const practisedPhrases = (phrases ?? []).filter((p) => p.times_total > 0);
   const active = versions?.[0];
   const o = ov.outcomes;
   const errors = Object.entries(ov.error_profile)
@@ -227,6 +235,34 @@ export default async function PatientOverviewPage({
               </Link>
             </div>
           </>
+        )}
+      </Section>
+
+      <Section
+        id="phrases"
+        title="Everyday phrases"
+        description="Scripts practised at home in the last 14 days. Lines said are the patient's own report."
+      >
+        {practisedPhrases.length ? (
+          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+            {practisedPhrases.map((p) => (
+              <li
+                key={p.id}
+                className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 px-5 py-3"
+              >
+                <span className="font-bold">{p.title}</span>
+                <span className="text-ink-muted tabular-nums">
+                  {p.times_recent} {p.times_recent === 1 ? "time" : "times"}
+                  {p.lines_said_share !== null &&
+                    ` · ${Math.round(p.lines_said_share * 100)}% of lines said`}
+                  {p.last_practised &&
+                    ` · last ${formatDate(p.last_practised)}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-ink-muted">No everyday phrases practised yet.</p>
         )}
       </Section>
 

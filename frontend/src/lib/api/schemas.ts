@@ -191,3 +191,14 @@ export const MessageSchema = z.object({
 });
 export type Message = z.infer<typeof MessageSchema>;
 export const MessageListSchema = z.array(MessageSchema);
+
+/** An everyday script ("At the café"), practised line by line. */
+export const ScriptSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  icon: z.string(),
+  lines: z.array(z.string()),
+  times_practised: z.number(),
+  last_practised: z.string().nullable(),
+});
+export type Script = z.infer<typeof ScriptSchema>;

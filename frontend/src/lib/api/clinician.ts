@@ -328,3 +328,14 @@ export const WordProgressSchema = z.object({
 });
 export type WordProgress = z.infer<typeof WordProgressSchema>;
 export const WordProgressListSchema = z.array(WordProgressSchema);
+
+/** How often each everyday script was practised (self-reported lines said). */
+export const ScriptSummarySchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  times_recent: z.number(),
+  times_total: z.number(),
+  lines_said_share: z.number().nullable(),
+  last_practised: dt.nullable(),
+});
+export type ScriptSummary = z.infer<typeof ScriptSummarySchema>;

@@ -33,6 +33,12 @@ export default defineConfig({
       url: "http://localhost:8000/api/health/live",
       reuseExistingServer: true,
       timeout: 120_000,
+      // The suite signs in more than the production per-IP limit (30 per 15 minutes)
+      // allows from one machine; lockout itself is covered by backend tests.
+      env: { ...process.env, LOGIN_MAX_ATTEMPTS_PER_IP: "1000" } as Record<
+        string,
+        string
+      >,
     },
     {
       command: "uv run python -m app.workers.main",
