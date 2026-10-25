@@ -54,7 +54,17 @@ export function AppShell({
           </p>
           <div className="flex items-center gap-3">
             {/* On a phone the header has no room: the home page shows the link instead. */}
-            {fit && <span className="hidden sm:contents">{credits}</span>}
+            {fit && (
+              <span className="hidden sm:contents">
+                <Link
+                  href="/patient/my-information"
+                  className="inline-flex min-h-target items-center text-sm text-ink-muted underline underline-offset-4 hover:text-ink"
+                >
+                  My information
+                </Link>
+                {credits}
+              </span>
+            )}
             <span className="hidden items-center gap-2.5 sm:flex">
               <Avatar name={name} size="sm" />
               <span className="font-bold">{name}</span>

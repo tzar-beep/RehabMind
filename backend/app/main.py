@@ -28,6 +28,7 @@ from app.exercises.router import router as stimuli_router
 from app.goals.router import patient_router as goals_patient_router
 from app.goals.router import router as goals_router
 from app.health.router import router as health_router
+from app.patients.privacy import router as privacy_router
 from app.patients.router import router as patients_router
 from app.personal.router import carer_router as personal_carer_router
 from app.personal.router import clinician_router as personal_clinician_router
@@ -93,6 +94,7 @@ for r in (
     phrases_clinician_router,
     mood_patient_router,
     mood_clinician_router,
+    privacy_router,
 ):
     api.include_router(r)
 app.include_router(api)

@@ -58,3 +58,32 @@ test("everyday phrases: a script line by line, then a summary", async ({
     .analyze();
   expect(axe.violations).toEqual([]);
 });
+
+test("my information: who can see my practice, and a copy to download", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByLabel("Email").fill("patient@recovery.local");
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill(process.env.SEED_DEV_PASSWORD ?? "");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/patient$/);
+  await page.getByRole("link", { name: "My information" }).click();
+  await expect(
+    page.getByText("Dr. Morgan Lee", { exact: false }),
+  ).toBeVisible();
+  await expect(page.getByText("Priya")).toBeVisible();
+  await page.getByRole("button", { name: "Stop sharing" }).click();
+  await expect(page.getByText("Stop sharing with Priya?")).toBeVisible();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  const download = await page.request.get(
+    "/api/v1/practice/my-information/export",
+  );
+  expect(download.ok()).toBe(true);
+  expect((await download.json()).about).toContain("never kept");
+  const axe = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    .analyze();
+  expect(axe.violations).toEqual([]);
+});

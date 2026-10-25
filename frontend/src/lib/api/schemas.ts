@@ -209,3 +209,15 @@ export const MoodDaySchema = z.object({
   mood: z.enum(["good", "okay", "low"]),
 });
 export type MoodDay = z.infer<typeof MoodDaySchema>;
+
+/** Who can see the patient's practice (their own view). */
+export const WhoCanSeeSchema = z.object({
+  care_team: z.array(z.string()),
+  family: z.array(
+    z.object({
+      user_id: z.string(),
+      name: z.string(),
+      relationship: z.string(),
+    }),
+  ),
+});
