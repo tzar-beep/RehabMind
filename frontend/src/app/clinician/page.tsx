@@ -13,6 +13,7 @@ import {
 } from "@/lib/api/clinician";
 import { backendGet, requireRole } from "@/lib/api/server";
 import { daysSince, responseMode } from "@/lib/format";
+import { MagicCard } from "@/components/magicui/magic-card";
 
 export const metadata: Metadata = { title: "Patients" };
 
@@ -47,66 +48,80 @@ function lastPractice(p: PatientListItem) {
 function PatientRow({ p }: { p: PatientListItem }) {
   const share = p.recent_responses ? p.recent_correct / p.recent_responses : 0;
   return (
-    <li className="relative grid gap-x-8 gap-y-3 px-5 py-4 transition-colors hover:bg-canvas sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center">
-      <div className="flex min-w-0 items-center gap-3">
-        <Avatar name={p.display_name} />
-        <div className="min-w-0">
-          {/* The name is the link; its hit area covers the whole row. */}
-          <Link
-            href={`/clinician/patients/${p.id}`}
-            className="text-lg font-bold text-ink after:absolute after:inset-0 after:content-[''] hover:text-accent"
-          >
-            {p.display_name}
-          </Link>
-          <p className="text-sm text-ink-muted">
-            {lastPractice(p)} · {p.sessions_completed}{" "}
-            {p.sessions_completed === 1 ? "session" : "sessions"}
-          </p>
+    <li>
+      {/* A soft spotlight follows the pointer across the row (Magic UI Magic Card). */}
+      <MagicCard
+        className="rounded-none border-0"
+        gradientSize={260}
+        gradientColor="var(--color-accent-soft)"
+        gradientOpacity={0.9}
+        gradientFrom="var(--color-accent)"
+        gradientTo="var(--color-brand-glow)"
+      >
+        <div className="relative grid gap-x-8 gap-y-3 px-5 py-4 sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center">
+          <div className="flex min-w-0 items-center gap-3">
+            <Avatar name={p.display_name} />
+            <div className="min-w-0">
+              {/* The name is the link; its hit area covers the whole row. */}
+              <Link
+                href={`/clinician/patients/${p.id}`}
+                className="text-lg font-bold text-ink after:absolute after:inset-0 after:content-[''] hover:text-accent"
+              >
+                {p.display_name}
+              </Link>
+              <p className="text-sm text-ink-muted">
+                {lastPractice(p)} · {p.sessions_completed}{" "}
+                {p.sessions_completed === 1 ? "session" : "sessions"}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm text-ink-muted">Last 20 answers</span>
+            {p.recent_responses ? (
+              <span className="flex items-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className="h-2 w-28 overflow-hidden rounded-full bg-line"
+                >
+                  <span
+                    className="block h-full rounded-full bg-chart"
+                    style={{ width: `${share * 100}%` }}
+                  />
+                </span>
+                <span className="tabular-nums">
+                  {p.recent_correct} of {p.recent_responses} correct
+                </span>
+              </span>
+            ) : (
+              <span className="text-ink-muted">—</span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm text-ink-muted">Practice limits</span>
+            {p.constraints ? (
+              <span>
+                Levels {p.constraints.min_difficulty}–
+                {p.constraints.max_difficulty} ·{" "}
+                {p.constraints.allowed_response_modes
+                  .map(responseMode)
+                  .join(", ")}
+              </span>
+            ) : (
+              <span>
+                <StatusBadge tone="warning">Not set</StatusBadge>
+              </span>
+            )}
+          </div>
+
+          <ChevronRight
+            aria-hidden="true"
+            size={20}
+            className="hidden text-ink-muted sm:block"
+          />
         </div>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <span className="text-sm text-ink-muted">Last 20 answers</span>
-        {p.recent_responses ? (
-          <span className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              className="h-2 w-28 overflow-hidden rounded-full bg-line"
-            >
-              <span
-                className="block h-full rounded-full bg-chart"
-                style={{ width: `${share * 100}%` }}
-              />
-            </span>
-            <span className="tabular-nums">
-              {p.recent_correct} of {p.recent_responses} correct
-            </span>
-          </span>
-        ) : (
-          <span className="text-ink-muted">—</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <span className="text-sm text-ink-muted">Practice limits</span>
-        {p.constraints ? (
-          <span>
-            Levels {p.constraints.min_difficulty}–{p.constraints.max_difficulty}{" "}
-            ·{" "}
-            {p.constraints.allowed_response_modes.map(responseMode).join(", ")}
-          </span>
-        ) : (
-          <span>
-            <StatusBadge tone="warning">Not set</StatusBadge>
-          </span>
-        )}
-      </div>
-
-      <ChevronRight
-        aria-hidden="true"
-        size={20}
-        className="hidden text-ink-muted sm:block"
-      />
+      </MagicCard>
     </li>
   );
 }

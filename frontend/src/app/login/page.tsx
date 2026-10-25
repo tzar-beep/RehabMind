@@ -9,6 +9,7 @@ import { ROLE_HOME } from "@/lib/api/schemas";
 import { getCurrentUser } from "@/lib/api/server";
 
 import { LoginForm } from "./LoginForm";
+import { DotPattern } from "@/components/magicui/dot-pattern";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -30,7 +31,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     >
       {/* Brand panel: the practice library itself, as a picture wall that fills
           whatever height the window has, so the page never scrolls. */}
-      <div className="hidden min-h-0 flex-col gap-[clamp(1rem,3.5vh,2rem)] bg-brand-deep p-[clamp(1.5rem,4.5vh,3rem)] text-white lg:flex">
+      <div className="relative isolate hidden min-h-0 flex-col gap-[clamp(1rem,3.5vh,2rem)] bg-brand-deep p-[clamp(1.5rem,4.5vh,3rem)] text-white lg:flex">
+        {/* Static texture for depth (Magic UI Dot Pattern): no motion. */}
+        <DotPattern
+          aria-hidden="true"
+          width={20}
+          height={20}
+          className="-z-10 text-white/20 [mask-image:radial-gradient(ellipse_at_top_left,white,transparent_65%)]"
+        />
         <BrandMark inverted large />
 
         <div className="flex max-w-2xl flex-col gap-3">

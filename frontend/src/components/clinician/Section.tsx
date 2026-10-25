@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { CountUp } from "@/components/CountUp";
 
 /** Titled content region; headings give screen-reader users a navigable outline. */
 export function Section({
@@ -75,7 +76,9 @@ export function Facts({
           } ${items.length > 4 ? "md:p-4" : ""}`}
         >
           <dt className="text-sm text-ink-muted">{label}</dt>
-          <dd className="text-2xl font-bold tabular-nums">{value}</dd>
+          <dd className="text-2xl font-bold tabular-nums">
+            {typeof value === "number" ? <CountUp value={value} /> : value}
+          </dd>
           {hint && <dd className="text-sm text-ink-muted">{hint}</dd>}
         </div>
       ))}

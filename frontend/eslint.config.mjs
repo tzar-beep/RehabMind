@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Vendored third-party chart components (Bklit UI, MIT): kept as upstream ships them.
     "src/components/charts/**",
+    "src/components/magicui/**",
     "src/components/shimmering-text.tsx",
   ]),
 ]);

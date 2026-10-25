@@ -1,5 +1,6 @@
 "use client";
 
+import { CountUp } from "@/components/CountUp";
 import type { PracticeActivity } from "@/lib/api/schemas";
 
 import { PracticeCalendar, picturesByDay } from "./PracticeCalendar";
@@ -53,7 +54,7 @@ function Stat({ label, value }: { label: string; value: number }) {
     <div className="flex flex-col-reverse short:max-md:flex-row-reverse short:max-md:items-baseline short:max-md:justify-end short:max-md:gap-2">
       <dt className="text-ink-muted">{label}</dt>
       <dd className="text-3xl leading-tight font-bold tabular-nums short:max-md:text-xl">
-        {value}
+        <CountUp value={value} />
       </dd>
     </div>
   );

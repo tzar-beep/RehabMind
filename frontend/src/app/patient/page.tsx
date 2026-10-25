@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PictureWall } from "@/components/PictureWall";
+import { DotPattern } from "@/components/magicui/dot-pattern";
 import { KeepGoing } from "@/components/patient/KeepGoing";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
@@ -63,8 +64,15 @@ export default async function PatientHome() {
     <div className="flex min-h-0 flex-1 flex-col gap-4 short:max-md:gap-3">
       <section
         aria-labelledby="today-heading"
-        className="flex shrink-0 flex-col gap-4 overflow-hidden rounded-card bg-brand-deep p-5 text-white sm:p-6 short:max-md:p-4 md:grid md:min-h-0 md:flex-1 md:shrink md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[minmax(0,1fr)] md:items-center md:gap-8 lg:p-8"
+        className="relative isolate flex shrink-0 flex-col gap-4 overflow-hidden rounded-card bg-brand-deep p-5 text-white sm:p-6 short:max-md:p-4 md:grid md:min-h-0 md:flex-1 md:shrink md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[minmax(0,1fr)] md:items-center md:gap-8 lg:p-8"
       >
+        {/* Static texture for depth (Magic UI Dot Pattern): no motion. */}
+        <DotPattern
+          aria-hidden="true"
+          width={18}
+          height={18}
+          className="-z-10 text-white/25 [mask-image:radial-gradient(ellipse_at_top_left,white,transparent_70%)]"
+        />
         <div className="flex min-w-0 flex-col gap-2">
           <p className="flex items-center gap-2 text-base text-brand-muted short:max-md:hidden">
             <CalendarHeart aria-hidden="true" size={18} />
