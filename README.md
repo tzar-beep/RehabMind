@@ -38,9 +38,22 @@ do at home, while the clinician stays in charge of every rule that matters.
 
 | Role | What they do |
 |---|---|
-| 🧑‍🦽 **Patient** | Practises seven exercise types (below) by typing, tapping or speaking. Gets hints, honest feedback and a weekly progress view. |
-| 🩺 **Clinician** | Sets practice limits (difficulty range, picture sets, input modes), reviews accuracy trends and sessions, audits every AI decision and can give a patient a fresh start. |
-| 🛠️ **Admin** | Creates and manages accounts and care-team assignments. Sees no clinical data. |
+| 🧑‍🦽 **Patient** | Practises seven exercise types (below) by typing, tapping or speaking, plus **everyday phrases** (short real-life scripts, line by line) and their **own words** (photos of their people and things). Uses a **talk board** to say everyday phrases aloud. Sees goals, notes from family and a practice calendar; checks in their mood; controls who sees their data. |
+| 👪 **Family / carer** | Sees how often the patient practises (never how well) and their goals, adds the patient's own words with photos, and sends short notes of encouragement. No clinical access. |
+| 🩺 **Clinician** | Works in four views: overview, sessions, words (per-picture progress) and plan (goals, own words, practice limits). Sees everyday-phrase practice and mood. The AI audit trail is one step away (AI review). |
+| 🛠️ **Admin** | Creates accounts, care-team assignments and family links. Sees no clinical data. |
+
+**Built for the person, not just the exercise**
+
+| Feature | Why |
+|---|---|
+| Own words (family photos) | Personally relevant words are among the best-supported naming targets; photos are re-encoded without location data, encrypted and visible only to the patient's circle, and never sent to the AI |
+| Goals ("Name 10 home words on your own") | Measured from practice, never typed in; shown in plain words |
+| Everyday phrases (script training) | Hear it, say it together, say it alone: practice that carries over into real conversations |
+| Talk board | Tap a picture and the device speaks: needs, feelings, answers and the patient's own people |
+| Family notes and activity | Recovery happens at home; family see effort, not scores |
+| Mood check-in, break suggestions | Low mood and fatigue are common after a stroke and change how practice should go |
+| My information | Who can see what, stop sharing with family, download everything kept |
 
 **Exercise types** (all with real photographs: 52 from the BOSS research dataset and 18
 Wikimedia Commons scenes, see [photo credits](docs/photo-credits.md))
