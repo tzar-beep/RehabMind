@@ -5,6 +5,7 @@ from typing import Literal
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai import feedback as ai_feedback
 from app.ai.provider import get_ai_provider
@@ -228,13 +229,17 @@ async def resume_session(session_id: uuid.UUID, user: PatientUser, db: DbDep) ->
 
 @router.get("/activity", response_model=PracticeActivity)
 async def practice_activity(user: PatientUser, db: DbDep) -> PracticeActivity:
-    patient = await _me(user, db)
-    reset_at = await resets.cutoff(db, patient.id)
+    return await activity_of(db, (await _me(user, db)).id)
+
+
+async def activity_of(db: AsyncSession, patient_id: uuid.UUID) -> PracticeActivity:
+    """Counts only (no scores): also what a patient's carers see."""
+    reset_at = await resets.cutoff(db, patient_id)
     completed = await db.scalar(
         select(func.count())
         .select_from(PracticeSession)
         .where(
-            PracticeSession.patient_id == patient.id,
+            PracticeSession.patient_id == patient_id,
             PracticeSession.status == "completed",
             resets.after(PracticeSession.started_at, reset_at),
         )
@@ -243,7 +248,7 @@ async def practice_activity(user: PatientUser, db: DbDep) -> PracticeActivity:
         select(func.count())
         .select_from(ExerciseResponse)
         .where(
-            ExerciseResponse.patient_id == patient.id,
+            ExerciseResponse.patient_id == patient_id,
             resets.after(ExerciseResponse.created_at, reset_at),
         )
     )
@@ -261,7 +266,7 @@ async def practice_activity(user: PatientUser, db: DbDep) -> PracticeActivity:
     rows = await db.execute(
         select(PracticeSession.started_at, answered)
         .where(
-            PracticeSession.patient_id == patient.id,
+            PracticeSession.patient_id == patient_id,
             PracticeSession.started_at >= since,
             answered > 0,
         )

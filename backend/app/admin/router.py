@@ -7,6 +7,7 @@ from sqlalchemy.orm import aliased
 
 from app.audit import service as audit
 from app.auth.deps import AdminUser, DbDep, SessionStoreDep
+from app.carers.models import PatientCarer
 from app.clinicians.models import Clinician, PatientClinician
 from app.core.passwords import hash_password
 from app.patients.models import Patient
@@ -32,6 +33,8 @@ class UserSummary(BaseModel):
     # Patients only: names of the assigned clinicians (an administrative fact, not
     # clinical data). Empty means nobody can see or plan this patient's practice yet.
     care_team: list[str] = []
+    # Carers only: who they support, e.g. "Alex (daughter)".
+    supports: list[str] = []
 
 
 class NewUser(BaseModel):
@@ -40,6 +43,9 @@ class NewUser(BaseModel):
     role: Role
     # Patients only: the user id of the clinician who will care for them.
     clinician_user_id: uuid.UUID | None = None
+    # Carers only: the patient they support, and how they know them ("daughter").
+    patient_user_id: uuid.UUID | None = None
+    relationship: str | None = Field(default=None, min_length=1, max_length=40)
 
 
 class CreatedUser(BaseModel):
@@ -48,7 +54,9 @@ class CreatedUser(BaseModel):
     initial_password: str
 
 
-def _summary(u: User, care_team: list[str] | None = None) -> UserSummary:
+def _summary(
+    u: User, care_team: list[str] | None = None, supports: list[str] | None = None
+) -> UserSummary:
     return UserSummary(
         id=str(u.id),
         email=u.email,
@@ -56,6 +64,7 @@ def _summary(u: User, care_team: list[str] | None = None) -> UserSummary:
         display_name=u.display_name,
         is_active=u.is_active,
         care_team=care_team or [],
+        supports=supports or [],
     )
 
 
@@ -78,7 +87,16 @@ async def _care_teams(db: DbDep) -> dict[uuid.UUID, list[str]]:
 async def list_users(_: AdminUser, db: DbDep) -> list[UserSummary]:
     rows = await db.execute(select(User).order_by(User.created_at))
     teams = await _care_teams(db)
-    return [_summary(u, teams.get(u.id)) for u in rows.scalars()]
+    patient_user = aliased(User)
+    links = await db.execute(
+        select(PatientCarer.user_id, patient_user.display_name, PatientCarer.relationship)
+        .join(Patient, Patient.id == PatientCarer.patient_id)
+        .join(patient_user, patient_user.id == Patient.user_id)
+    )
+    supports: dict[uuid.UUID, list[str]] = {}
+    for carer_id, name, relationship in links.all():
+        supports.setdefault(carer_id, []).append(f"{name} ({relationship})")
+    return [_summary(u, teams.get(u.id), supports.get(u.id)) for u in rows.scalars()]
 
 
 async def _user(db: DbDep, user_id: uuid.UUID) -> User:
@@ -183,6 +201,14 @@ async def create_user(body: NewUser, admin: AdminUser, db: DbDep) -> CreatedUser
         clinician = await clinician_for_user(db, body.clinician_user_id)
         if clinician is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Clinician not found.")
+    carer_of = None
+    if body.role is Role.CARER:
+        carer_of = await db.scalar(select(Patient).where(Patient.user_id == body.patient_user_id))
+        if carer_of is None or not body.relationship:
+            raise HTTPException(
+                status.HTTP_422_UNPROCESSABLE_CONTENT,
+                "A carer needs the patient they support and how they know them.",
+            )
     password = generate_password()
     try:
         user = await create_account(
@@ -197,4 +223,21 @@ async def create_user(body: NewUser, admin: AdminUser, db: DbDep) -> CreatedUser
         )
     except AccountError as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e)) from None
+    if carer_of is not None:
+        db.add(
+            PatientCarer(
+                patient_id=carer_of.id, user_id=user.id, relationship=body.relationship.strip()
+            )
+        )
+        await audit.record(
+            db,
+            "carer.linked",
+            "success",
+            actor_user_id=admin.id,
+            target_type="patient",
+            target_id=carer_of.id,
+            details={"carer_user_id": str(user.id)},
+            commit=False,
+        )
+        await db.commit()
     return CreatedUser(user=_summary(user), initial_password=password)

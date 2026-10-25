@@ -2,6 +2,7 @@
 
 from app.ai.models import AIGeneration
 from app.audit.models import AuditLog
+from app.carers.models import PatientCarer
 from app.clinical.models import ConstraintSet
 from app.clinicians.models import Clinician, PatientClinician
 from app.core.db import Base
@@ -23,6 +24,7 @@ __all__ = [
     "Exercise",
     "ExerciseResponse",
     "Patient",
+    "PatientCarer",
     "PatientClinician",
     "PerformanceProfile",
     "PracticeSession",

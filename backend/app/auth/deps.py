@@ -67,4 +67,5 @@ def require_roles(*roles: Role) -> Callable[..., Awaitable[CurrentUser]]:
 
 PatientUser = Annotated[CurrentUser, Depends(require_roles(Role.PATIENT))]
 ClinicianUser = Annotated[CurrentUser, Depends(require_roles(Role.CLINICIAN))]
+CarerUser = Annotated[CurrentUser, Depends(require_roles(Role.CARER))]
 AdminUser = Annotated[CurrentUser, Depends(require_roles(Role.ADMIN))]

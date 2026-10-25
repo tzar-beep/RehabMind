@@ -12,6 +12,7 @@ class Role(enum.StrEnum):
     PATIENT = "patient"
     CLINICIAN = "clinician"
     ADMIN = "admin"
+    CARER = "carer"
 
 
 class User(TimestampMixin, Base):
