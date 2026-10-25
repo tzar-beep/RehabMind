@@ -31,7 +31,7 @@ test("patient practises picture naming end to end", async ({ page }) => {
   await endOpenSession(page);
   await page.reload();
 
-  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(
     page.getByRole("img", { name: "Picture to name" }),
@@ -76,8 +76,11 @@ test("patient practises picture naming end to end", async ({ page }) => {
 
   await page.getByRole("button", { name: "Stop for today" }).click();
   await expect(page).toHaveURL(/\/patient$/);
+  // Stopping can be undone: the home page offers to carry on, or start afresh.
+  await expect(page.getByText("You stopped after 2 pictures.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Keep going" })).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Start practice" }),
+    page.getByRole("link", { name: "Start new practice" }),
   ).toBeVisible();
 });
 
@@ -91,7 +94,7 @@ test("hints reveal meaning first, then the first sound", async ({ page }) => {
   await expect(page).toHaveURL(/\/patient$/);
   await endOpenSession(page);
   await page.reload();
-  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
   await page.getByRole("button", { name: "Show a hint" }).click();
   await expect(page.getByRole("listitem")).toHaveCount(1);
   await page.getByRole("button", { name: "Show another hint" }).click();
@@ -118,7 +121,7 @@ test("sentence building can switch to speaking and back", async ({ page }) => {
   await expect(page).toHaveURL(/\/patient$/);
   await endOpenSession(page);
   await page.reload();
-  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
   await expect(
     page.getByRole("button", { name: "Stop for today" }),
   ).toBeVisible();

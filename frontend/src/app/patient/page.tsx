@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PRACTICE_PICTURES, PictureWall } from "@/components/PictureWall";
+import { KeepGoing } from "@/components/patient/KeepGoing";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
   PracticeActivitySchema,
@@ -69,7 +70,14 @@ export default async function PatientHome() {
           <h2 id="today-heading" className="sr-only">
             Today&rsquo;s practice
           </h2>
-          {status?.has_plan ? (
+          {status?.has_plan &&
+          status.resumable &&
+          !status.has_active_session ? (
+            <KeepGoing
+              sessionId={status.resumable.session_id}
+              answered={status.resumable.answered}
+            />
+          ) : status?.has_plan ? (
             <>
               <p className="max-w-md text-xl text-brand-muted">
                 {status.has_active_session

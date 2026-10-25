@@ -37,6 +37,11 @@ export const ROLE_HOME: Record<Role, string> = {
 export const PracticeStatusSchema = z.object({
   has_plan: z.boolean(),
   has_active_session: z.boolean(),
+  // Stopped early in the last 30 minutes: can be reopened ("Keep going").
+  resumable: z
+    .object({ session_id: z.string(), answered: z.number() })
+    .nullable()
+    .default(null),
 });
 
 export const PracticeActivitySchema = z.object({
@@ -122,3 +127,13 @@ export const AIFeedbackSchema = z.object({
   feedback: z.string().nullable(),
   hint: z.string().nullable(),
 });
+
+/** One-word answers in a finished session, for the end-of-session recap. */
+export const RecapSchema = z.array(
+  z.object({
+    word: z.string(),
+    image_url: z.string().nullable(),
+    outcome: z.enum(["correct", "near_miss", "incorrect", "skipped"]),
+  }),
+);
+export type RecapWord = z.infer<typeof RecapSchema>[number];

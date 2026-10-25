@@ -12,6 +12,7 @@ from app.auth.deps import DbDep, PatientUser
 from app.clinical.service import latest_constraints
 from app.exercises.generator import NoSafeExercise
 from app.exercises.models import Exercise
+from app.exercises.types import CHOICE_TYPES, NAMING_FAMILY
 from app.patients.access import accessible_patients
 from app.patients.models import Patient
 from app.sessions import resets, service
@@ -75,9 +76,16 @@ class ResponseResult(BaseModel):
     state: SessionState
 
 
+class Resumable(BaseModel):
+    session_id: str
+    answered: int
+
+
 class PracticeStatus(BaseModel):
     has_plan: bool
     has_active_session: bool
+    # A session stopped early in the last 30 minutes that can be reopened ("Keep going").
+    resumable: Resumable | None = None
 
 
 class RecentSession(BaseModel):
@@ -146,10 +154,74 @@ async def _state(db: DbDep, session: PracticeSession) -> SessionState:
 @router.get("/status", response_model=PracticeStatus)
 async def practice_status(user: PatientUser, db: DbDep) -> PracticeStatus:
     patient = await _me(user, db)
+    stopped = await service.resumable_session(db, patient.id)
     return PracticeStatus(
         has_plan=await latest_constraints(db, patient.id) is not None,
         has_active_session=await service.active_session(db, patient.id) is not None,
+        resumable=Resumable(
+            session_id=str(stopped.id),
+            answered=sum((await service.outcome_counts(db, stopped.id)).values()),
+        )
+        if stopped
+        else None,
     )
+
+
+class RecapWord(BaseModel):
+    word: str
+    image_url: str | None
+    outcome: Literal["correct", "near_miss", "incorrect", "skipped"]
+
+
+@router.get("/sessions/{session_id}/recap", response_model=list[RecapWord])
+async def session_recap(session_id: uuid.UUID, user: PatientUser, db: DbDep) -> list[RecapWord]:
+    """The one-word exercises answered in a session, in order: for the end-of-session
+    recap ("Words you named today"), including answers given before a "Keep going"."""
+    session = await db.get(PracticeSession, session_id)
+    if session is None or session.patient_id != (await _me(user, db)).id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Session not found.")
+    rows = await db.execute(
+        select(Exercise, ExerciseResponse.outcome)
+        .join(ExerciseResponse, ExerciseResponse.exercise_id == Exercise.id)
+        .where(
+            Exercise.session_id == session_id,
+            Exercise.exercise_type.in_(sorted(NAMING_FAMILY | CHOICE_TYPES)),
+        )
+        .order_by(Exercise.position)
+    )
+    return [
+        RecapWord(
+            word=ex.expected["target"],
+            image_url=ex.content.get("image_url")
+            or next(
+                (
+                    o["image_url"]
+                    for o in ex.content.get("options") or []
+                    if o["word"] == ex.expected["target"]
+                ),
+                None,
+            ),
+            outcome=outcome,
+        )
+        for ex, outcome in rows.all()
+    ]
+
+
+@router.post("/sessions/{session_id}/resume", response_model=SessionState)
+async def resume_session(session_id: uuid.UUID, user: PatientUser, db: DbDep) -> SessionState:
+    """Undo "Stop for today" within 30 minutes: carry on where the patient left off."""
+    patient = await _me(user, db)
+    try:
+        session = await service.resume(db, patient.id, session_id, user.id)
+    except service.NotResumable:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT, "That practice can't be continued. Start a new one."
+        ) from None
+    except service.NoPlan:
+        raise _NO_PLAN from None
+    except NoSafeExercise:
+        raise _NO_EXERCISE from None
+    return await _state(db, session)
 
 
 @router.get("/activity", response_model=PracticeActivity)

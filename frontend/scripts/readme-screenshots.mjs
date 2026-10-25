@@ -48,7 +48,7 @@ async function shot(page, name) {
 {
   const { context, page } = await signIn("patient@recovery.local");
   await shot(page, "patient-home");
-  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
   await page.waitForURL(/\/patient\/practice/);
   await page.getByRole("button", { name: "I’m not sure" }).first().waitFor();
   const hint = page.getByRole("button", { name: /Show (a|another) hint/ });

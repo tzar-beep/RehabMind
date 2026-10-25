@@ -113,7 +113,7 @@ test("an expired sign-in returns to the sign-in page with an explanation", async
 }) => {
   await signIn(page, "patient@recovery.local");
   await expect(page).toHaveURL(/\/patient$/);
-  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
   await expect(
     page.getByRole("button", { name: "Stop for today" }),
   ).toBeVisible();

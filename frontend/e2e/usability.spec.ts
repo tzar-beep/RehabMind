@@ -88,7 +88,7 @@ for (const vp of VIEWPORTS) {
     await bigTargets(page);
 
     // 2. Start practice.
-    await user.click(/(Start|Continue) practice/, "link");
+    await user.click(/(Start|Start new|Continue) practice/, "link");
     await expect(
       page.getByRole("button", { name: "I’m not sure" }).first(),
     ).toBeVisible();
@@ -127,10 +127,10 @@ for (const vp of VIEWPORTS) {
       ).toBeVisible();
     }
 
-    // 5. Stop early ("Stop for today" ends the session), then come back and start again.
+    // 5. Stop early, then come back to the same session ("Keep going" undoes the stop).
     await user.click("Stop for today");
     await expect(page).toHaveURL(/\/patient$/);
-    await user.click(/(Start|Continue) practice/, "link");
+    await user.click("Keep going");
     await expect(
       page.getByRole("button", { name: "I’m not sure" }).first(),
     ).toBeVisible();

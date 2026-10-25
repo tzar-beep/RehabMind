@@ -478,3 +478,58 @@ async def test_deferred_answer_returns_at_once_and_next_comes_from_resume(care):
     assert done["status"] == "completed" and done["exercise"] is None
     assert done["summary"]["practiced"] == 2
     assert len(await issued(pid)) == 2
+
+
+async def test_stop_for_today_can_be_undone_for_a_while(care):
+    patient, clinician, pid = care
+    await set_plan(clinician, pid, max_exercises_per_session=3)
+    state = (await patient.post(START)).json()
+    status = "/api/v1/practice/status"
+    # Nothing answered yet: stopping leaves nothing to come back to.
+    await patient.post("/api/v1/practice/sessions/current/end")
+    assert (await patient.get(status)).json()["resumable"] is None
+
+    state = (await patient.post(START)).json()
+    state = (await answer(patient, state, correct=True))["state"]
+    left_on = state["exercise"]["id"]
+    await patient.post("/api/v1/practice/sessions/current/end")
+    resumable = (await patient.get(status)).json()["resumable"]
+    assert resumable == {"session_id": state["session_id"], "answered": 1}
+
+    url = f"/api/v1/practice/sessions/{state['session_id']}/resume"
+    back = (await patient.post(url)).json()
+    assert back["status"] == "active" and back["exercise"]["id"] == left_on
+    assert (await patient.get(status)).json()["resumable"] is None
+    assert (await patient.post(url)).status_code == 409  # already going again
+
+    # Only within the window.
+    await patient.post("/api/v1/practice/sessions/current/end")
+    async with SessionLocal() as db:
+        await db.execute(
+            update(PracticeSession)
+            .where(PracticeSession.id == uuid.UUID(state["session_id"]))
+            .values(completed_at=text("now() - interval '31 minutes'"))
+        )
+        await db.commit()
+    assert (await patient.get(status)).json()["resumable"] is None
+    assert (await patient.post(url)).status_code == 409
+
+
+async def test_session_recap_lists_one_word_answers_in_order(care):
+    patient, clinician, pid = care
+    await set_plan(
+        clinician,
+        pid,
+        allowed_exercise_types=["picture_naming", "sentence_construction"],
+        max_exercises_per_session=4,
+    )
+    state = (await patient.post(START)).json()
+    sid, naming = state["session_id"], []
+    for _ in range(4):
+        if state["exercise"]["type"] == "picture_naming":
+            naming.append(state["exercise"]["id"])
+        state = (await answer(patient, state, correct=True))["state"]
+    recap = (await patient.get(f"/api/v1/practice/sessions/{sid}/recap")).json()
+    assert len(recap) == len(naming)  # sentences are not words
+    assert all(r["outcome"] == "correct" and r["image_url"] for r in recap)
+    assert (await clinician.get(f"/api/v1/practice/sessions/{sid}/recap")).status_code == 403

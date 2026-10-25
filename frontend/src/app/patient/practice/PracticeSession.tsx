@@ -23,9 +23,11 @@ import { Button, buttonClasses } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import { ApiError, apiFetch } from "@/lib/api/client";
 import {
+  RecapSchema,
   ResponseResultSchema,
   SessionStateSchema,
   type Exercise,
+  type RecapWord,
   type Outcome,
   type ResponseResult,
   type SessionState,
@@ -235,11 +237,15 @@ export function PracticeSession() {
             <OutcomeIcon outcome={view.outcome} />
             <p className="text-3xl font-bold">{fb.title}</p>
             <p className="text-xl text-ink-muted">{fb.lead}</p>
-            <p
-              className={`font-bold text-accent ${isWord ? "text-5xl" : "text-3xl"}`}
-            >
-              {view.target}
-            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <p
+                className={`font-bold text-accent ${isWord ? "text-5xl" : "text-3xl"}`}
+              >
+                {view.target}
+              </p>
+              {/* Hearing the word is itself a cue: listen, then say it to yourself. */}
+              <HearIt text={view.target} />
+            </div>
             {view.exerciseType === "picture_description" && (
               <div className="flex flex-col gap-1 text-lg">
                 {view.matched.length > 0 && (
@@ -258,9 +264,11 @@ export function PracticeSession() {
               </p>
             )}
           </div>
-          {/* A tip helps after a miss; after a correct answer the praise is enough. Only
+          {/* A tip after a close answer or a skip. Not after a different word: the model
+            cannot reliably say what a word means (a walkthrough found "something you use
+            for writing notes" for key), and the word with Hear it is the better cue. Only
             the types the AI personalises (backend AI_TYPES) were audited for tips. */}
-          {view.outcome !== "correct" &&
+          {(view.outcome === "near_miss" || view.outcome === "skipped") &&
             AI_TIP_TYPES.has(view.exerciseType) && (
               <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
             )}
@@ -308,6 +316,7 @@ export function PracticeSession() {
         <p className="text-xl text-ink-muted">
           Well done for showing up today.
         </p>
+        {s && s.practiced > 0 && <SessionRecap sessionId={state.session_id} />}
         {s && s.practiced > 0 && (
           <DifficultyRating sessionId={state.session_id} />
         )}
@@ -680,10 +689,34 @@ function OutcomeIcon({ outcome }: { outcome: keyof typeof OUTCOME_ICON }) {
   return (
     <span
       aria-hidden="true"
-      className={`animate-pop grid size-16 place-items-center rounded-full ${cls}`}
+      className="relative grid size-16 place-items-center"
     >
-      <Icon size={34} />
+      {/* The peak of each picture: naming it on your own gets one soft, expanding ring. */}
+      {outcome === "correct" && (
+        <span className="absolute inset-0 animate-ripple rounded-full bg-success" />
+      )}
+      <span
+        className={`relative grid size-16 animate-pop place-items-center rounded-full ${cls}`}
+      >
+        <Icon size={34} />
+      </span>
     </span>
+  );
+}
+
+/** Plays a word or sentence with the device's voice. */
+function HearIt({ text }: { text: string }) {
+  const speakable = useCanSpeak();
+  if (!speakable) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => say(text)}
+      className="inline-flex min-h-target items-center gap-2 rounded-control border-2 border-accent px-4 font-bold text-accent transition-colors hover:bg-accent-soft"
+    >
+      <Volume2 aria-hidden="true" size={22} />
+      Hear it
+    </button>
   );
 }
 
@@ -701,5 +734,58 @@ function HearQuestion({ text }: { text: string }) {
     >
       <Volume2 aria-hidden="true" size={22} />
     </button>
+  );
+}
+
+/**
+ * The end of the session is what is remembered (peak-end): show the words named today,
+ * with their pictures. If none were named, show what was practised, never what was missed.
+ */
+function SessionRecap({ sessionId }: { sessionId: string }) {
+  // From the server, so answers given before a "Keep going" and by voice are included.
+  const [words, setWords] = useState<RecapWord[] | null>(null);
+  useEffect(() => {
+    apiFetch(`/practice/sessions/${sessionId}/recap`, {}, RecapSchema)
+      .then((w) => setWords(w ?? []))
+      .catch(() => setWords([])); // the recap is a bonus: never block the ending
+  }, [sessionId]);
+  if (!words) return null;
+  const named = words.filter((w) => w.outcome === "correct");
+  const shown = (named.length ? named : words).filter(
+    (w, i, all) => all.findIndex((x) => x.word === w.word) === i,
+  );
+  if (shown.length === 0) return null;
+  return (
+    <section
+      aria-labelledby="recap-heading"
+      className="flex w-full flex-col gap-3"
+    >
+      <h2 id="recap-heading" className="text-2xl font-bold">
+        {named.length ? "Words you named today" : "Words you practised today"}
+      </h2>
+      <ul className="flex flex-wrap justify-center gap-3">
+        {shown.map((w, i) => (
+          <li
+            key={w.word}
+            style={{ "--i": i } as CSSProperties}
+            className="flex w-28 animate-rise flex-col items-center gap-1 rounded-card border border-line bg-surface p-2 [animation-delay:calc(var(--i)*80ms)]"
+          >
+            {w.image_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={w.image_url}
+                alt=""
+                width={96}
+                height={96}
+                className="size-20 object-contain"
+              />
+            )}
+            <span lang="en" className="text-lg font-bold">
+              {w.word}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

@@ -22,7 +22,7 @@ test("patient answers by voice through the real speech pipeline", async ({
   });
   expect(end.ok()).toBe(true);
   await page.reload();
-  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
 
   await expect(page.getByText("Say the word for this picture.")).toBeVisible();
   await page.getByRole("button", { name: "Start speaking" }).click();
@@ -85,7 +85,7 @@ test("patient is asked to confirm a recognised match, and can say no", async ({
   await page.route("**/api/v1/practice/speech/rec-1/confirm", (r) =>
     r.fulfill({ json: { status: "rejected", heard: null, result: null } }),
   );
-  await page.getByRole("link", { name: /(Start|Continue) practice/ }).click();
+  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
   await page.getByRole("button", { name: "Start speaking" }).click();
   await page.waitForTimeout(1_000);
   await page.getByRole("button", { name: "Stop recording" }).click();

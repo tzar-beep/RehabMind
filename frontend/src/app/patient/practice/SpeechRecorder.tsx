@@ -25,10 +25,15 @@ const MIME_TYPES = [
 
 type Phase =
   | { kind: "idle" }
-  | { kind: "recording"; seconds: number }
+  | { kind: "recording"; seconds: number; heardVoice: boolean }
   | { kind: "processing" }
   | { kind: "confirm"; heard: string; recordingId: string }
   | { kind: "retry"; message: string };
+
+// Input level that counts as a voice rather than room noise.
+const VOICE_LEVEL = 0.12;
+const QUIET_HINT_AFTER_S = 3;
+const BARS = [0.55, 0.8, 1, 0.8, 0.55];
 
 const TRY_AGAIN = "That didn’t work. Please try again, or type your answer.";
 
@@ -83,14 +88,55 @@ export function SpeechRecorder({
   const chunks = useRef<Blob[]>([]);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const latency = useRef(0);
+  // Live input level (0-1) while recording, so the patient can see they are heard.
+  const [level, setLevel] = useState(0);
+  const meter = useRef<{ ctx: AudioContext; raf: number } | null>(null);
 
   useEffect(
     () => () => {
       if (timer.current) clearInterval(timer.current);
       recorder.current?.stream.getTracks().forEach((t) => t.stop());
+      stopMeter();
     },
     [],
   );
+
+  function startMeter(stream: MediaStream) {
+    try {
+      const ctx = new AudioContext();
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 512;
+      ctx.createMediaStreamSource(stream).connect(analyser);
+      const samples = new Float32Array(analyser.fftSize);
+      let shown = 0;
+      const tick = () => {
+        analyser.getFloatTimeDomainData(samples);
+        let sum = 0;
+        for (const v of samples) sum += v * v;
+        // RMS of speech is small: scale so normal speaking fills most of the meter.
+        const next = Math.min(1, Math.sqrt(sum / samples.length) * 6);
+        if (Math.abs(next - shown) > 0.04) setLevel((shown = next));
+        if (next > VOICE_LEVEL)
+          setPhase((p) =>
+            p.kind === "recording" && !p.heardVoice
+              ? { ...p, heardVoice: true }
+              : p,
+          );
+        if (meter.current) meter.current.raf = requestAnimationFrame(tick);
+      };
+      meter.current = { ctx, raf: requestAnimationFrame(tick) };
+    } catch {
+      // No Web Audio: recording still works, just without the meter.
+    }
+  }
+
+  function stopMeter() {
+    if (!meter.current) return;
+    cancelAnimationFrame(meter.current.raf);
+    void meter.current.ctx.close();
+    meter.current = null;
+    setLevel(0);
+  }
 
   async function start() {
     let stream: MediaStream;
@@ -117,12 +163,13 @@ export function SpeechRecorder({
     };
     recorder.current = rec;
     rec.start();
-    setPhase({ kind: "recording", seconds: 0 });
+    startMeter(stream);
+    setPhase({ kind: "recording", seconds: 0, heardVoice: false });
     timer.current = setInterval(() => {
       setPhase((p) => {
         if (p.kind !== "recording") return p;
         if (p.seconds + 1 >= MAX_SECONDS) stop();
-        return { kind: "recording", seconds: p.seconds + 1 };
+        return { ...p, seconds: p.seconds + 1 };
       });
     }, 1000);
   }
@@ -130,6 +177,7 @@ export function SpeechRecorder({
   function stop() {
     if (timer.current) clearInterval(timer.current);
     timer.current = null;
+    stopMeter();
     if (recorder.current?.state === "recording") recorder.current.stop();
     setPhase({ kind: "processing" });
   }
@@ -262,6 +310,22 @@ export function SpeechRecorder({
             0:{String(phase.seconds).padStart(2, "0")}
           </span>
         </p>
+        {/* What the microphone hears, live. The words below say the same for screen readers. */}
+        <div aria-hidden="true" className="flex h-12 items-center gap-1.5">
+          {BARS.map((weight, i) => (
+            <span
+              key={i}
+              className={`w-2.5 rounded-full transition-[height] duration-75 ${phase.heardVoice ? "bg-accent" : "bg-line-strong"}`}
+              style={{ height: `${Math.max(12, level * weight * 100)}%` }}
+            />
+          ))}
+        </div>
+        {!phase.heardVoice && phase.seconds >= QUIET_HINT_AFTER_S && (
+          <p role="status" className="text-lg text-ink-muted">
+            I can&rsquo;t hear you yet. Try speaking a little louder, or closer
+            to the device.
+          </p>
+        )}
         <button
           type="button"
           onClick={stop}

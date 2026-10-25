@@ -72,7 +72,12 @@ blind on relevance, clarity, tone and difficulty fit
   image, and the v2 instruction asked it to point to a feature of the picture. v3 asks for
   a clue about what the word means or is used for ("try thinking of something you use for
   sleeping"), and states that the model cannot see the picture. Audit: 88% valid first
-  time, 98% after the retry, no score contradictions. Reproduce with
+  time, 98% after the retry, no score contradictions. But a later walkthrough found an
+  accepted v3 clue that was simply wrong ("something you use for writing notes" for
+  *key*): the validators check form and safety, not truth. So the app no longer shows an AI
+  tip after a different word; the patient gets the right word with a button to hear it,
+  which is itself a recognised cue. AI tips remain after a close answer or a skip, where
+  they are about trying again, not about what a word means. Reproduce with
   `uv run python -m app.scripts.genai_audit --repeats 0 --feedback 120`.
 
 - **About 30% of exercise requests fall back to rule-based text.** The fallback is safe, so

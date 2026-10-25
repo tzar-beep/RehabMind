@@ -1,7 +1,7 @@
 """Practice loop: start/resume → exercise → response → score → profile → next exercise."""
 
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -271,6 +271,67 @@ async def end_session(db: AsyncSession, patient_id: uuid.UUID) -> None:
     if (ex := await pending_exercise(db, session.id)) is not None:
         ex.status = "cancelled"
     await db.commit()
+
+
+# "Stop for today" can be undone for this long: a mis-tap (tremor, one-handed use after a
+# stroke) must not cost the session. An undo instead of an "Are you sure?" dialog.
+RESUME_WINDOW = timedelta(minutes=30)
+
+
+class NotResumable(Exception):
+    pass
+
+
+async def resumable_session(db: AsyncSession, patient_id: uuid.UUID) -> PracticeSession | None:
+    """The patient's latest session, if they stopped it early, recently, after answering
+    something, and have not started another since."""
+    latest = await db.scalar(
+        select(PracticeSession)
+        .where(PracticeSession.patient_id == patient_id)
+        .order_by(PracticeSession.started_at.desc())
+        .limit(1)
+    )
+    if (
+        latest is None
+        or latest.status != "ended"
+        or latest.completed_at is None
+        or datetime.now(UTC) - latest.completed_at > RESUME_WINDOW
+        or not sum((await outcome_counts(db, latest.id)).values())
+    ):
+        return None
+    return latest
+
+
+async def resume(
+    db: AsyncSession, patient_id: uuid.UUID, session_id: uuid.UUID, actor_user_id: uuid.UUID
+) -> PracticeSession:
+    """Undo "Stop for today": reopen the session where the patient left it."""
+    session = await resumable_session(db, patient_id)
+    if session is None or session.id != session_id:
+        raise NotResumable
+    session.status, session.completed_at = "active", None
+    await audit.record(
+        db,
+        "practice.session_resumed",
+        "success",
+        actor_user_id=actor_user_id,
+        target_type="session",
+        target_id=session.id,
+        commit=False,
+    )
+    # Back to the very picture they left (stopping cancelled it), not a new one.
+    left = await db.scalar(
+        select(Exercise)
+        .where(Exercise.session_id == session.id, Exercise.status == "cancelled")
+        .order_by(Exercise.position.desc())
+        .limit(1)
+    )
+    if left is not None:
+        left.status = "pending"
+    else:
+        await issue_next(db, session)
+    await db.commit()
+    return session
 
 
 async def outcome_counts(db: AsyncSession, session_id: uuid.UUID) -> dict[str, int]:
