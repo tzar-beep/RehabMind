@@ -31,7 +31,9 @@ test("patient practises picture naming end to end", async ({ page }) => {
   await endOpenSession(page);
   await page.reload();
 
-  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
+  await page
+    .getByRole("link", { name: /(Start|Start new|Continue) practice/ })
+    .click();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(
     page.getByRole("img", { name: "Picture to name" }),
@@ -94,7 +96,9 @@ test("hints reveal meaning first, then the first sound", async ({ page }) => {
   await expect(page).toHaveURL(/\/patient$/);
   await endOpenSession(page);
   await page.reload();
-  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
+  await page
+    .getByRole("link", { name: /(Start|Start new|Continue) practice/ })
+    .click();
   await page.getByRole("button", { name: "Show a hint" }).click();
   await expect(page.getByRole("listitem")).toHaveCount(1);
   await page.getByRole("button", { name: "Show another hint" }).click();
@@ -121,7 +125,9 @@ test("sentence building can switch to speaking and back", async ({ page }) => {
   await expect(page).toHaveURL(/\/patient$/);
   await endOpenSession(page);
   await page.reload();
-  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
+  await page
+    .getByRole("link", { name: /(Start|Start new|Continue) practice/ })
+    .click();
   await expect(
     page.getByRole("button", { name: "Stop for today" }),
   ).toBeVisible();

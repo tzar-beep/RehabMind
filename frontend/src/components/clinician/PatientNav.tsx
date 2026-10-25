@@ -1,31 +1,26 @@
 "use client";
 
+import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function PatientNav({
-  patientId,
-  showPipeline = false,
-}: {
-  patientId: string;
-  /** Development-only AI pipeline demonstration view. */
-  showPipeline?: boolean;
-}) {
+export function PatientNav({ patientId }: { patientId: string }) {
   const pathname = usePathname();
   const base = `/clinician/patients/${patientId}`;
+  // The clinician's work: how practice is going, which words, and the plan. How the AI
+  // reached its choices is one step away (AI review), not a main tab.
   const tabs = [
     { href: base, label: "Overview", exact: true },
     { href: `${base}/sessions`, label: "Sessions" },
     { href: `${base}/words`, label: "Words" },
-    { href: `${base}/constraints`, label: "Practice limits" },
-    { href: `${base}/ai-generations`, label: "AI audit log" },
-    ...(showPipeline
-      ? [{ href: `${base}/ai-pipeline`, label: "AI pipeline (demo)" }]
-      : []),
+    { href: `${base}/constraints`, label: "Plan" },
   ];
+  const aiActive =
+    pathname.startsWith(`${base}/ai-generations`) ||
+    pathname.startsWith(`${base}/ai-pipeline`);
   return (
     <nav aria-label="Patient sections" className="border-b border-line">
-      <ul className="-mb-px flex flex-wrap gap-1">
+      <ul className="-mb-px flex flex-wrap items-center gap-1">
         {tabs.map((t) => {
           const active = t.exact
             ? pathname === t.href
@@ -47,6 +42,21 @@ export function PatientNav({
             </li>
           );
         })}
+        <li className="ml-auto">
+          <Link
+            href={`${base}/ai-generations`}
+            aria-current={aiActive ? "page" : undefined}
+            className={
+              "inline-flex min-h-target items-center gap-1.5 border-b-4 px-3 text-sm " +
+              (aiActive
+                ? "border-accent font-bold text-ink"
+                : "border-transparent text-ink-muted hover:text-ink")
+            }
+          >
+            <ShieldCheck aria-hidden="true" size={16} />
+            AI review
+          </Link>
+        </li>
       </ul>
     </nav>
   );

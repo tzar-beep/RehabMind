@@ -186,9 +186,7 @@ test("AI audit log explains accepted, retried and rule-based exercises", async (
 }) => {
   const href = await openAlex(page);
   await page.goto(`${href}/ai-generations`);
-  await expect(
-    page.getByRole("heading", { name: "AI audit log" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI review" })).toBeVisible();
   await expect(
     page.getByText("the patient gets a rule-based exercise instead", {
       exact: false,

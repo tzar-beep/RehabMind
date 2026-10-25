@@ -42,10 +42,7 @@ export default async function PatientLayout({
             <PrintButton />
           </div>
         </div>
-        <PatientNav
-          patientId={patientId}
-          showPipeline={aiStatus?.demo_view ?? false}
-        />
+        <PatientNav patientId={patientId} />
       </div>
       {aiOffline && (
         <Alert tone="warning">

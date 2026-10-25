@@ -65,8 +65,9 @@ test("AI pipeline demo view renders without errors when enabled", async ({
   await signIn(page, "clinician@recovery.local");
   await expect(page).toHaveURL(/\/clinician$/);
   await page.getByRole("link", { name: "Alex" }).click();
+  await page.getByRole("link", { name: "AI review" }).click();
   const tab = page.getByRole("link", { name: "AI pipeline (demo)" });
-  await expect(page.getByRole("link", { name: "Overview" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI review" })).toBeVisible();
   test.skip(!(await tab.isVisible()), "AI_DEMO_VIEW is off");
   await tab.click();
   await expect(
@@ -113,7 +114,9 @@ test("an expired sign-in returns to the sign-in page with an explanation", async
 }) => {
   await signIn(page, "patient@recovery.local");
   await expect(page).toHaveURL(/\/patient$/);
-  await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
+  await page
+    .getByRole("link", { name: /(Start|Start new|Continue) practice/ })
+    .click();
   await expect(
     page.getByRole("button", { name: "Stop for today" }),
   ).toBeVisible();

@@ -1,11 +1,12 @@
 import { ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
 import { EmptyState } from "@/components/clinician/EmptyState";
 import { StatusBadge } from "@/components/clinician/StatusBadge";
-import { AIRunSchema, type AIRun } from "@/lib/api/clinician";
+import { AIRunSchema, AIStatusSchema, type AIRun } from "@/lib/api/clinician";
 import { backendGet } from "@/lib/api/server";
 import {
   formatDateTime,
@@ -17,7 +18,7 @@ import {
   STAGE,
 } from "@/lib/format";
 
-export const metadata: Metadata = { title: "AI audit log" };
+export const metadata: Metadata = { title: "AI review" };
 
 const RESULT: Record<
   AIRun["result"],
@@ -191,10 +192,13 @@ export default async function AIGenerationsPage({
   params,
 }: PageProps<"/clinician/patients/[patientId]/ai-generations">) {
   const { patientId } = await params;
-  const runs = await backendGet(
-    `/patients/${patientId}/ai-generations/runs`,
-    z.array(AIRunSchema),
-  );
+  const [runs, aiStatus] = await Promise.all([
+    backendGet(
+      `/patients/${patientId}/ai-generations/runs`,
+      z.array(AIRunSchema),
+    ),
+    backendGet("/ai/status", AIStatusSchema),
+  ]);
   if (!runs) notFound();
   const counts = runs.reduce<Record<string, number>>(
     (acc, r) => ({ ...acc, [r.result]: (acc[r.result] ?? 0) + 1 }),
@@ -204,12 +208,20 @@ export default async function AIGenerationsPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold">AI audit log</h1>
+        <h1 className="text-2xl font-bold">AI review</h1>
         <p className="max-w-prose text-ink-muted">
           Every AI suggestion is checked for format, clinical limits and safety.
           If it fails, the patient gets a rule-based exercise instead. Open an
           entry for the full record.
         </p>
+        {aiStatus?.demo_view && (
+          <Link
+            href={`/clinician/patients/${patientId}/ai-pipeline`}
+            className="mt-2 inline-flex min-h-target items-center font-bold text-accent underline underline-offset-4"
+          >
+            AI pipeline (demo)
+          </Link>
+        )}
       </div>
 
       {runs.length === 0 ? (

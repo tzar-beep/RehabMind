@@ -52,7 +52,9 @@ test.describe("phone (375px)", () => {
     await signIn(page, "patient@recovery.local");
     await expect(page).toHaveURL(/\/patient$/);
     await layoutChecks(page);
-    await page.getByRole("link", { name: /(Start|Start new|Continue) practice/ }).click();
+    await page
+      .getByRole("link", { name: /(Start|Start new|Continue) practice/ })
+      .click();
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await layoutChecks(page);
     await page.getByRole("button", { name: "Stop for today" }).click();
