@@ -37,6 +37,8 @@ from app.phrases.router import clinician_router as phrases_clinician_router
 from app.phrases.router import patient_router as phrases_patient_router
 from app.sessions.router import router as practice_router
 from app.speech.router import router as speech_router
+from app.wellbeing.router import clinician_router as mood_clinician_router
+from app.wellbeing.router import patient_router as mood_patient_router
 
 configure_logging()
 settings = get_settings()
@@ -89,6 +91,8 @@ for r in (
     personal_patient_router,
     phrases_patient_router,
     phrases_clinician_router,
+    mood_patient_router,
+    mood_clinician_router,
 ):
     api.include_router(r)
 app.include_router(api)

@@ -182,7 +182,7 @@ export default async function PatientHome() {
         )}
       </section>
 
-      {activity && <WeekActivity activity={activity} />}
+      {activity && <WeekActivity activity={activity} checkIn />}
       <Link
         href="/credits"
         className="-my-2 inline-flex min-h-target shrink-0 items-center self-start text-sm text-ink-muted underline underline-offset-4 sm:hidden short:hidden"

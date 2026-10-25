@@ -35,9 +35,12 @@ import {
   ProgressSummarySchema,
   TrendPointSchema,
 } from "@/lib/api/clinician";
+import { MOODS } from "@/lib/moods";
+import { MoodDaySchema } from "@/lib/api/schemas";
 import { backendGet } from "@/lib/api/server";
 import {
   DIFFICULTY_RATING,
+  daysSince,
   errorType,
   formatDate,
   formatDateTime,
@@ -57,8 +60,8 @@ export default async function PatientOverviewPage({
   params,
 }: PageProps<"/clinician/patients/[patientId]">) {
   const { patientId } = await params;
-  const [ov, trend, versions, aiSummary, aiStatus, phrases] = await Promise.all(
-    [
+  const [ov, trend, versions, aiSummary, aiStatus, phrases, moods] =
+    await Promise.all([
       backendGet(`/patients/${patientId}/overview`, PatientOverviewSchema),
       backendGet(`/patients/${patientId}/trends`, z.array(TrendPointSchema)),
       backendGet(
@@ -74,9 +77,12 @@ export default async function PatientOverviewPage({
         `/patients/${patientId}/phrases`,
         z.array(ScriptSummarySchema),
       ),
-    ],
-  );
+      backendGet(`/patients/${patientId}/moods`, z.array(MoodDaySchema)),
+    ]);
   if (!ov) notFound();
+  const lowDays = (moods ?? []).filter(
+    (m) => m.mood === "low" && (daysSince(m.day) ?? 99) < 7,
+  ).length;
   const practisedPhrases = (phrases ?? []).filter((p) => p.times_total > 0);
   const active = versions?.[0];
   const o = ov.outcomes;
@@ -263,6 +269,54 @@ export default async function PatientOverviewPage({
           </ul>
         ) : (
           <p className="text-ink-muted">No everyday phrases practised yet.</p>
+        )}
+      </Section>
+
+      <Section
+        id="wellbeing"
+        title="Wellbeing"
+        description="How the patient said they felt, one tap a day on their home page (last 14 days)."
+      >
+        {moods && moods.length ? (
+          <div className="flex flex-col gap-3">
+            {lowDays >= 3 && (
+              <div>
+                <StatusBadge tone="warning">
+                  Low mood on {lowDays} of the last 7 days
+                </StatusBadge>
+              </div>
+            )}
+            <ol className="flex flex-wrap gap-2">
+              {moods.map((m) => {
+                const { Icon, label } =
+                  MOODS.find((x) => x.mood === m.mood) ?? MOODS[1];
+                return (
+                  <li
+                    key={m.day}
+                    className="flex w-20 flex-col items-center gap-1 rounded-control border border-line bg-surface py-2"
+                  >
+                    <Icon
+                      aria-hidden="true"
+                      size={22}
+                      className={
+                        m.mood === "low"
+                          ? "text-warning"
+                          : m.mood === "good"
+                            ? "text-success"
+                            : "text-ink-muted"
+                      }
+                    />
+                    <span className="text-xs text-ink-muted">
+                      {formatDate(m.day)}
+                    </span>
+                    <span className="sr-only">{label}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        ) : (
+          <p className="text-ink-muted">No check-ins yet.</p>
         )}
       </Section>
 

@@ -202,3 +202,10 @@ export const ScriptSchema = z.object({
   last_practised: z.string().nullable(),
 });
 export type Script = z.infer<typeof ScriptSchema>;
+
+/** One tap a day: how the patient feels. */
+export const MoodDaySchema = z.object({
+  day: z.string(),
+  mood: z.enum(["good", "okay", "low"]),
+});
+export type MoodDay = z.infer<typeof MoodDaySchema>;

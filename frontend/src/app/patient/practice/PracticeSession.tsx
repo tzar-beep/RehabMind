@@ -4,6 +4,7 @@ import {
   CircleCheck,
   HeartHandshake,
   Lightbulb,
+  Coffee,
   Sparkles,
   Volume2,
 } from "lucide-react";
@@ -40,6 +41,8 @@ import { EMPTY_ANSWER, IMAGE_ALT, TYPE_HINT, feedbackFor } from "./messages";
 import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
 import { WordBank } from "./WordBank";
 
+const MISSES_FOR_BREAK = 4;
+
 const AI_TIP_TYPES = new Set([
   "picture_naming",
   "sentence_construction",
@@ -69,6 +72,9 @@ export function PracticeSession() {
   const router = useRouter();
   const [view, setView] = useState<View>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
+  // Misses or skips in a row in this visit; enough of them and a break is offered (once).
+  const [misses, setMisses] = useState(0);
+  const [breakOffered, setBreakOffered] = useState(false);
   const [answerError, setAnswerError] = useState<string | null>(null);
   // How the patient answers: the default for the exercise type, or their explicit choice.
   // The choice carries over to later exercises in the session.
@@ -106,6 +112,7 @@ export function PracticeSession() {
   }, [view]);
 
   function showFeedback(exercise: Exercise, result: ResponseResult) {
+    setMisses((m) => (result.outcome === "correct" ? 0 : m + 1));
     // Answers are scored at once; the next exercise is prepared in the background (the
     // server issues it on this request), so "Next picture" rarely has to wait.
     nextState.current =
@@ -213,6 +220,8 @@ export function PracticeSession() {
     const fb = feedbackFor(view.exerciseType, view.outcome);
     const isWord = view.exerciseType === "picture_naming";
     const done = view.last;
+    // After a run of misses the break suggestion is the message; the tip steps aside.
+    const offerBreak = misses >= MISSES_FOR_BREAK && !breakOffered && !done;
     // Two columns on wide screens (picture | result), so "Next picture" stays in view
     // even with a tip; one centred column on phones.
     return (
@@ -273,7 +282,8 @@ export function PracticeSession() {
             for writing notes" for key), and the word with Hear it is the better cue. Only
             the types the AI personalises (backend AI_TYPES) were audited for tips. */}
           {(view.outcome === "near_miss" || view.outcome === "skipped") &&
-            AI_TIP_TYPES.has(view.exerciseType) && (
+            AI_TIP_TYPES.has(view.exerciseType) &&
+            !offerBreak && (
               <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
             )}
           <Button
@@ -283,6 +293,7 @@ export function PracticeSession() {
             onClick={async () => {
               setBusy(true);
               try {
+                if (misses >= MISSES_FOR_BREAK) setBreakOffered(true);
                 const next = await nextState.current;
                 setView({ kind: "answering", state: next! });
               } catch (e) {
@@ -297,6 +308,27 @@ export function PracticeSession() {
           >
             {done ? "See how you did" : "Next picture"}
           </Button>
+          {/* Fatigue shows as a run of misses: offer a break, never insist. */}
+          {offerBreak && (
+            <div
+              role="status"
+              className="flex w-full max-w-xl flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-canvas px-4 py-3 text-left"
+            >
+              <span className="flex items-center gap-2 text-lg">
+                <Coffee aria-hidden="true" size={20} className="text-accent" />
+                That was a few tricky ones. A short break often helps.
+              </span>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setBreakOffered(true);
+                  void stopForToday();
+                }}
+              >
+                Take a break
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );

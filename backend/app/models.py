@@ -15,6 +15,7 @@ from app.phrases.models import ScriptPractice
 from app.sessions.models import ExerciseResponse, PracticeSession
 from app.speech.models import AudioAsset
 from app.users.models import User
+from app.wellbeing.models import MoodCheckin
 
 __all__ = [
     "AIGeneration",
@@ -27,6 +28,7 @@ __all__ = [
     "Exercise",
     "ExerciseResponse",
     "Patient",
+    "MoodCheckin",
     "PatientCarer",
     "PatientClinician",
     "PerformanceProfile",

@@ -3,6 +3,7 @@
 import { CountUp } from "@/components/CountUp";
 import type { PracticeActivity } from "@/lib/api/schemas";
 
+import { MoodCheckin } from "./MoodCheckin";
 import { PracticeCalendar, picturesByDay } from "./PracticeCalendar";
 
 const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
@@ -12,7 +13,14 @@ const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
  * only (never scores), and no "streak" pressure: a missed day is just empty. A client
  * component so "today" is the patient's own day, not the server's.
  */
-export function WeekActivity({ activity }: { activity: PracticeActivity }) {
+export function WeekActivity({
+  activity,
+  checkIn = false,
+}: {
+  activity: PracticeActivity;
+  /** The patient's own home: ask how they are today. */
+  checkIn?: boolean;
+}) {
   const byDay = picturesByDay(activity);
   const today = new Date();
   const thisWeek = Array.from({ length: 7 }, (_, i) => {
@@ -33,11 +41,14 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
       className="grid shrink-0 gap-x-8 gap-y-3 rounded-card border border-line bg-surface p-4 sm:p-5 md:grid-cols-[minmax(0,1fr)_auto] short:max-md:gap-y-2"
     >
       <div className="flex min-w-0 flex-col gap-2">
-        <div className="flex flex-wrap items-baseline gap-x-3">
-          <h2 id="week-heading" className="text-xl font-bold">
-            Your practice
-          </h2>
-          <p className="text-ink-muted">{message}</p>
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+          <div className="flex flex-wrap items-baseline gap-x-3">
+            <h2 id="week-heading" className="text-xl font-bold">
+              Your practice
+            </h2>
+            <p className="text-ink-muted">{message}</p>
+          </div>
+          {checkIn && <MoodCheckin />}
         </div>
         <PracticeCalendar activity={activity} />
       </div>
