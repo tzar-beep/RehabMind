@@ -10,6 +10,7 @@ from app.exercises.models import Exercise, Stimulus
 from app.goals.models import TherapyGoal
 from app.patients.models import Patient
 from app.performance.models import PerformanceProfile
+from app.personal.models import PersonalPhoto
 from app.sessions.models import ExerciseResponse, PracticeSession
 from app.speech.models import AudioAsset
 from app.users.models import User
@@ -27,6 +28,7 @@ __all__ = [
     "PatientCarer",
     "PatientClinician",
     "PerformanceProfile",
+    "PersonalPhoto",
     "PracticeSession",
     "Stimulus",
     "TherapyGoal",

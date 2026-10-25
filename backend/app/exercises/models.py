@@ -34,6 +34,12 @@ class Stimulus(TimestampMixin, Base):
     source_url: Mapped[str | None] = mapped_column(String(300))
     catalog_version: Mapped[int]
     is_active: Mapped[bool] = mapped_column(default=True)
+    # A patient's own word (a photo their family or clinician added): only ever shown to
+    # that patient. None for the shared catalogue.
+    owner_patient_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("patients.id", ondelete="CASCADE"), index=True
+    )
+    added_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
 
 
 class Exercise(Base):

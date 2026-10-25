@@ -19,7 +19,13 @@ def load_catalog() -> dict:
 async def sync_stimuli(db: AsyncSession) -> int:
     """Upsert catalog entries; deactivate stimuli no longer in the catalog. Idempotent."""
     catalog = load_catalog()
-    existing = {s.slug: s for s in (await db.execute(select(Stimulus))).scalars()}
+    # The shared catalogue only: patients' own words are not catalogue entries.
+    existing = {
+        s.slug: s
+        for s in (
+            await db.execute(select(Stimulus).where(Stimulus.owner_patient_id.is_(None)))
+        ).scalars()
+    }
     slugs = set()
     entries = [
         {

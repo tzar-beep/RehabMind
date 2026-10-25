@@ -62,6 +62,10 @@ async def clean_state() -> AsyncIterator[None]:
             )
         )
     await engine.dispose()
+    # Truncating patients and users cascades to stimuli (personal words reference them),
+    # so the shared catalogue is loaded again for each test.
+    async with SessionLocal() as db:
+        await sync_stimuli(db)
     await redis_client.flushdb()
     yield
 

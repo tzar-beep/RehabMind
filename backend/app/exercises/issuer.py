@@ -7,7 +7,7 @@ the patient's latest clinical constraint set. The DB trigger re-checks the same 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clinical.models import ConstraintSet
-from app.exercises.generator import Proposal
+from app.exercises.generator import Proposal, personal_level
 from app.exercises.models import Exercise
 from app.exercises.types import IMPLEMENTED_TYPES
 from app.sessions.models import PracticeSession
@@ -35,8 +35,15 @@ def validate(p: Proposal, cs: ConstraintSet, session: PracticeSession, position:
             reasons.append("stimulus_inactive")
         if p.exercise_type not in p.stimulus.exercise_types:
             reasons.append("stimulus_not_for_exercise_type")
-        if p.stimulus.difficulty != p.difficulty:
-            reasons.append("stimulus_difficulty_mismatch")
+        if p.stimulus.owner_patient_id is None:
+            if p.stimulus.difficulty != p.difficulty:
+                reasons.append("stimulus_difficulty_mismatch")
+        else:
+            # A patient's own word: only for that patient, at its level clamped to the plan.
+            if p.stimulus.owner_patient_id != session.patient_id:
+                reasons.append("stimulus_not_this_patients")
+            if p.difficulty != personal_level(p.stimulus, cs):
+                reasons.append("stimulus_difficulty_mismatch")
         if cs.allowed_categories and p.stimulus.category not in cs.allowed_categories:
             reasons.append("category_not_allowed")
     if position > min(session.planned_exercises, cs.max_exercises_per_session):

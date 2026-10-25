@@ -28,6 +28,9 @@ from app.goals.router import patient_router as goals_patient_router
 from app.goals.router import router as goals_router
 from app.health.router import router as health_router
 from app.patients.router import router as patients_router
+from app.personal.router import carer_router as personal_carer_router
+from app.personal.router import clinician_router as personal_clinician_router
+from app.personal.router import photo_router as personal_photo_router
 from app.sessions.router import router as practice_router
 from app.speech.router import router as speech_router
 
@@ -75,6 +78,9 @@ for r in (
     goals_router,
     goals_patient_router,
     carers_router,
+    personal_carer_router,
+    personal_clinician_router,
+    personal_photo_router,
 ):
     api.include_router(r)
 app.include_router(api)

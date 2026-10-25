@@ -84,12 +84,19 @@ async def build_input(
     """Data minimization: no names, emails, user/patient IDs or free text from the patient."""
     in_session, recent = await used_stimuli(db, session.patient_id, session.id)
     target = clamp(profile.target_difficulty, cs)
-    pool = await candidates_at(db, cs, target, in_session, exercise_type)
+
+    # A patient's own words (often family names) are never sent to the model: the AI input
+    # holds no names. They reach the patient through the rule-based path.
+    async def shared(level: int):
+        pool = await candidates_at(db, cs, level, in_session, exercise_type)
+        return [s for s in pool if s.owner_patient_id is None]
+
+    pool = await shared(target)
     if not pool:
         for level in sorted(
             range(cs.min_difficulty, cs.max_difficulty + 1), key=lambda d: abs(d - target)
         ):
-            if pool := await candidates_at(db, cs, level, in_session, exercise_type):
+            if pool := await shared(level):
                 break
     if not pool:
         raise NoSafeExercise("no candidates for AI personalization")

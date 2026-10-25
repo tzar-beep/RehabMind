@@ -10,7 +10,7 @@ import uuid
 from dataclasses import dataclass
 from typing import Any
 
-from sqlalchemy import any_, select
+from sqlalchemy import and_, any_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clinical.models import ConstraintSet
@@ -175,12 +175,27 @@ async def candidates_at(
 ) -> list[Stimulus]:
     stmt = select(Stimulus).where(
         Stimulus.is_active,
-        Stimulus.difficulty == difficulty,
         any_(Stimulus.exercise_types) == exercise_type,
+        # The shared catalogue at this level, or this patient's own words (never another
+        # patient's: their photos are private).
+        or_(
+            and_(Stimulus.owner_patient_id.is_(None), Stimulus.difficulty == difficulty),
+            Stimulus.owner_patient_id == cs.patient_id,
+        ),
     )
     if cs.allowed_categories:
         stmt = stmt.where(Stimulus.category.in_(cs.allowed_categories))
-    return [s for s in (await db.execute(stmt)).scalars() if s.id not in exclude]
+    return [
+        s
+        for s in (await db.execute(stmt)).scalars()
+        if s.id not in exclude
+        and (s.owner_patient_id is None or personal_level(s, cs) == difficulty)
+    ]
+
+
+def personal_level(stim: Stimulus, cs: ConstraintSet) -> int:
+    """A patient's own word is practised at its level, clamped to the clinician's range."""
+    return min(max(stim.difficulty, cs.min_difficulty), cs.max_difficulty)
 
 
 async def choice_options(db: AsyncSession, stim: Stimulus, exercise_type: str) -> list[Stimulus]:
@@ -196,6 +211,7 @@ async def choice_options(db: AsyncSession, stim: Stimulus, exercise_type: str) -
             Stimulus.is_active,
             any_(Stimulus.exercise_types) == ExerciseType.PICTURE_NAMING,
             Stimulus.id != stim.id,
+            Stimulus.owner_patient_id.is_(None),  # distractors: catalogue only
         )
     )
     names = {stim.target.lower(), *(a.lower() for a in stim.accepted_answers)}
@@ -224,6 +240,12 @@ async def build_for(
         await choice_options(db, stim, exercise_type) if exercise_type in CHOICE_TYPES else None
     )
     return build(exercise_type, stim, modes, source, options=options)
+
+
+def at_level(proposal: Proposal, cs: ConstraintSet) -> Proposal:
+    if proposal.stimulus is not None and proposal.stimulus.owner_patient_id is not None:
+        proposal.difficulty = personal_level(proposal.stimulus, cs)
+    return proposal
 
 
 def prefer_photos(pool: list[Stimulus]) -> list[Stimulus]:
@@ -272,7 +294,7 @@ async def propose_next(
         for level in levels:
             if pool := await candidates_at(db, cs, level, exclude, exercise_type):
                 stim = secrets.choice(prefer_photos(pool))
-                return await build_for(db, exercise_type, stim, modes, "rule")
+                return at_level(await build_for(db, exercise_type, stim, modes, "rule"), cs)
     raise NoSafeExercise("stimulus library exhausted")
 
 
@@ -289,5 +311,5 @@ async def fallback(
     for exclude in (in_session, set()):
         if pool := await candidates_at(db, cs, cs.min_difficulty, exclude, exercise_type):
             stim = sorted(prefer_photos(pool), key=lambda s: s.slug)[0]
-            return await build_for(db, exercise_type, stim, modes, "fallback")
+            return at_level(await build_for(db, exercise_type, stim, modes, "fallback"), cs)
     raise NoSafeExercise("no stimulus at minimum difficulty")

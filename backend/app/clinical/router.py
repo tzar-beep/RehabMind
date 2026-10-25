@@ -117,11 +117,13 @@ async def constraint_options(_: ClinicianUser, db: DbDep) -> ConstraintOptions:
     for category, level, n in (
         await db.execute(
             select(Stimulus.category, Stimulus.difficulty, func.count())
-            .where(Stimulus.is_active)
+            .where(Stimulus.is_active, Stimulus.owner_patient_id.is_(None))
             .group_by(Stimulus.category, Stimulus.difficulty)
         )
     ).all():
         categories.setdefault(category, {})[level] = n
+    # Each patient's own words (photos added by their family or clinician).
+    categories.setdefault("my_words", {})
     return ConstraintOptions(
         exercise_types=[
             {"value": t.value, "available": t in IMPLEMENTED_TYPES} for t in ExerciseType
