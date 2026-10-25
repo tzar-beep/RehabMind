@@ -1,96 +1,46 @@
-import { Check } from "lucide-react";
+"use client";
 
 import type { PracticeActivity } from "@/lib/api/schemas";
-import { cn } from "@/lib/utils";
+
+import { PracticeCalendar, picturesByDay } from "./PracticeCalendar";
 
 const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
 /**
- * The patient's last seven days as a row of day markers, plus two running totals.
- * Activity only (never scores), and no "streak" pressure: a missed day is just empty.
+ * The patient's practice: a calendar of the last weeks and two running totals. Activity
+ * only (never scores), and no "streak" pressure: a missed day is just empty. A client
+ * component so "today" is the patient's own day, not the server's.
  */
 export function WeekActivity({ activity }: { activity: PracticeActivity }) {
-  const practised = new Map<string, number>();
-  for (const s of activity.recent) {
-    if (s.answered === 0) continue;
-    const k = dayKey(new Date(s.started_at));
-    practised.set(k, (practised.get(k) ?? 0) + s.answered);
-  }
+  const byDay = picturesByDay(activity);
   const today = new Date();
-  const days = Array.from({ length: 7 }, (_, i) => {
+  const thisWeek = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(today);
-    d.setDate(today.getDate() - 6 + i);
-    return { date: d, count: practised.get(dayKey(d)) ?? 0, isToday: i === 6 };
+    d.setDate(today.getDate() - i);
+    return byDay.get(dayKey(d)) ?? 0;
   });
-  const activeDays = days.filter((d) => d.count > 0).length;
-  const message = days[6].count
+  const activeDays = thisWeek.filter((n) => n > 0).length;
+  const message = thisWeek[0]
     ? "You practised today. Well done."
     : activeDays
       ? `You practised on ${activeDays} ${activeDays === 1 ? "day" : "days"} this week.`
       : "Every day is a fresh start.";
-  const weekday = new Intl.DateTimeFormat("en-GB", { weekday: "short" });
-  const full = new Intl.DateTimeFormat("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
 
   return (
     <section
       aria-labelledby="week-heading"
-      className="grid gap-6 rounded-card border border-line bg-surface p-6 sm:p-8 lg:grid-cols-[1fr_auto]"
+      className="grid shrink-0 gap-x-8 gap-y-3 rounded-card border border-line bg-surface p-4 sm:p-5 md:grid-cols-[minmax(0,1fr)_auto] short:max-md:gap-y-2"
     >
-      <div className="flex flex-col gap-5">
-        <div>
-          <h2 id="week-heading" className="text-2xl font-bold">
-            Your week
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex flex-wrap items-baseline gap-x-3">
+          <h2 id="week-heading" className="text-xl font-bold">
+            Your practice
           </h2>
-          <p className="text-lg text-ink-muted">{message}</p>
+          <p className="text-ink-muted">{message}</p>
         </div>
-        <ol className="grid grid-cols-7 gap-2">
-          {days.map(({ date, count, isToday }) => (
-            <li key={dayKey(date)} className="flex flex-col items-center gap-2">
-              <span
-                className={cn(
-                  "text-sm font-bold",
-                  isToday ? "text-accent-hover" : "text-ink-muted",
-                )}
-              >
-                <span aria-hidden="true">{weekday.format(date)}</span>
-                <span className="sr-only">
-                  {full.format(date)}:{" "}
-                  {count
-                    ? `practised ${count} ${count === 1 ? "picture" : "pictures"}`
-                    : "no practice"}
-                </span>
-              </span>
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "grid aspect-square w-full max-w-12 place-items-center rounded-full",
-                  count ? "bg-accent text-white" : "bg-canvas",
-                  isToday && "ring-4 ring-accent-soft",
-                )}
-              >
-                {count > 0 && <Check size={20} strokeWidth={3} />}
-              </span>
-              <span
-                aria-hidden="true"
-                className="h-6 text-sm text-ink-muted tabular-nums"
-              >
-                {count > 0 ? count : ""}
-              </span>
-            </li>
-          ))}
-        </ol>
-        {days.some((d) => d.count > 0) && (
-          <p aria-hidden="true" className="text-sm text-ink-muted">
-            The number under a day is how many pictures you practised.
-          </p>
-        )}
+        <PracticeCalendar activity={activity} />
       </div>
-
-      <dl className="grid grid-cols-2 gap-3 lg:w-64 lg:grid-cols-1">
+      <dl className="grid grid-cols-2 gap-3 md:w-44 md:grid-cols-1 md:content-center short:max-md:grid-cols-1 short:max-md:gap-0">
         <Stat label="Pictures practised" value={activity.pictures_practised} />
         <Stat label="Sessions finished" value={activity.sessions_completed} />
       </dl>
@@ -100,9 +50,11 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex flex-col-reverse gap-0.5 border-line py-2 lg:border-l lg:pl-6">
-      <dt className="text-base text-ink-muted">{label}</dt>
-      <dd className="text-3xl leading-tight font-bold tabular-nums">{value}</dd>
+    <div className="flex flex-col-reverse short:max-md:flex-row-reverse short:max-md:items-baseline short:max-md:justify-end short:max-md:gap-2">
+      <dt className="text-ink-muted">{label}</dt>
+      <dd className="text-3xl leading-tight font-bold tabular-nums short:max-md:text-xl">
+        {value}
+      </dd>
     </div>
   );
 }

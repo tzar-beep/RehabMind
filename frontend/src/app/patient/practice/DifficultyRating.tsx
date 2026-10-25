@@ -35,8 +35,10 @@ export function DifficultyRating({ sessionId }: { sessionId: string }) {
   }
 
   return (
-    <fieldset className="flex w-full max-w-xl flex-col items-center gap-3">
-      <legend className="mb-3 text-2xl font-bold">How did that feel?</legend>
+    <fieldset className="flex w-full max-w-xl flex-col items-center gap-2">
+      <legend className="mb-2 text-xl font-bold sm:text-2xl">
+        How did that feel?
+      </legend>
       <div className="grid w-full grid-cols-3 gap-3">
         {OPTIONS.map(({ value, label, icon: Icon }) => (
           <button
@@ -44,13 +46,13 @@ export function DifficultyRating({ sessionId }: { sessionId: string }) {
             type="button"
             aria-pressed={chosen === value}
             onClick={() => rate(value)}
-            className={`flex min-h-24 flex-col items-center justify-center gap-2 rounded-card border-2 px-2 py-3 text-lg font-bold transition-colors ${
+            className={`flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-card border-2 px-2 py-2 text-lg font-bold short:min-h-16 transition-colors ${
               chosen === value
                 ? "border-accent bg-accent-soft text-accent-hover"
                 : "border-line-strong bg-surface hover:bg-accent-soft"
             }`}
           >
-            <Icon aria-hidden="true" size={32} />
+            <Icon aria-hidden="true" size={28} />
             {label}
           </button>
         ))}

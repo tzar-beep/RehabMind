@@ -216,30 +216,34 @@ export function PracticeSession() {
     // Two columns on wide screens (picture | result), so "Next picture" stays in view
     // even with a tip; one centred column on phones.
     return (
-      <div className="grid items-center gap-8 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card lg:grid-cols-2 lg:px-10 lg:text-left">
+      <div className="flex min-h-0 flex-1 flex-col items-center gap-4 rounded-card border border-line bg-surface px-5 py-5 text-center shadow-card sm:gap-5 sm:py-8 lg:grid lg:grid-cols-2 lg:grid-rows-[minmax(0,1fr)] lg:gap-10 lg:px-10 lg:text-left short:gap-3 short:sm:py-4">
         {view.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={view.imageUrl}
-            alt=""
-            width={200}
-            height={200}
-            className="mx-auto max-h-56 w-auto rounded-card border border-line bg-surface object-contain p-2 lg:max-h-[min(24rem,55dvh)] lg:w-full"
-          />
+          <div className="relative min-h-16 w-full max-w-md flex-1 lg:h-full lg:max-w-none">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={view.imageUrl}
+              alt=""
+              width={200}
+              height={200}
+              className="absolute inset-0 size-full rounded-card border border-line bg-surface object-contain p-2"
+            />
+          </div>
         )}
         <div
-          className={`flex flex-col items-center gap-6 lg:items-start ${view.imageUrl ? "" : "lg:col-span-2"}`}
+          className={`flex shrink-0 flex-col items-center gap-4 lg:items-start ${view.imageUrl ? "" : "lg:col-span-2"}`}
         >
           <div
             role="status"
-            className="flex flex-col items-center gap-4 lg:items-start"
+            className="flex flex-col items-center gap-2 sm:gap-3 lg:items-start"
           >
-            <OutcomeIcon outcome={view.outcome} />
-            <p className="text-3xl font-bold">{fb.title}</p>
+            <div className="flex items-center gap-3">
+              <OutcomeIcon outcome={view.outcome} />
+              <p className="text-2xl font-bold sm:text-3xl">{fb.title}</p>
+            </div>
             <p className="text-xl text-ink-muted">{fb.lead}</p>
             <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <p
-                className={`font-bold text-accent ${isWord ? "text-5xl" : "text-3xl"}`}
+                className={`font-bold text-accent ${isWord ? "text-4xl sm:text-5xl" : "text-2xl sm:text-3xl"}`}
               >
                 {view.target}
               </p>
@@ -247,7 +251,7 @@ export function PracticeSession() {
               <HearIt text={view.target} />
             </div>
             {view.exerciseType === "picture_description" && (
-              <div className="flex flex-col gap-1 text-lg">
+              <div className="flex flex-col gap-1 text-lg short:text-base">
                 {view.matched.length > 0 && (
                   <p>You mentioned: {view.matched.join(", ")}.</p>
                 )}
@@ -302,27 +306,43 @@ export function PracticeSession() {
 
   if (!state.exercise) {
     const s = state.summary;
+    const practised = !!s && s.practiced > 0;
+    // One screen: the summary and the way home on the left, the patient's words and the
+    // rating on the right (stacked on phones).
     return (
-      <div className="relative isolate flex flex-col items-center gap-6 overflow-hidden rounded-card border border-line bg-surface px-6 py-12 text-center shadow-card">
-        {s && <CompletionRing done={s.practiced} total={state.total} />}
-        <h1 className="text-4xl font-bold">Practice complete</h1>
-        {s && (
-          <p className="text-2xl">
-            You practised {s.practiced}{" "}
-            {s.practiced === 1 ? "picture" : "pictures"}.
-            {s.correct > 0 && ` You got ${s.correct} right on your own.`}
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 rounded-card border border-line bg-surface px-5 py-5 text-center shadow-card sm:gap-6 sm:py-8 lg:grid lg:grid-cols-2 lg:gap-10 lg:px-10">
+        <div className="flex flex-col items-center gap-3 sm:gap-4">
+          {/* On a phone the sentence below says the same; the ring would cost a third
+              of the screen. */}
+          {s && (
+            <div className="max-lg:hidden">
+              <CompletionRing done={s.practiced} total={state.total} />
+            </div>
+          )}
+          <h1 className="text-3xl font-bold sm:text-4xl">Practice complete</h1>
+          {s && (
+            <p className="text-xl sm:text-2xl">
+              You practised {s.practiced}{" "}
+              {s.practiced === 1 ? "picture" : "pictures"}.
+              {s.correct > 0 && ` You got ${s.correct} right on your own.`}
+            </p>
+          )}
+          <p className="text-lg text-ink-muted max-sm:hidden sm:text-xl">
+            Well done for showing up today.
           </p>
+          <Link
+            href="/patient"
+            className={`${buttonClasses("primary", "lg")} max-lg:order-last`}
+          >
+            Back to home
+          </Link>
+        </div>
+        {practised && (
+          <div className="flex w-full flex-col items-center gap-4 sm:gap-6">
+            <SessionRecap sessionId={state.session_id} />
+            <DifficultyRating sessionId={state.session_id} />
+          </div>
         )}
-        <p className="text-xl text-ink-muted">
-          Well done for showing up today.
-        </p>
-        {s && s.practiced > 0 && <SessionRecap sessionId={state.session_id} />}
-        {s && s.practiced > 0 && (
-          <DifficultyRating sessionId={state.session_id} />
-        )}
-        <Link href="/patient" className={buttonClasses("primary", "lg")}>
-          Back to home
-        </Link>
       </div>
     );
   }
@@ -363,51 +383,57 @@ export function PracticeSession() {
   }
 
   return (
-    <div className="flex flex-col gap-5 sm:gap-8">
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-lg text-ink-muted">
+    // One screen: a slim top row, then the picture takes whatever height is left.
+    <div className="flex min-h-0 flex-1 flex-col gap-3 sm:gap-5">
+      <div className="flex shrink-0 items-center gap-3 sm:gap-5">
+        <p className="shrink-0 text-lg text-ink-muted">
           Picture {ex.position} of {state.total}
         </p>
-        <Button variant="quiet" onClick={stopForToday}>
+        <div
+          role="progressbar"
+          aria-label="Practice progress"
+          aria-valuemin={0}
+          aria-valuemax={state.total}
+          aria-valuenow={ex.position - 1}
+          aria-valuetext={`${ex.position - 1} of ${state.total} pictures done`}
+          className="flex min-w-0 flex-1 gap-1.5"
+        >
+          {Array.from({ length: state.total }, (_, i) => (
+            <span
+              key={i}
+              className={
+                "h-3 flex-1 rounded-full transition-colors " +
+                (i < ex.position - 1
+                  ? "bg-accent"
+                  : i === ex.position - 1
+                    ? "bg-accent/35"
+                    : "bg-line")
+              }
+            />
+          ))}
+        </div>
+        <Button variant="quiet" className="shrink-0" onClick={stopForToday}>
           Stop for today
         </Button>
       </div>
-      <div
-        role="progressbar"
-        aria-label="Practice progress"
-        aria-valuemin={0}
-        aria-valuemax={state.total}
-        aria-valuenow={ex.position - 1}
-        aria-valuetext={`${ex.position - 1} of ${state.total} pictures done`}
-        className="flex gap-1.5"
-      >
-        {Array.from({ length: state.total }, (_, i) => (
-          <span
-            key={i}
-            className={
-              "h-3 flex-1 rounded-full transition-colors " +
-              (i < ex.position - 1
-                ? "bg-accent"
-                : i === ex.position - 1
-                  ? "bg-accent/35"
-                  : "bg-line")
-            }
-          />
-        ))}
-      </div>
 
-      {/* Picture beside the question and answer on wide screens, so nothing needs scrolling. */}
+      {/* Picture beside the question and answer on wide screens; above them on phones,
+          shrinking to the space that is left. */}
       <section
         aria-labelledby="prompt"
-        className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-center lg:gap-12"
+        className="flex min-h-0 flex-1 flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] lg:items-center lg:gap-12"
       >
         <div
           className={
-            isChoice ? "order-last lg:order-none" : "flex justify-center"
+            isChoice
+              ? "relative order-last min-h-0 lg:order-none lg:h-full"
+              : "relative min-h-16 flex-1 lg:h-full"
           }
         >
           {isChoice && (
-            <div className="flex flex-col gap-4">
+            // Wide screens: a square as tall as the space, placed absolutely so its size
+            // can never push the page taller (an aspect ratio sized from the width did).
+            <div className="flex flex-col gap-4 lg:absolute lg:inset-y-0 lg:left-1/2 lg:aspect-square lg:max-w-full lg:-translate-x-1/2">
               <ChoiceGrid
                 options={options}
                 busy={busy}
@@ -434,18 +460,19 @@ export function PracticeSession() {
               width={isPhoto ? 480 : 240}
               height={isPhoto ? 360 : 240}
               className={
+                // Absolutely placed in the space left, so it can never push anything off screen.
                 isPhoto
-                  ? "max-h-[26vh] w-auto max-w-full rounded-card border-8 border-surface bg-surface object-contain lg:max-h-[58vh]"
-                  : "max-h-[26vh] w-auto rounded-card border border-line bg-surface p-8 lg:max-h-[50vh]"
+                  ? "absolute inset-0 size-full rounded-card bg-surface object-contain p-2"
+                  : "absolute inset-0 size-full rounded-card border border-line bg-surface object-contain p-6"
               }
             />
           )}
         </div>
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex shrink-0 flex-col gap-3 sm:gap-4 short:gap-2.5">
           <div className="flex items-start justify-center gap-3 lg:justify-start">
             <h1
               id="prompt"
-              className="text-center text-2xl font-bold tracking-tight sm:text-4xl lg:text-left"
+              className="text-center text-2xl font-bold tracking-tight sm:text-3xl lg:text-left lg:text-4xl short:lg:text-2xl"
             >
               {ex.prompt}
             </h1>
@@ -464,7 +491,7 @@ export function PracticeSession() {
               {hints > 0 && (
                 <div
                   role="status"
-                  className="flex w-full gap-4 rounded-card border border-accent/20 bg-accent-soft px-6 py-5"
+                  className="flex w-full gap-3 rounded-card border border-accent/20 bg-accent-soft px-4 py-3"
                 >
                   <span
                     aria-hidden="true"
@@ -472,7 +499,7 @@ export function PracticeSession() {
                   >
                     <Lightbulb size={22} />
                   </span>
-                  <ul className="flex flex-col gap-2 self-center text-xl">
+                  <ul className="flex flex-col gap-1 self-center text-lg sm:text-xl">
                     {ex.cues.slice(0, hints).map((cue) => (
                       <li key={cue}>
                         <Cue text={cue} />
@@ -509,8 +536,8 @@ export function PracticeSession() {
               </Button>
             </div>
           ) : useSpeech ? (
-            <div className="flex flex-col gap-4 sm:gap-6">
-              <p className="hidden text-center text-lg text-ink-muted sm:block lg:text-left">
+            <div className="flex flex-col gap-3 sm:gap-5">
+              <p className="hidden text-center text-lg text-ink-muted sm:block lg:text-left short:hidden">
                 {ex.instructions}
               </p>
               <SpeechRecorder
@@ -568,7 +595,7 @@ export function PracticeSession() {
               key={ex.id}
               onSubmit={onSubmit}
               noValidate
-              className="flex flex-col gap-5"
+              className="flex flex-col gap-3 sm:gap-4"
             >
               <TextField
                 label={
@@ -585,13 +612,8 @@ export function PracticeSession() {
                 error={answerError ?? undefined}
                 className="text-2xl"
               />
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Button
-                  type="submit"
-                  size="lg"
-                  busy={busy}
-                  className="sm:flex-1"
-                >
+              <div className="flex gap-3">
+                <Button type="submit" size="lg" busy={busy} className="flex-1">
                   Check
                 </Button>
                 <Button
@@ -625,7 +647,7 @@ function CompletionRing({ done, total }: { done: number; total: number }) {
     // The sentence below the ring states the same number for assistive technology.
     <div
       aria-hidden="true"
-      className="relative grid size-40 place-items-center"
+      className="relative grid size-28 place-items-center sm:size-36 short:size-24"
     >
       <svg viewBox="0 0 120 120" className="absolute inset-0 -rotate-90">
         <circle
@@ -689,16 +711,16 @@ function OutcomeIcon({ outcome }: { outcome: keyof typeof OUTCOME_ICON }) {
   return (
     <span
       aria-hidden="true"
-      className="relative grid size-16 place-items-center"
+      className="relative grid size-12 shrink-0 place-items-center sm:size-14"
     >
       {/* The peak of each picture: naming it on your own gets one soft, expanding ring. */}
       {outcome === "correct" && (
         <span className="absolute inset-0 animate-ripple rounded-full bg-success" />
       )}
       <span
-        className={`relative grid size-16 animate-pop place-items-center rounded-full ${cls}`}
+        className={`relative grid size-full animate-pop place-items-center rounded-full ${cls}`}
       >
-        <Icon size={34} />
+        <Icon size={28} />
       </span>
     </span>
   );
@@ -741,6 +763,9 @@ function HearQuestion({ text }: { text: string }) {
  * The end of the session is what is remembered (peak-end): show the words named today,
  * with their pictures. If none were named, show what was practised, never what was missed.
  */
+// Six fit on one row beside the summary, and in two rows on a phone.
+const RECAP_MAX = 6;
+
 function SessionRecap({ sessionId }: { sessionId: string }) {
   // From the server, so answers given before a "Keep going" and by voice are included.
   const [words, setWords] = useState<RecapWord[] | null>(null);
@@ -751,24 +776,24 @@ function SessionRecap({ sessionId }: { sessionId: string }) {
   }, [sessionId]);
   if (!words) return null;
   const named = words.filter((w) => w.outcome === "correct");
-  const shown = (named.length ? named : words).filter(
-    (w, i, all) => all.findIndex((x) => x.word === w.word) === i,
-  );
+  const shown = (named.length ? named : words)
+    .filter((w, i, all) => all.findIndex((x) => x.word === w.word) === i)
+    .slice(0, RECAP_MAX);
   if (shown.length === 0) return null;
   return (
     <section
       aria-labelledby="recap-heading"
       className="flex w-full flex-col gap-3"
     >
-      <h2 id="recap-heading" className="text-2xl font-bold">
+      <h2 id="recap-heading" className="text-xl font-bold sm:text-2xl">
         {named.length ? "Words you named today" : "Words you practised today"}
       </h2>
-      <ul className="flex flex-wrap justify-center gap-3">
+      <ul className="flex flex-wrap justify-center gap-3 max-sm:[&>li:nth-child(n+4)]:hidden short:[&>li:nth-child(n+5)]:hidden">
         {shown.map((w, i) => (
           <li
             key={w.word}
             style={{ "--i": i } as CSSProperties}
-            className="flex w-28 animate-rise flex-col items-center gap-1 rounded-card border border-line bg-surface p-2 [animation-delay:calc(var(--i)*80ms)]"
+            className="flex w-24 animate-rise flex-col items-center gap-1 rounded-card border border-line bg-surface p-2 [animation-delay:calc(var(--i)*80ms)]"
           >
             {w.image_url && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -777,7 +802,7 @@ function SessionRecap({ sessionId }: { sessionId: string }) {
                 alt=""
                 width={96}
                 height={96}
-                className="size-20 object-contain"
+                className="size-16 object-contain max-sm:size-12 short:size-12"
               />
             )}
             <span lang="en" className="text-lg font-bold">

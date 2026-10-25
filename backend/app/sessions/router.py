@@ -101,7 +101,9 @@ class PracticeActivity(BaseModel):
     recent: list[RecentSession]
 
 
-ACTIVITY_DAYS = 8  # a week plus a day, so the caller can group by its local date
+# The practice calendar on the patient's home shows 16 weeks; one more day so the caller
+# can group sessions by its own local date.
+ACTIVITY_DAYS = 16 * 7 + 1
 
 
 _NO_PLAN = HTTPException(status.HTTP_409_CONFLICT, "Your practice plan is not ready yet.")
@@ -258,7 +260,11 @@ async def practice_activity(user: PatientUser, db: DbDep) -> PracticeActivity:
     )
     rows = await db.execute(
         select(PracticeSession.started_at, answered)
-        .where(PracticeSession.patient_id == patient.id, PracticeSession.started_at >= since)
+        .where(
+            PracticeSession.patient_id == patient.id,
+            PracticeSession.started_at >= since,
+            answered > 0,
+        )
         .order_by(PracticeSession.started_at)
     )
     return PracticeActivity(

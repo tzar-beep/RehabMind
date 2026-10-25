@@ -8,7 +8,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PRACTICE_PICTURES, PictureWall } from "@/components/PictureWall";
+import { PictureWall } from "@/components/PictureWall";
 import { KeepGoing } from "@/components/patient/KeepGoing";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
@@ -53,18 +53,24 @@ export default async function PatientHome() {
     backendGet("/practice/activity", PracticeActivitySchema),
   ]);
 
+  const newcomer = (activity?.sessions_completed ?? 0) < NEWCOMER_SESSIONS;
+  const cta =
+    "mt-2 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold whitespace-nowrap text-brand-deep transition-[background-color,transform] hover:bg-accent-soft active:scale-[0.98] sm:w-fit";
+
+  // One screen, no scrolling: the welcome takes the height that is left, the practice
+  // calendar keeps its own.
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 short:max-md:gap-3">
       <section
         aria-labelledby="today-heading"
-        className="grid gap-8 rounded-card bg-brand-deep p-6 text-white sm:p-10 md:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] md:items-center"
+        className="flex shrink-0 flex-col gap-4 overflow-hidden rounded-card bg-brand-deep p-5 text-white sm:p-6 short:max-md:p-4 md:grid md:min-h-0 md:flex-1 md:shrink md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[minmax(0,1fr)] md:items-center md:gap-8 lg:p-8"
       >
-        <div className="flex min-w-0 flex-col gap-3">
-          <p className="flex items-center gap-2 text-base text-brand-muted">
+        <div className="flex min-w-0 flex-col gap-2">
+          <p className="flex items-center gap-2 text-base text-brand-muted short:max-md:hidden">
             <CalendarHeart aria-hidden="true" size={18} />
             {today()}
           </p>
-          <h1 className="text-4xl leading-tight font-bold tracking-tight">
+          <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl">
             Hello, {me.display_name}
           </h1>
           <h2 id="today-heading" className="sr-only">
@@ -79,15 +85,12 @@ export default async function PatientHome() {
             />
           ) : status?.has_plan ? (
             <>
-              <p className="max-w-md text-xl text-brand-muted">
+              <p className="max-w-md text-xl text-brand-muted short:max-md:text-lg">
                 {status.has_active_session
                   ? "Pick up where you left off."
                   : "A few pictures to name. Go at your own pace."}
               </p>
-              <Link
-                href="/patient/practice"
-                className="mt-4 inline-flex min-h-16 w-full items-center sm:w-fit justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold whitespace-nowrap text-brand-deep transition-[background-color,transform] hover:bg-accent-soft active:scale-[0.98]"
-              >
+              <Link href="/patient/practice" className={cta}>
                 {status.has_active_session
                   ? "Continue practice"
                   : "Start practice"}
@@ -100,6 +103,22 @@ export default async function PatientHome() {
               here.
             </p>
           )}
+          {/* For newcomers only: how practice works, in three short steps. */}
+          {newcomer && (
+            <ol
+              aria-label="How practice works"
+              className="mt-3 flex flex-col gap-2 text-brand-muted"
+            >
+              {STEPS.map(({ icon: Icon, title, text }) => (
+                <li key={title} className="flex items-center gap-3">
+                  <Icon aria-hidden="true" size={20} className="shrink-0" />
+                  <span>
+                    <strong className="text-white">{title}.</strong> {text}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
         </div>
 
         {/* A second, larger way into practice (the button stays the accessible one). */}
@@ -107,45 +126,23 @@ export default async function PatientHome() {
           href={status?.has_plan ? "/patient/practice" : "#"}
           aria-hidden="true"
           tabIndex={-1}
-          className={
+          className={`hidden h-full max-h-72 min-h-0 md:block ${
             status?.has_plan
-              ? "block transition-opacity hover:opacity-90"
-              : "pointer-events-none block"
-          }
+              ? "transition-opacity hover:opacity-90"
+              : "pointer-events-none"
+          }`}
         >
-          <PictureWall className="hidden md:grid" />
-          <PictureWall
-            pictures={PRACTICE_PICTURES.slice(0, 3)}
-            className="md:hidden"
-          />
+          <PictureWall fill className="aspect-[3/2] h-full grid-rows-2" />
         </Link>
       </section>
 
       {activity && <WeekActivity activity={activity} />}
-
-      {/* The explainer is for newcomers; returning patients go straight to practice. */}
-      {(activity?.sessions_completed ?? 0) < NEWCOMER_SESSIONS && (
-        <section aria-labelledby="how-heading">
-          <h2 id="how-heading" className="mb-4 text-2xl font-bold">
-            How practice works
-          </h2>
-          <ol className="grid gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-3">
-            {STEPS.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="flex gap-4 bg-surface p-6 sm:flex-col">
-                <Icon
-                  aria-hidden="true"
-                  size={28}
-                  className="shrink-0 text-accent"
-                />
-                <span className="flex flex-col gap-1">
-                  <span className="text-xl font-bold">{title}</span>
-                  <span className="text-ink-muted">{text}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
+      <Link
+        href="/credits"
+        className="-my-2 inline-flex min-h-target shrink-0 items-center self-start text-sm text-ink-muted underline underline-offset-4 sm:hidden short:hidden"
+      >
+        Photo credits
+      </Link>
     </div>
   );
 }

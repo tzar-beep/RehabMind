@@ -85,14 +85,14 @@ export function ChoiceGrid({
   onPick: (word: string) => void;
 }) {
   return (
-    <ul className="grid grid-cols-2 gap-3">
+    <ul className="grid grid-cols-2 gap-3 lg:min-h-0 lg:flex-1 lg:grid-rows-2">
       {options.map((o, i) => (
-        <li key={o.image_url}>
+        <li key={o.image_url} className="lg:min-h-0">
           <button
             type="button"
             disabled={busy}
             onClick={() => onPick(o.word)}
-            className="block aspect-square w-full overflow-hidden rounded-card border-2 border-line bg-white p-3 transition-[border-color,transform] hover:border-accent active:scale-[0.98] disabled:opacity-60"
+            className="block aspect-square w-full overflow-hidden rounded-card border-2 border-line bg-white p-3 lg:aspect-auto lg:h-full transition-[border-color,transform] hover:border-accent active:scale-[0.98] disabled:opacity-60"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

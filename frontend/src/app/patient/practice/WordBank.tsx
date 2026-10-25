@@ -29,14 +29,24 @@ export function WordBank({
     .filter(({ i }) => !placed.includes(i));
 
   return (
-    <div className="flex flex-col gap-5">
-      <section aria-labelledby="sentence-label" className="flex flex-col gap-2">
-        <p id="sentence-label" className="font-bold">
-          Your sentence
-        </p>
+    <div className="flex flex-col gap-3">
+      <section aria-labelledby="sentence-label" className="flex flex-col">
+        {/* Clear acts on the sentence, so it sits with it. */}
+        <div className="flex items-center justify-between gap-3">
+          <p id="sentence-label" className="text-sm font-bold text-ink-muted">
+            Your sentence
+          </p>
+          <Button
+            variant="quiet"
+            disabled={busy || !placed.length}
+            onClick={() => setPlaced([])}
+          >
+            Clear
+          </Button>
+        </div>
         <div
           aria-live="polite"
-          className="flex min-h-20 flex-wrap items-center gap-2 rounded-card border-2 border-dashed border-line-strong bg-surface p-3"
+          className="flex min-h-16 flex-wrap items-center gap-2 rounded-card border-2 border-dashed border-line-strong bg-surface p-2"
         >
           {placed.length === 0 ? (
             <span className="px-2 text-lg text-ink-muted">
@@ -58,8 +68,11 @@ export function WordBank({
         </div>
       </section>
 
-      <section aria-labelledby="bank-label" className="flex flex-col gap-2">
-        <p id="bank-label" className="font-bold">
+      <section aria-labelledby="bank-label" className="flex flex-col gap-1.5">
+        <p
+          id="bank-label"
+          className="text-sm font-bold text-ink-muted short:sr-only"
+        >
           Words
         </p>
         <div className="flex flex-wrap gap-2">
@@ -85,22 +98,15 @@ export function WordBank({
         </p>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row">
+      {/* One row at every size: the main action takes the spare width. */}
+      <div className="flex gap-2">
         <Button
           size="lg"
           busy={busy}
-          className="sm:flex-1"
+          className="flex-1"
           onClick={() => onCheck(placed.map((i) => words[i]).join(" "))}
         >
           Check
-        </Button>
-        <Button
-          variant="secondary"
-          size="lg"
-          disabled={busy || !placed.length}
-          onClick={() => setPlaced([])}
-        >
-          Clear
         </Button>
         <Button variant="secondary" size="lg" disabled={busy} onClick={onSkip}>
           I&rsquo;m not sure

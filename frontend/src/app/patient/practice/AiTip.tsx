@@ -47,11 +47,11 @@ export function AiTip({ exerciseId }: { exerciseId: string }) {
   return (
     <div
       role="status"
-      className="animate-rise flex w-full max-w-xl gap-4 rounded-card border border-accent/20 bg-accent-soft px-6 py-5 text-left"
+      className="animate-rise flex w-full max-w-xl gap-3 rounded-card border border-accent/20 bg-accent-soft px-4 py-3 text-left"
     >
       <span
         aria-hidden="true"
-        className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-warning"
+        className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-warning"
       >
         <Lightbulb size={22} />
       </span>

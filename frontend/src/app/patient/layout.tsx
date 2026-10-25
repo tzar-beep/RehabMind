@@ -5,5 +5,5 @@ export default async function PatientLayout({
   children,
 }: LayoutProps<"/patient">) {
   const me = await requireRole("patient");
-  return <AppShell name={me.display_name}>{children}</AppShell>;
+  return <AppShell name={me.display_name} fit>{children}</AppShell>;
 }
