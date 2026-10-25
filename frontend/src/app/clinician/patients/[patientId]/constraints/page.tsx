@@ -11,9 +11,11 @@ import { StatusBadge } from "@/components/clinician/StatusBadge";
 import {
   ConstraintOptionsSchema,
   ConstraintVersionSchema,
+  PatientOverviewSchema,
   type ConstraintVersion,
 } from "@/lib/api/clinician";
-import { GoalListSchema } from "@/lib/api/schemas";
+import { GoalListSchema, PersonalWordSchema } from "@/lib/api/schemas";
+import { OwnWords } from "@/components/OwnWords";
 import { backendGet } from "@/lib/api/server";
 import { formatDateTime } from "@/lib/format";
 
@@ -58,15 +60,20 @@ export default async function ConstraintsPage({
 }: PageProps<"/clinician/patients/[patientId]/constraints">) {
   const { patientId } = await params;
   const showAll = (await searchParams).history === "all";
-  const [versions, options, goals] = await Promise.all([
+  const [versions, options, goals, words, overview] = await Promise.all([
     backendGet(
       `/patients/${patientId}/constraints/versions`,
       z.array(ConstraintVersionSchema),
     ),
     backendGet("/clinical/constraint-options", ConstraintOptionsSchema),
     backendGet(`/patients/${patientId}/goals`, GoalListSchema),
+    backendGet(
+      `/patients/${patientId}/personal-words`,
+      z.array(PersonalWordSchema),
+    ),
+    backendGet(`/patients/${patientId}/overview`, PatientOverviewSchema),
   ]);
-  if (!versions || !options || !goals) notFound();
+  if (!versions || !options || !goals || !words || !overview) notFound();
   const active = versions.find((v) => v.is_active) ?? null;
 
   return (
@@ -85,6 +92,18 @@ export default async function ConstraintsPage({
         description="Shown to the patient in plain words, with progress measured from their practice."
       >
         <GoalsPanel patientId={patientId} goals={goals} />
+      </Section>
+
+      <Section
+        id="own-words"
+        title="Own words"
+        description="Photos of the patient's people, pets and things, added here or by their family. Practised with the catalogue pictures (category “My words”)."
+      >
+        <OwnWords
+          apiBase={`/patients/${patientId}/personal-words`}
+          patientName={overview.display_name}
+          words={words}
+        />
       </Section>
 
       <div>

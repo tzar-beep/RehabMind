@@ -19,6 +19,7 @@ const CreatedSchema = z.object({
 const ROLES = [
   { value: "patient", label: "Patient" },
   { value: "clinician", label: "Clinician" },
+  { value: "carer", label: "Family / carer" },
   { value: "admin", label: "Administrator" },
 ] as const;
 
@@ -27,8 +28,11 @@ type Created = z.infer<typeof CreatedSchema>;
 /** Create an account. The generated first password is shown here once and never again. */
 export function AddUserForm({
   clinicians,
+  patients,
 }: {
   clinicians: { id: string; name: string }[];
+  /** Patients a new carer can support. */
+  patients: { id: string; name: string }[];
 }) {
   const router = useRouter();
   const [role, setRole] = useState<string>("patient");
@@ -37,6 +41,7 @@ export function AddUserForm({
   const [created, setCreated] = useState<Created | null>(null);
   const [copied, setCopied] = useState(false);
   const clinicianId = useId();
+  const patientId = useId();
   const resultRef = useRef<HTMLDivElement>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -46,6 +51,12 @@ export function AddUserForm({
     const email = String(data.get("email") ?? "").trim();
     const display_name = String(data.get("name") ?? "").trim();
     const clinician = String(data.get("clinician") ?? "");
+    const patient = String(data.get("patient") ?? "");
+    const relationship = String(data.get("relationship") ?? "").trim();
+    if (role === "carer" && (!patient || !relationship)) {
+      setError("Choose who they support and how they know them.");
+      return;
+    }
     if (!email || !display_name) {
       setError("Please enter a name and an email address.");
       return;
@@ -64,6 +75,8 @@ export function AddUserForm({
             role,
             clinician_user_id:
               role === "patient" && clinician ? clinician : null,
+            patient_user_id: role === "carer" ? patient : null,
+            relationship: role === "carer" ? relationship : null,
           },
         },
         CreatedSchema,
@@ -208,6 +221,38 @@ export function AddUserForm({
                 </option>
               ))}
             </select>
+          </div>
+        )}
+
+        {role === "carer" && (
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor={patientId} className="font-bold">
+                Supports
+              </label>
+              <p className="text-sm text-ink-muted">
+                The patient whose practice they help with at home.
+              </p>
+              <select
+                id={patientId}
+                name="patient"
+                defaultValue={patients[0]?.id ?? ""}
+                className="min-h-target rounded-control border-2 border-line-strong bg-surface px-4 text-lg"
+              >
+                {patients.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <TextField
+              label="How they know them"
+              hint="For example: daughter, husband, friend."
+              name="relationship"
+              autoComplete="off"
+              maxLength={40}
+            />
           </div>
         )}
 

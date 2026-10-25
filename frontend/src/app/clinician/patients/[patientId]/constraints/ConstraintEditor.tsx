@@ -468,13 +468,23 @@ export function ConstraintEditor({
                 <Check
                   key={cat}
                   label={
-                    <>
-                      <span className="capitalize">{cat}</span>
-                      <span className="text-sm text-ink-muted">
-                        {" "}
-                        ({inRange} in range)
-                      </span>
-                    </>
+                    cat === "my_words" ? (
+                      <>
+                        My words
+                        <span className="text-sm text-ink-muted">
+                          {" "}
+                          (the patient&rsquo;s own photos)
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="capitalize">{cat}</span>
+                        <span className="text-sm text-ink-muted">
+                          {" "}
+                          ({inRange} in range)
+                        </span>
+                      </>
+                    )
                   }
                   checked={v.allowed_categories!.includes(cat)}
                   onChange={(on) =>

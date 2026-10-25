@@ -10,6 +10,7 @@ import sys
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.carers.models import PatientCarer
 from app.clinical.service import ConstraintSetIn, create_version, latest_constraints
 from app.clinicians.models import Clinician, PatientClinician
 from app.core.config import Settings, get_settings
@@ -27,10 +28,13 @@ CARE_TEAMS = [
     ("patient2@recovery.local", "Sam", "clinician2@recovery.local", "Dr. Priya Shah"),
 ]
 ADMIN = ("admin@recovery.local", "Site Admin")
+# A family member supporting the first patient at home.
+CARER = ("carer@recovery.local", "Priya", "patient@recovery.local", "daughter")
 ACCOUNTS = [
     *[(e, Role.PATIENT, n) for e, n, _, _ in CARE_TEAMS],
     *[(e, Role.CLINICIAN, n) for _, _, e, n in CARE_TEAMS],
     (ADMIN[0], Role.ADMIN, ADMIN[1]),
+    (CARER[0], Role.CARER, CARER[1]),
 ]
 
 DEV_CONSTRAINTS = ConstraintSetIn(
@@ -83,6 +87,17 @@ async def seed(password: str) -> None:
         users = {e: await _upsert_user(db, e, r, n, password) for e, r, n in ACCOUNTS}
         for patient_email, _, clinician_email, _ in CARE_TEAMS:
             await _care_team(db, users[patient_email], users[clinician_email])
+        await db.flush()
+        carer_email, _, patient_email, relationship = CARER
+        patient = await db.scalar(select(Patient).where(Patient.user_id == users[patient_email].id))
+        if await db.get(PatientCarer, (patient.id, users[carer_email].id)) is None:
+            db.add(
+                PatientCarer(
+                    patient_id=patient.id,
+                    user_id=users[carer_email].id,
+                    relationship=relationship,
+                )
+            )
         await db.commit()
         await sync_stimuli(db)
 

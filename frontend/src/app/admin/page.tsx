@@ -21,6 +21,9 @@ export default async function AdminHome() {
   const clinicians = users
     .filter((u) => u.role === "clinician" && u.is_active)
     .map((u) => ({ id: u.id, name: u.display_name }));
+  const patients = users
+    .filter((u) => u.role === "patient" && u.is_active)
+    .map((u) => ({ id: u.id, name: u.display_name }));
   const unassigned = users.filter(
     (u) => u.role === "patient" && u.is_active && u.care_team.length === 0,
   ).length;
@@ -43,7 +46,7 @@ export default async function AdminHome() {
           <span className="hidden group-open:inline">Close the form</span>
         </summary>
         <div className="mt-4 max-w-3xl">
-          <AddUserForm clinicians={clinicians} />
+          <AddUserForm clinicians={clinicians} patients={patients} />
         </div>
       </details>
       <h2 className="mt-2 text-xl font-bold">User list</h2>
@@ -107,7 +110,11 @@ export default async function AdminHome() {
                   )}
                 </td>
                 <td className="px-6 py-3">
-                  {u.role !== "patient" ? (
+                  {u.role === "carer" ? (
+                    <span className="whitespace-nowrap">
+                      Supports {u.supports.join(", ") || "nobody yet"}
+                    </span>
+                  ) : u.role !== "patient" ? (
                     <span className="text-ink-muted">—</span>
                   ) : u.care_team.length ? (
                     <span className="whitespace-nowrap">

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const RoleSchema = z.enum(["patient", "clinician", "admin"]);
+export const RoleSchema = z.enum(["patient", "clinician", "admin", "carer"]);
 export type Role = z.infer<typeof RoleSchema>;
 
 export const MeSchema = z.object({
@@ -23,6 +23,8 @@ export const UserSummarySchema = z.object({
   display_name: z.string(),
   is_active: z.boolean(),
   care_team: z.array(z.string()).default([]),
+  // Carers: who they support, e.g. "Alex (daughter)".
+  supports: z.array(z.string()).default([]),
 });
 export type UserSummary = z.infer<typeof UserSummarySchema>;
 
@@ -30,6 +32,7 @@ export const ROLE_HOME: Record<Role, string> = {
   patient: "/patient",
   clinician: "/clinician",
   admin: "/admin",
+  carer: "/carer",
 };
 
 // ---- Practice ----
@@ -153,3 +156,26 @@ export const GoalSchema = z.object({
 });
 export type Goal = z.infer<typeof GoalSchema>;
 export const GoalListSchema = z.array(GoalSchema);
+
+// ---- Family / carers ----
+
+export const SupportedPatientSchema = z.object({
+  id: z.string(),
+  display_name: z.string(),
+  relationship: z.string(),
+});
+export const CarerSummarySchema = z.object({
+  patient: SupportedPatientSchema,
+  activity: z.lazy(() => PracticeActivitySchema),
+  goals: GoalListSchema,
+});
+
+/** One of a patient's own words: a photo added by their family or clinician. */
+export const PersonalWordSchema = z.object({
+  id: z.string(),
+  word: z.string(),
+  also_accepted: z.array(z.string()),
+  image_url: z.string(),
+  added_by: z.string().nullable(),
+});
+export type PersonalWord = z.infer<typeof PersonalWordSchema>;
