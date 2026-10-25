@@ -25,3 +25,18 @@ class PatientCarer(Base):
     # How they know the patient, in the family's words: "daughter", "husband", "friend".
     relationship: Mapped[str] = mapped_column(String(40))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Encouragement(Base):
+    """A short note from a carer, shown on the patient's home page ("Proud of you, Dad")."""
+
+    __tablename__ = "encouragements"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    patient_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("patients.id", ondelete="CASCADE"), index=True
+    )
+    author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    text: Mapped[str] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

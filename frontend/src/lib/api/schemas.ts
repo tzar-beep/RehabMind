@@ -179,3 +179,15 @@ export const PersonalWordSchema = z.object({
   added_by: z.string().nullable(),
 });
 export type PersonalWord = z.infer<typeof PersonalWordSchema>;
+
+/** A short note from a family member to the patient. */
+export const MessageSchema = z.object({
+  id: z.string(),
+  text: z.string(),
+  author: z.string(),
+  relationship: z.string(),
+  created_at: z.string(),
+  seen: z.boolean(),
+});
+export type Message = z.infer<typeof MessageSchema>;
+export const MessageListSchema = z.array(MessageSchema);

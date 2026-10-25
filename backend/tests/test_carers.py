@@ -66,3 +66,27 @@ async def test_carers_only_reach_the_patient_they_support(care):  # noqa: F811
         json={"email": "lone@x.test", "display_name": "Lone", "role": "carer"},
     )
     assert r.status_code == 422
+
+
+async def test_a_carer_can_encourage_the_patient(care):  # noqa: F811
+    patient, clinician, pid = care
+    await create_user("admin@x.test", Role.ADMIN)
+    carer = await _carer(await as_user("admin@x.test"), "p@x.test")
+    url = f"/api/v1/carer/patients/{pid}/messages"
+
+    r = await carer.post(url, json={"text": "  So proud of you this week!  "})
+    assert r.status_code == 201 and r.json()["text"] == "So proud of you this week!"
+
+    seen = (await patient.get("/api/v1/practice/messages")).json()
+    assert [(m["text"], m["author"], m["relationship"], m["seen"]) for m in seen] == [
+        ("So proud of you this week!", "Priya", "daughter", False)
+    ]
+    assert (await patient.get("/api/v1/practice/messages")).json()[0]["seen"] is True
+    assert (await carer.get(url)).json()[0]["seen"] is True
+
+    for _ in range(4):
+        await carer.post(url, json={"text": "Keep going"})
+    assert (await carer.post(url, json={"text": "One more"})).status_code == 429
+    assert (await carer.post(url, json={"text": "   "})).status_code == 422
+    assert (await clinician.get("/api/v1/practice/messages")).status_code == 403
+    assert (await patient.post(url, json={"text": "hi"})).status_code == 403

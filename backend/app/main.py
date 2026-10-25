@@ -16,6 +16,7 @@ from app.ai.clinician_router import status_router as ai_status_router
 from app.ai.provider import get_ai_provider
 from app.ai.router import router as ai_router
 from app.auth.router import router as auth_router
+from app.carers.router import patient_router as carers_patient_router
 from app.carers.router import router as carers_router
 from app.clinical.router import options_router as clinical_options_router
 from app.clinical.router import router as clinical_router
@@ -78,6 +79,7 @@ for r in (
     goals_router,
     goals_patient_router,
     carers_router,
+    carers_patient_router,
     personal_carer_router,
     personal_clinician_router,
     personal_photo_router,

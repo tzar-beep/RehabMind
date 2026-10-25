@@ -3,6 +3,7 @@ import {
   CalendarHeart,
   Image as ImageIcon,
   Lightbulb,
+  MessageCircleHeart,
   MessageSquareText,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -15,6 +16,7 @@ import { PatientGoals } from "@/components/patient/PatientGoals";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
   GoalListSchema,
+  MessageListSchema,
   PracticeActivitySchema,
   PracticeStatusSchema,
 } from "@/lib/api/schemas";
@@ -51,11 +53,13 @@ const today = () =>
 
 export default async function PatientHome() {
   const me = await requireRole("patient");
-  const [status, activity, goals] = await Promise.all([
+  const [status, activity, goals, messages] = await Promise.all([
     backendGet("/practice/status", PracticeStatusSchema),
     backendGet("/practice/activity", PracticeActivitySchema),
     backendGet("/practice/goals", GoalListSchema),
+    backendGet("/practice/messages", MessageListSchema),
   ]);
+  const note = messages?.[0];
 
   const newcomer = (activity?.sessions_completed ?? 0) < NEWCOMER_SESSIONS;
   const cta =
@@ -67,7 +71,7 @@ export default async function PatientHome() {
     <div className="flex min-h-0 flex-1 flex-col gap-4 short:max-md:gap-3">
       <section
         aria-labelledby="today-heading"
-        className="relative isolate flex shrink-0 flex-col gap-4 overflow-hidden rounded-card bg-brand-deep p-5 text-white sm:p-6 short:max-md:p-4 md:grid md:min-h-0 md:flex-1 md:shrink md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[minmax(0,1fr)] md:items-center md:gap-8 lg:p-8"
+        className="relative isolate flex shrink-0 flex-col gap-4 overflow-hidden rounded-card bg-brand-deep p-5 text-white sm:p-6 short:max-md:p-4 md:grid md:min-h-0 md:flex-1 md:shrink md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[minmax(0,1fr)] md:items-center md:gap-8 lg:p-8 short:lg:p-6"
       >
         {/* Static texture for depth (Magic UI Dot Pattern): no motion. */}
         <DotPattern
@@ -77,11 +81,11 @@ export default async function PatientHome() {
           className="-z-10 text-white/25 [mask-image:radial-gradient(ellipse_at_top_left,white,transparent_70%)]"
         />
         <div className="flex min-w-0 flex-col gap-2">
-          <p className="flex items-center gap-2 text-base text-brand-muted short:max-md:hidden">
+          <p className="flex items-center gap-2 text-base text-brand-muted short:hidden">
             <CalendarHeart aria-hidden="true" size={18} />
             {today()}
           </p>
-          <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl">
+          <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl short:sm:text-3xl">
             Hello, {me.display_name}
           </h1>
           <h2 id="today-heading" className="sr-only">
@@ -96,11 +100,30 @@ export default async function PatientHome() {
             />
           ) : status?.has_plan ? (
             <>
-              <p className="max-w-md text-xl text-brand-muted short:max-md:text-lg">
-                {status.has_active_session
-                  ? "Pick up where you left off."
-                  : "A few pictures to name. Go at your own pace."}
-              </p>
+              {/* A note from family takes the place of the usual line: it means more. */}
+              {note ? (
+                <figure className="flex max-w-md items-start gap-3 rounded-card bg-white/8 px-4 py-3 short:py-2">
+                  <MessageCircleHeart
+                    aria-hidden="true"
+                    size={22}
+                    className="mt-0.5 shrink-0 text-brand-glow"
+                  />
+                  <div className="min-w-0">
+                    <blockquote className="line-clamp-2 text-lg">
+                      {note.text}
+                    </blockquote>
+                    <figcaption className="text-sm text-brand-muted">
+                      {note.author}, your {note.relationship}
+                    </figcaption>
+                  </div>
+                </figure>
+              ) : (
+                <p className="max-w-md text-xl text-brand-muted short:max-md:text-lg">
+                  {status.has_active_session
+                    ? "Pick up where you left off."
+                    : "A few pictures to name. Go at your own pace."}
+                </p>
+              )}
               <Link href="/patient/practice" className={cta}>
                 {status.has_active_session
                   ? "Continue practice"

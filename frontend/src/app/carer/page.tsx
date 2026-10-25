@@ -6,11 +6,14 @@ import { OwnWords } from "@/components/OwnWords";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
   CarerSummarySchema,
+  MessageListSchema,
   PersonalWordSchema,
   SupportedPatientSchema,
   type Goal,
 } from "@/lib/api/schemas";
 import { backendGet } from "@/lib/api/server";
+
+import { SendNote } from "./SendNote";
 
 export const metadata: Metadata = { title: "Family" };
 
@@ -70,12 +73,13 @@ export default async function CarerHome() {
         </p>
       </div>
     );
-  const [summary, words] = await Promise.all([
+  const [summary, words, sent] = await Promise.all([
     backendGet(`/carer/patients/${patient.id}`, CarerSummarySchema),
     backendGet(
       `/carer/patients/${patient.id}/words`,
       z.array(PersonalWordSchema),
     ),
+    backendGet(`/carer/patients/${patient.id}/messages`, MessageListSchema),
   ]);
   const name = patient.display_name;
 
@@ -108,6 +112,9 @@ export default async function CarerHome() {
             {name}&rsquo;s goals
           </h2>
           <Goals goals={summary?.goals ?? []} name={name} />
+          <div className="mt-2 border-t border-line pt-4">
+            <SendNote patientId={patient.id} name={name} sent={sent ?? []} />
+          </div>
         </section>
       </div>
 
