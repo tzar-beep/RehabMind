@@ -46,7 +46,7 @@ export const TYPE_HINT: Record<string, string> = {
   picture_naming: "Type the word for this picture.",
   picture_description: "Type a few words about the picture.",
   sentence_completion: "Type the missing word.",
-  word_repetition: "Type the word you see.",
+  word_repetition: "Type the word you hear.",
 };
 
 export const EMPTY_ANSWER: Record<string, string> = {

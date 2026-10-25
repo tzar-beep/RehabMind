@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { ChoiceGrid } from "./Choices";
+import { ChoiceGrid, WordCard } from "./Choices";
 
 const OPTIONS = [
   { word: "dog", image_url: "/a.jpg" },
@@ -32,5 +32,24 @@ describe("ChoiceGrid", () => {
     expect(onPick).toHaveBeenCalledWith("car");
     rerender(<ChoiceGrid options={OPTIONS} busy onPick={onPick} />);
     expect(screen.getAllByRole("button")[0]).toBeDisabled();
+  });
+});
+
+describe("WordCard", () => {
+  it("hides the word for typed repetition until asked, so it cannot be copied", () => {
+    Object.defineProperty(window, "speechSynthesis", {
+      value: { cancel: vi.fn(), speak: vi.fn() },
+      configurable: true,
+    });
+    render(<WordCard word="kettle" listenFirst />);
+    expect(screen.queryByText("kettle")).toBeNull();
+    expect(screen.getByRole("button", { name: /Hear it/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Show the word" }));
+    expect(screen.getByText("kettle")).toBeTruthy();
+  });
+
+  it("shows the word when it is to be said aloud", () => {
+    render(<WordCard word="kettle" />);
+    expect(screen.getByText("kettle")).toBeTruthy();
   });
 });

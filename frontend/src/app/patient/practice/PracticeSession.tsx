@@ -1,6 +1,12 @@
 "use client";
 
-import { CircleCheck, HeartHandshake, Lightbulb, Sparkles } from "lucide-react";
+import {
+  CircleCheck,
+  HeartHandshake,
+  Lightbulb,
+  Sparkles,
+  Volume2,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -26,7 +32,7 @@ import {
 } from "@/lib/api/schemas";
 
 import { AiTip } from "./AiTip";
-import { ChoiceGrid, WordCard } from "./Choices";
+import { ChoiceGrid, WordCard, say, useCanSpeak } from "./Choices";
 import { DifficultyRating } from "./DifficultyRating";
 import { EMPTY_ANSWER, IMAGE_ALT, TYPE_HINT, feedbackFor } from "./messages";
 import { SpeechRecorder, speechSupported } from "./SpeechRecorder";
@@ -90,8 +96,11 @@ export function PracticeSession() {
   }, []);
 
   useEffect(() => {
+    // Each picture, result and summary starts at the top of the page.
+    window.scrollTo({ top: 0 });
     if (view.kind === "answering") shownAt.current = performance.now();
-    if (view.kind === "feedback") nextButton.current?.focus();
+    if (view.kind === "feedback")
+      nextButton.current?.focus({ preventScroll: true });
   }, [view]);
 
   function showFeedback(exercise: Exercise, result: ResponseResult) {
@@ -202,71 +211,81 @@ export function PracticeSession() {
     const fb = feedbackFor(view.exerciseType, view.outcome);
     const isWord = view.exerciseType === "picture_naming";
     const done = view.last;
+    // Two columns on wide screens (picture | result), so "Next picture" stays in view
+    // even with a tip; one centred column on phones.
     return (
-      <div className="flex flex-col items-center gap-8 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
-        <div role="status" className="flex flex-col items-center gap-4">
-          <OutcomeIcon outcome={view.outcome} />
-          <p className="text-3xl font-bold">{fb.title}</p>
-          {view.imageUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={view.imageUrl}
-              alt=""
-              width={200}
-              height={200}
-              className="max-h-56 w-auto rounded-card border border-line bg-surface object-contain p-2"
-            />
-          )}
-          <p className="text-xl text-ink-muted">{fb.lead}</p>
-          <p
-            className={`font-bold text-accent ${isWord ? "text-5xl" : "text-3xl"}`}
-          >
-            {view.target}
-          </p>
-          {view.exerciseType === "picture_description" && (
-            <div className="flex flex-col gap-1 text-lg">
-              {view.matched.length > 0 && (
-                <p>You mentioned: {view.matched.join(", ")}.</p>
-              )}
-              {view.missing.length > 0 && (
-                <p className="text-ink-muted">
-                  You could also say: {view.missing.join(", ")}.
-                </p>
-              )}
-            </div>
-          )}
-          {view.heard && view.outcome !== "correct" && (
-            <p className="text-lg text-ink-muted">
-              We heard &ldquo;{view.heard}&rdquo;.
-            </p>
-          )}
-        </div>
-        {/* A tip helps after a miss; after a correct answer the praise is enough. Only
-            the types the AI personalises (backend AI_TYPES) were audited for tips. */}
-        {view.outcome !== "correct" && AI_TIP_TYPES.has(view.exerciseType) && (
-          <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
+      <div className="grid items-center gap-8 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card lg:grid-cols-2 lg:px-10 lg:text-left">
+        {view.imageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={view.imageUrl}
+            alt=""
+            width={200}
+            height={200}
+            className="mx-auto max-h-56 w-auto rounded-card border border-line bg-surface object-contain p-2 lg:max-h-[min(24rem,55dvh)] lg:w-full"
+          />
         )}
-        <Button
-          ref={nextButton}
-          size="lg"
-          busy={busy}
-          onClick={async () => {
-            setBusy(true);
-            try {
-              const next = await nextState.current;
-              setView({ kind: "answering", state: next! });
-            } catch (e) {
-              setView({
-                kind: "error",
-                message: e instanceof ApiError ? e.message : String(e),
-              });
-            } finally {
-              setBusy(false);
-            }
-          }}
+        <div
+          className={`flex flex-col items-center gap-6 lg:items-start ${view.imageUrl ? "" : "lg:col-span-2"}`}
         >
-          {done ? "See how you did" : "Next picture"}
-        </Button>
+          <div
+            role="status"
+            className="flex flex-col items-center gap-4 lg:items-start"
+          >
+            <OutcomeIcon outcome={view.outcome} />
+            <p className="text-3xl font-bold">{fb.title}</p>
+            <p className="text-xl text-ink-muted">{fb.lead}</p>
+            <p
+              className={`font-bold text-accent ${isWord ? "text-5xl" : "text-3xl"}`}
+            >
+              {view.target}
+            </p>
+            {view.exerciseType === "picture_description" && (
+              <div className="flex flex-col gap-1 text-lg">
+                {view.matched.length > 0 && (
+                  <p>You mentioned: {view.matched.join(", ")}.</p>
+                )}
+                {view.missing.length > 0 && (
+                  <p className="text-ink-muted">
+                    You could also say: {view.missing.join(", ")}.
+                  </p>
+                )}
+              </div>
+            )}
+            {view.heard && view.outcome !== "correct" && (
+              <p className="text-lg text-ink-muted">
+                We heard &ldquo;{view.heard}&rdquo;.
+              </p>
+            )}
+          </div>
+          {/* A tip helps after a miss; after a correct answer the praise is enough. Only
+            the types the AI personalises (backend AI_TYPES) were audited for tips. */}
+          {view.outcome !== "correct" &&
+            AI_TIP_TYPES.has(view.exerciseType) && (
+              <AiTip key={view.exerciseId} exerciseId={view.exerciseId} />
+            )}
+          <Button
+            ref={nextButton}
+            size="lg"
+            busy={busy}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                const next = await nextState.current;
+                setView({ kind: "answering", state: next! });
+              } catch (e) {
+                setView({
+                  kind: "error",
+                  message: e instanceof ApiError ? e.message : String(e),
+                });
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            {done ? "See how you did" : "Next picture"}
+          </Button>
+        </div>
       </div>
     );
   }
@@ -414,13 +433,22 @@ export function PracticeSession() {
           )}
         </div>
         <div className="flex flex-col gap-4 sm:gap-6">
-          <h1
-            id="prompt"
-            className="text-center text-2xl font-bold tracking-tight sm:text-4xl lg:text-left"
-          >
-            {ex.prompt}
-          </h1>
-          {ex.word && <WordCard word={ex.word} />}
+          <div className="flex items-start justify-center gap-3 lg:justify-start">
+            <h1
+              id="prompt"
+              className="text-center text-2xl font-bold tracking-tight sm:text-4xl lg:text-left"
+            >
+              {ex.prompt}
+            </h1>
+            <HearQuestion text={ex.prompt} />
+          </div>
+          {ex.word && (
+            <WordCard
+              key={ex.id}
+              word={ex.word}
+              listenFirst={ex.type === "word_repetition" && !useSpeech}
+            />
+          )}
 
           {ex.cues.length > 0 && (
             <div className="flex flex-col items-center gap-3 lg:items-start">
@@ -656,5 +684,22 @@ function OutcomeIcon({ outcome }: { outcome: keyof typeof OUTCOME_ICON }) {
     >
       <Icon size={34} />
     </span>
+  );
+}
+
+/** Reads the question aloud: reading is often harder than listening after a stroke. */
+function HearQuestion({ text }: { text: string }) {
+  const speakable = useCanSpeak();
+  if (!speakable) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => say(text.replace(/_{2,}/g, "blank"))}
+      aria-label="Hear the question"
+      title="Hear the question"
+      className="inline-flex size-target shrink-0 items-center justify-center rounded-full border-2 border-line text-accent transition-colors hover:border-accent hover:bg-accent-soft sm:mt-1"
+    >
+      <Volume2 aria-hidden="true" size={22} />
+    </button>
   );
 }

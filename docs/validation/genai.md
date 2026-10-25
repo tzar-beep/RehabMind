@@ -66,7 +66,13 @@ blind on relevance, clarity, tone and difficulty fit
   check now reads a possessive as its noun. Re-run: **89%** valid first time, **96%** after
   the retry, 4% without a tip; raw outputs flagged for rare words 8.3%, long sentences 4.5%,
   score contradiction 0.8% (one output, caught). Tips are shown again after any answer that is not
-  correct, for the three exercise types the AI personalises. Reproduce with
+  correct, for the three exercise types the AI personalises.
+- **Done (feedback prompt v3):** a walkthrough found accepted v2 tips that described the
+  picture wrongly ("look at the handle for holding the bed"): the model cannot see the
+  image, and the v2 instruction asked it to point to a feature of the picture. v3 asks for
+  a clue about what the word means or is used for ("try thinking of something you use for
+  sleeping"), and states that the model cannot see the picture. Audit: 88% valid first
+  time, 98% after the retry, no score contradictions. Reproduce with
   `uv run python -m app.scripts.genai_audit --repeats 0 --feedback 120`.
 
 - **About 30% of exercise requests fall back to rule-based text.** The fallback is safe, so

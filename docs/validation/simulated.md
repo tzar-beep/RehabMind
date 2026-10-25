@@ -74,6 +74,10 @@ a hint: it holds the level instead of raising it (`counted_outcome` in
 limits page tells the clinician. The setting `SPEECH_COUNTS_FOR_PROGRESSION` turns full
 credit back on once a real Part B run passes.
 
+**A larger model is not enough.** The same 160 recordings through `medium.en` (about 5×
+the compute): non-words repaired 20% (was 28%), real-word sound errors 0% (was 5%), sound
+errors overall **10.0%**, still over the 5% limit. `small.en` stays, with the step below.
+
 **Second change: the patient confirms a match.** When a spoken answer would score as
 correct, the app now asks "I heard “door”. Is that what you said?" (with a button to hear
 the word) before scoring it. "No, try again" discards it and keeps the exercise open; the

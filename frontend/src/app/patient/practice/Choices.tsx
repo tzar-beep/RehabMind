@@ -1,7 +1,7 @@
 "use client";
 
 import { Volume2 } from "lucide-react";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 const subscribe = () => () => {};
 const canSpeak = () =>
@@ -21,14 +21,33 @@ export function say(word: string) {
   window.speechSynthesis.speak(u);
 }
 
-/** The word to say or to find, large, with a button to hear it. */
-export function WordCard({ word }: { word: string }) {
+/**
+ * The word to say or to find, large, with a button to hear it. With `listenFirst` (word
+ * repetition answered by typing) the word is heard, not read: showing it would turn
+ * repetition into copying. It can still be shown on request.
+ */
+export function WordCard({
+  word,
+  listenFirst = false,
+}: {
+  word: string;
+  listenFirst?: boolean;
+}) {
   const speakable = useCanSpeak();
+  const [revealed, setRevealed] = useState(false);
+  const hidden = listenFirst && speakable && !revealed;
   return (
     <div className="flex flex-wrap items-center justify-center gap-4 rounded-card border border-line bg-surface px-6 py-5 lg:justify-start">
-      <span lang="en" className="text-4xl font-bold tracking-tight sm:text-5xl">
-        {word}
-      </span>
+      {hidden ? (
+        <span className="text-xl text-ink-muted">Listen to the word.</span>
+      ) : (
+        <span
+          lang="en"
+          className="text-4xl font-bold tracking-tight sm:text-5xl"
+        >
+          {word}
+        </span>
+      )}
       {speakable && (
         <button
           type="button"
@@ -37,6 +56,15 @@ export function WordCard({ word }: { word: string }) {
         >
           <Volume2 aria-hidden="true" size={22} />
           Hear it
+        </button>
+      )}
+      {hidden && (
+        <button
+          type="button"
+          onClick={() => setRevealed(true)}
+          className="inline-flex min-h-target items-center px-3 font-bold text-ink-muted underline underline-offset-4 hover:text-ink"
+        >
+          Show the word
         </button>
       )}
     </div>

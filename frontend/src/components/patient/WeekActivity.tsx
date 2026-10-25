@@ -83,6 +83,11 @@ export function WeekActivity({ activity }: { activity: PracticeActivity }) {
             </li>
           ))}
         </ol>
+        {days.some((d) => d.count > 0) && (
+          <p aria-hidden="true" className="text-sm text-ink-muted">
+            The number under a day is how many pictures you practised.
+          </p>
+        )}
       </div>
 
       <dl className="grid grid-cols-2 gap-3 lg:w-64 lg:grid-cols-1">
