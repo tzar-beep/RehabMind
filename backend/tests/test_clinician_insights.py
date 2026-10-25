@@ -196,6 +196,7 @@ ROUTES = [
     "/trends",
     "/sessions",
     "/words",
+    "/goals",
     "/constraints",
     "/constraints/versions",
     "/ai-generations",

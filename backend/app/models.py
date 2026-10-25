@@ -6,6 +6,7 @@ from app.clinical.models import ConstraintSet
 from app.clinicians.models import Clinician, PatientClinician
 from app.core.db import Base
 from app.exercises.models import Exercise, Stimulus
+from app.goals.models import TherapyGoal
 from app.patients.models import Patient
 from app.performance.models import PerformanceProfile
 from app.sessions.models import ExerciseResponse, PracticeSession
@@ -26,5 +27,6 @@ __all__ = [
     "PerformanceProfile",
     "PracticeSession",
     "Stimulus",
+    "TherapyGoal",
     "User",
 ]
