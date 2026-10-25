@@ -13,13 +13,15 @@ import {
   ConstraintVersionSchema,
   type ConstraintVersion,
 } from "@/lib/api/clinician";
+import { GoalListSchema } from "@/lib/api/schemas";
 import { backendGet } from "@/lib/api/server";
 import { formatDateTime } from "@/lib/format";
 
 import { ConstraintEditor } from "./ConstraintEditor";
+import { GoalsPanel } from "./GoalsPanel";
 import { VersionCompare } from "./VersionCompare";
 
-export const metadata: Metadata = { title: "Practice limits" };
+export const metadata: Metadata = { title: "Plan" };
 
 // The history can grow long; the newest few are listed, the rest behind "Show all".
 const RECENT_VERSIONS = 6;
@@ -56,20 +58,37 @@ export default async function ConstraintsPage({
 }: PageProps<"/clinician/patients/[patientId]/constraints">) {
   const { patientId } = await params;
   const showAll = (await searchParams).history === "all";
-  const [versions, options] = await Promise.all([
+  const [versions, options, goals] = await Promise.all([
     backendGet(
       `/patients/${patientId}/constraints/versions`,
       z.array(ConstraintVersionSchema),
     ),
     backendGet("/clinical/constraint-options", ConstraintOptionsSchema),
+    backendGet(`/patients/${patientId}/goals`, GoalListSchema),
   ]);
-  if (!versions || !options) notFound();
+  if (!versions || !options || !goals) notFound();
   const active = versions.find((v) => v.is_active) ?? null;
 
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <h1 className="text-2xl font-bold">Practice limits</h1>
+        <h1 className="text-2xl font-bold">Plan</h1>
+        <p className="max-w-prose text-ink-muted">
+          What the patient is working towards, and the limits every exercise
+          stays inside.
+        </p>
+      </div>
+
+      <Section
+        id="goals"
+        title="Goals"
+        description="Shown to the patient in plain words, with progress measured from their practice."
+      >
+        <GoalsPanel patientId={patientId} goals={goals} />
+      </Section>
+
+      <div>
+        <h2 className="text-xl font-bold">Practice limits</h2>
         <p className="max-w-prose text-ink-muted">
           Every exercise, AI-written or rule-based, stays inside these limits.
           Changes create a new version; old versions are kept.

@@ -137,3 +137,19 @@ export const RecapSchema = z.array(
   }),
 );
 export type RecapWord = z.infer<typeof RecapSchema>[number];
+
+/** A therapy goal set by the clinician, with progress measured from practice. */
+export const GoalSchema = z.object({
+  id: z.string(),
+  kind: z.enum(["name_words", "practice_days"]),
+  target: z.number(),
+  category: z.string().nullable(),
+  due_on: z.string().nullable(),
+  status: z.enum(["active", "achieved", "ended"]),
+  title: z.string(),
+  progress: z.number(),
+  created_at: z.string(),
+  achieved_at: z.string().nullable(),
+});
+export type Goal = z.infer<typeof GoalSchema>;
+export const GoalListSchema = z.array(GoalSchema);

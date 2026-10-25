@@ -11,8 +11,10 @@ import Link from "next/link";
 import { PictureWall } from "@/components/PictureWall";
 import { DotPattern } from "@/components/magicui/dot-pattern";
 import { KeepGoing } from "@/components/patient/KeepGoing";
+import { PatientGoals } from "@/components/patient/PatientGoals";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
+  GoalListSchema,
   PracticeActivitySchema,
   PracticeStatusSchema,
 } from "@/lib/api/schemas";
@@ -49,9 +51,10 @@ const today = () =>
 
 export default async function PatientHome() {
   const me = await requireRole("patient");
-  const [status, activity] = await Promise.all([
+  const [status, activity, goals] = await Promise.all([
     backendGet("/practice/status", PracticeStatusSchema),
     backendGet("/practice/activity", PracticeActivitySchema),
+    backendGet("/practice/goals", GoalListSchema),
   ]);
 
   const newcomer = (activity?.sessions_completed ?? 0) < NEWCOMER_SESSIONS;
@@ -129,19 +132,27 @@ export default async function PatientHome() {
           )}
         </div>
 
-        {/* A second, larger way into practice (the button stays the accessible one). */}
-        <Link
-          href={status?.has_plan ? "/patient/practice" : "#"}
-          aria-hidden="true"
-          tabIndex={-1}
-          className={`hidden h-full max-h-72 min-h-0 md:block ${
-            status?.has_plan
-              ? "transition-opacity hover:opacity-90"
-              : "pointer-events-none"
-          }`}
-        >
-          <PictureWall fill className="aspect-[3/2] h-full grid-rows-2" />
-        </Link>
+        {/* With goals, the right side is what the patient is working towards; without,
+            the picture wall is a second way into practice. */}
+        {goals && goals.length > 0 ? (
+          <PatientGoals goals={goals} />
+        ) : (
+          <>
+            {/* A second, larger way into practice (the button stays the accessible one). */}
+            <Link
+              href={status?.has_plan ? "/patient/practice" : "#"}
+              aria-hidden="true"
+              tabIndex={-1}
+              className={`hidden h-full max-h-72 min-h-0 md:block ${
+                status?.has_plan
+                  ? "transition-opacity hover:opacity-90"
+                  : "pointer-events-none"
+              }`}
+            >
+              <PictureWall fill className="aspect-[3/2] h-full grid-rows-2" />
+            </Link>
+          </>
+        )}
       </section>
 
       {activity && <WeekActivity activity={activity} />}
