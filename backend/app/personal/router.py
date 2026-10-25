@@ -7,10 +7,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.audit import service as audit
-from app.auth.deps import CarerUser, ClinicianUser, CurrentUserDep, DbDep
+from app.auth.deps import CarerUser, ClinicianUser, CurrentUserDep, DbDep, PatientUser
 from app.carers.access import get_supported_patient
 from app.exercises.models import Stimulus
-from app.patients.access import get_accessible_patient
+from app.patients.access import accessible_patients, get_accessible_patient
 from app.patients.models import Patient
 from app.personal import service
 from app.personal.models import PersonalPhoto
@@ -181,3 +181,17 @@ async def photo(word_id: uuid.UUID, user: CurrentUserDep, db: DbDep) -> Response
         media_type="image/jpeg",
         headers={"Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff"},
     )
+
+
+# ---------- the patient ----------
+
+patient_router = APIRouter(prefix="/practice", tags=["personal words"])
+
+
+@patient_router.get("/my-words", response_model=list[PersonalWord])
+async def my_words(user: PatientUser, db: DbDep) -> list[PersonalWord]:
+    """The patient's own words, for their talk board."""
+    patient = (await db.execute(accessible_patients(user))).scalar_one_or_none()
+    if patient is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Patient profile not found.")
+    return await _out(db, await service.words_of(db, patient.id))

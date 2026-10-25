@@ -8,6 +8,8 @@ import { useState } from "react";
 import { ApiError, apiFetch } from "@/lib/api/client";
 import { SessionStateSchema } from "@/lib/api/schemas";
 
+import { TalkLink } from "./TalkLink";
+
 /**
  * Undo for "Stop for today": for half an hour the patient can carry on from the picture
  * they left, instead of being asked "Are you sure?" when they stop.
@@ -64,6 +66,7 @@ export function KeepGoing({
           {busy ? "Opening…" : "Keep going"}
           <ArrowRight aria-hidden="true" size={24} />
         </button>
+        <TalkLink />
         <Link
           href="/patient/practice"
           className="inline-flex min-h-target items-center text-lg font-bold underline underline-offset-4"

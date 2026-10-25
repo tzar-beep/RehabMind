@@ -12,6 +12,7 @@ import Link from "next/link";
 import { PictureWall } from "@/components/PictureWall";
 import { DotPattern } from "@/components/magicui/dot-pattern";
 import { KeepGoing } from "@/components/patient/KeepGoing";
+import { TalkLink } from "@/components/patient/TalkLink";
 import { PatientGoals } from "@/components/patient/PatientGoals";
 import { WeekActivity } from "@/components/patient/WeekActivity";
 import {
@@ -63,7 +64,7 @@ export default async function PatientHome() {
 
   const newcomer = (activity?.sessions_completed ?? 0) < NEWCOMER_SESSIONS;
   const cta =
-    "mt-2 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold whitespace-nowrap text-brand-deep transition-[background-color,transform] hover:bg-accent-soft active:scale-[0.98] sm:w-fit";
+    "inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold whitespace-nowrap text-brand-deep transition-[background-color,transform] hover:bg-accent-soft active:scale-[0.98] sm:w-fit";
 
   // One screen, no scrolling: the welcome takes the height that is left, the practice
   // calendar keeps its own.
@@ -124,12 +125,15 @@ export default async function PatientHome() {
                     : "A few pictures to name. Go at your own pace."}
                 </p>
               )}
-              <Link href="/patient/practice" className={cta}>
-                {status.has_active_session
-                  ? "Continue practice"
-                  : "Start practice"}
-                <ArrowRight aria-hidden="true" size={24} />
-              </Link>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <Link href="/patient/practice" className={cta}>
+                  {status.has_active_session
+                    ? "Continue practice"
+                    : "Start practice"}
+                  <ArrowRight aria-hidden="true" size={24} />
+                </Link>
+                <TalkLink />
+              </div>
             </>
           ) : (
             <p className="max-w-md text-xl text-brand-muted">

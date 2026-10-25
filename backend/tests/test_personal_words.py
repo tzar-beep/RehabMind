@@ -146,3 +146,11 @@ def test_issuer_refuses_another_patients_word():
     proposal = Proposal("picture_naming", 1, ["text"], stim, {}, {}, "rule")
     session = SimpleNamespace(planned_exercises=8, patient_id=other)
     assert "stimulus_not_this_patients" in validate(proposal, cs, session, 1)
+
+
+async def test_patient_lists_their_own_words(care):  # noqa: F811
+    patient, clinician, pid = care
+    await _add(clinician, f"{base(pid)}/personal-words", "Rex")
+    mine = (await patient.get("/api/v1/practice/my-words")).json()
+    assert [w["word"] for w in mine] == ["Rex"]
+    assert (await clinician.get("/api/v1/practice/my-words")).status_code == 403

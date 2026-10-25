@@ -1,25 +1,11 @@
 "use client";
 
 import { Volume2 } from "lucide-react";
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
-const subscribe = () => () => {};
-const canSpeak = () =>
-  typeof window !== "undefined" && "speechSynthesis" in window;
+import { say, useCanSpeak } from "@/lib/speak";
 
-/** Whether this device can read words aloud (false during server rendering). */
-export function useCanSpeak(): boolean {
-  return useSyncExternalStore(subscribe, canSpeak, () => false);
-}
-
-/** Reads a word aloud with the device's own voice (nothing leaves the device). */
-export function say(word: string) {
-  const u = new SpeechSynthesisUtterance(word);
-  u.lang = "en-GB";
-  u.rate = 0.8; // a little slower than conversation
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
-}
+export { say, useCanSpeak };
 
 /**
  * The word to say or to find, large, with a button to hear it. With `listenFirst` (word
