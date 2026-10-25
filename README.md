@@ -207,14 +207,19 @@ Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.p
 
 ## ✅ Quality
 
-- **259** backend tests, including property-based tests of the max-difficulty rule
+- **269** backend tests, including property-based tests of the max-difficulty rule
 - **Clinical validation** ([docs/validation](docs/validation/README.md)): scoring benchmark
   (held-out κ = 0.95, 1.0% false accepts), Philadelphia Naming Test error types, a
-  difficulty audit against word norms (ρ = 0.84) and BOSS name agreement, a raw-vs-shipped GenAI audit (14.7% of raw
-  outputs leaked the answer; none reached patients), a learner simulation (ability-guided
-  progression keeps 71% of practice in the productive band vs 45%), and ready-to-run study
-  protocols for clinicians, older adults and people with aphasia
-- **23** Vitest unit tests and **23 Playwright end-to-end** tests, with axe accessibility checks on every screen
+  difficulty audit against word norms and BOSS name agreement (levels rebalanced), a
+  raw-vs-shipped GenAI audit (14.7% of raw outputs leaked the answer; none reached
+  patients; feedback valid 89% first time), a learner simulation, and study protocols for
+  clinicians, older adults and people with aphasia
+- **Dry runs of all three study phases** with simulated participants
+  ([docs/validation/simulated.md](docs/validation/simulated.md)): synthetic, not evidence
+  about people, but they found that the speech recogniser hears 16% of sound errors as the
+  target word, so spoken matches no longer raise difficulty
+- **25** Vitest unit tests and **25 Playwright end-to-end** tests, with axe accessibility
+  checks on every screen and the Phase 2 usability tasks on phone and laptop
 - Phone and tablet layout checks, dependency audits, and a CI workflow
 
 ## 📚 Documentation

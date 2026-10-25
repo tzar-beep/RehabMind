@@ -15,7 +15,7 @@ evidence. The background literature review is in [research/roadmap.md](research/
 | Question | What we can show now (Phase 0, no participants) | What needs people |
 |---|---|---|
 | Is the **scoring** appropriate? | Right/wrong decisions agree with labelled answers (held-out κ = 0.95, 1.0% false accepts). Errors are classified with the Philadelphia Naming Test categories (held-out κ = 0.77). [scoring.md](scoring.md) | Two speech and language therapists (SLPs) label 200 answers: Phase 1 |
-| Are the **generated exercises** appropriate? | Difficulty levels agree with word-frequency norms (ρ = 0.84) but not with BOSS name agreement. The validators stop every leaked answer, wrong first-sound cue and unsafe text: 14.7% of raw model outputs leaked the answer and 23.3% of feedback called a wrong word "nearly right" (0% after the v2 feedback prompt); none reached a patient. [difficulty.md](difficulty.md), [genai.md](genai.md) | SLP panel rates AI vs rule-based items for content validity (CVI): Phase 1 |
+| Are the **generated exercises** appropriate? | Difficulty levels agreed with word-frequency norms (ρ = 0.84) but not with BOSS name agreement, so they were rebalanced to include it. The validators stop every leaked answer, wrong first-sound cue and unsafe text: 14.7% of raw model outputs leaked the answer and 23.3% of feedback called a wrong word "nearly right" (0% after the v2 feedback prompt); none reached a patient. [difficulty.md](difficulty.md), [genai.md](genai.md) | SLP panel rates AI vs rule-based items for content validity (CVI): Phase 1 |
 | Does **personalization** improve training? | In simulation, the new ability-guided mode keeps 71% of practice in the productive band vs 45% for the step rule and 38-41% for fixed difficulty. [personalization.md](personalization.md) | Healthy older adults (Phase 2), then people with aphasia in a single-case study (Phase 3) |
 
 ## Claims we make, and claims we do not
@@ -48,9 +48,16 @@ prototype, not a medical device.
 | Phase | Status | Ethics | What is in the repo |
 |---|---|---|---|
 | **0: Technical validation** | Done | None needed | Scoring benchmark, PNT error classifier, difficulty audit, GenAI audit, learner simulation, plain-language checks, speech-uncertainty flag. Results in [results/](results/) |
-| **1: Expert panel** | Ready to run | Institutional ethics committee (IEC), exempt or expedited review | [Protocol](protocols/phase1-slp-panel.md), blinded [rating packets](review-packets/), [analysis script](../../backend/app/scripts/analyse_panel.py) |
-| **2: Healthy older adults** | Ready to run | IEC expedited review | [Protocol](protocols/phase2-older-adults.md), after-session difficulty rating in the app, pseudonymised [export and analysis](../../backend/app/scripts/study_data.py) |
-| **3: People with aphasia** | Protocol ready; needs a clinical partner | Full IEC review | [Protocol](protocols/phase3-single-case.md), progression-mode switch per constraint version, the same export and analysis |
+| **1: Expert panel** | Dry run done; ready to run with SLPs | Institutional ethics committee (IEC), exempt or expedited review | [Protocol](protocols/phase1-slp-panel.md), blinded [rating packets](review-packets/), [analysis script](../../backend/app/scripts/analyse_panel.py) |
+| **2: Healthy older adults** | Dry run done; ready to run | IEC expedited review | [Protocol](protocols/phase2-older-adults.md), usability e2e test, speech-fidelity script, after-session rating, pseudonymised [export and analysis](../../backend/app/scripts/study_data.py) |
+| **3: People with aphasia** | Dry run done; needs a clinical partner | Full IEC review | [Protocol](protocols/phase3-single-case.md), progression-mode switch per constraint version, the same export and analysis |
+
+**Dry runs with simulated participants** ([simulated.md](simulated.md)). Every phase was run
+end to end with stand-ins (language-model raters, synthetic voices, simulated learners
+practising through the app's own session code) to test the study machinery before people
+are involved. Their figures are synthetic and are not evidence about people. They found
+one real problem: the speech recogniser turned 16% of scripted sound errors into the target
+word, so spoken matches no longer raise difficulty until a real Part B run passes.
 
 Consent materials and the ethics application outline: [protocols/ethics-and-consent.md](protocols/ethics-and-consent.md).
 
@@ -63,6 +70,7 @@ Consent materials and the ethics application outline: [protocols/ethics-and-cons
 | **Plain-language checks** on AI text: rare words, long sentences, patronising tone | `app/validation/plain_language.py` | Aphasia-friendly information guidance |
 | **Ability-guided progression** (clinician opt-in per constraint version) | `app/performance/progression.py` | Simulation showed it keeps practice in the productive band; also the condition switch for Phases 2-3 |
 | **After-session rating** "Too easy / Just right / Too hard" (pictorial, optional) | patient practice screen; clinician overview and sessions | The patient's own report of whether difficulty was right |
+| **Spoken matches hold the level** (and cued successes, in the ability estimate too) until speech is validated | `app/performance/ability.py` `counted_outcome` | Dry run of Phase 2 part B: 16% of sound errors were heard as the target |
 
 ## Reproduce everything
 
