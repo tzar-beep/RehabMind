@@ -9,8 +9,10 @@ import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
 import { ApiError, apiFetch } from "@/lib/api/client";
 import { MeSchema, ROLE_HOME } from "@/lib/api/schemas";
+import { cn } from "@/lib/utils";
 
-export function LoginForm() {
+/** `inline` lays the fields and button out in one row on large screens. */
+export function LoginForm({ inline = false }: { inline?: boolean }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -47,8 +49,20 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
-      {error && <Alert tone="error">{error}</Alert>}
+    <form
+      onSubmit={onSubmit}
+      noValidate
+      className={cn(
+        "flex flex-col gap-6",
+        inline &&
+          "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end lg:gap-x-4 lg:gap-y-4 lg:[&_input]:min-h-14",
+      )}
+    >
+      {error && (
+        <div className={cn(inline && "lg:col-span-3")}>
+          <Alert tone="error">{error}</Alert>
+        </div>
+      )}
       <TextField
         ref={emailRef}
         label="Email"
@@ -64,7 +78,12 @@ export function LoginForm() {
         autoComplete="current-password"
         required
       />
-      <Button type="submit" size="lg" busy={busy}>
+      <Button
+        type="submit"
+        size="lg"
+        busy={busy}
+        className={inline ? "lg:min-h-14 lg:px-8" : ""}
+      >
         {busy ? "Signing in…" : "Sign in"}
       </Button>
     </form>

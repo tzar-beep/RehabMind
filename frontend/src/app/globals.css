@@ -129,6 +129,11 @@ body {
   line-height: 1.6;
 }
 
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
+}
+
 /* A single, highly visible focus style everywhere. */
 :focus-visible {
   outline: 3px solid var(--color-focus);
