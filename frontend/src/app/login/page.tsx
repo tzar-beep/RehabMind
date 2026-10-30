@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { BrandMark } from "@/components/BrandMark";
+import { LabelStrip } from "@/components/LabelStrip";
 import { Alert } from "@/components/ui/Alert";
 import { ROLE_HOME } from "@/lib/api/schemas";
 import { getCurrentUser } from "@/lib/api/server";
@@ -83,27 +84,26 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           <div
             aria-hidden="true"
             className={cn(
-              s.band,
+              "strap",
               s.fasten,
               "absolute inset-y-0 right-[-3rem] my-auto hidden h-24 items-center rounded-l-full pl-4 lg:left-[max(1.5rem,calc((100vw-72rem)/2))] lg:flex",
             )}
           >
-            <span className={cn(s.stud, s.press, "size-14 shrink-0 rounded-full")} />
+            <span className={cn("strap-stud", s.press, "size-14 shrink-0 rounded-full")} />
             <div className="ml-auto flex items-center gap-[clamp(2.25rem,4vw,3.5rem)] pr-16">
               {Array.from({ length: 10 }, (_, i) => (
-                <span key={i} className={cn(s.hole, "size-6 shrink-0 rounded-full")} />
+                <span key={i} className={"strap-hole size-6 shrink-0 rounded-full"} />
               ))}
             </div>
           </div>
 
           <section
             aria-labelledby="sign-in-heading"
-            className="relative mx-3 overflow-hidden rounded-[1.5rem] border border-line bg-white shadow-[0_28px_50px_-26px_rgb(28_36_48/0.45)] sm:mx-6 lg:mx-0 lg:ml-36 lg:w-[min(52rem,calc(100vw-22rem))]"
+            className="relative mx-3 overflow-hidden rounded-card border border-line bg-surface shadow-card shadow-float sm:mx-6 lg:mx-0 lg:ml-36 lg:w-[min(52rem,calc(100vw-22rem))]"
           >
-            <p className="flex items-center justify-between gap-4 bg-accent px-[clamp(1.25rem,2.5vw,2rem)] py-2 text-sm font-bold text-white">
-              <span>Speech and language practice</span>
-              <span className="hidden text-[#cfeee8] sm:inline">One sign-in for the whole care team</span>
-            </p>
+            <LabelStrip aside="One sign-in for the whole care team">
+              Speech and language practice
+            </LabelStrip>
 
             <div className="grid gap-x-8 gap-y-5 p-[clamp(1.25rem,2.5vw,2rem)] lg:grid-cols-[minmax(0,1fr)_auto]">
               <div className="min-w-0">

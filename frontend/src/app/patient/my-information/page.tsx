@@ -33,7 +33,7 @@ export default async function MyInformation() {
       <div className="grid min-h-0 flex-1 gap-4 overflow-y-auto lg:grid-cols-2">
         <section
           aria-labelledby="who-heading"
-          className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5"
+          className="flex flex-col gap-4 rounded-card border border-line bg-surface shadow-card p-5"
         >
           <h2 id="who-heading" className="text-xl font-bold">
             Who can see your practice
@@ -84,7 +84,7 @@ export default async function MyInformation() {
 
         <section
           aria-labelledby="kept-heading"
-          className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5"
+          className="flex flex-col gap-4 rounded-card border border-line bg-surface shadow-card p-5"
         >
           <h2 id="kept-heading" className="text-xl font-bold">
             What is kept

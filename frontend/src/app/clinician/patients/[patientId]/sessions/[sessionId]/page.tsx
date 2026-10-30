@@ -127,7 +127,7 @@ export default async function SessionDetailPage({
         {data.exercises.map((ex) => (
           <li
             key={ex.position}
-            className={`grid gap-4 rounded-card border border-line bg-surface p-5 ${ex.image_url ? "sm:grid-cols-[96px_1fr]" : ""}`}
+            className={`grid gap-4 rounded-card border border-line bg-surface shadow-card p-5 ${ex.image_url ? "sm:grid-cols-[96px_1fr]" : ""}`}
           >
             {ex.image_url && (
               // eslint-disable-next-line @next/next/no-img-element

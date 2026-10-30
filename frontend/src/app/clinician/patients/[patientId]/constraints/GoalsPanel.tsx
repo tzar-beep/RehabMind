@@ -125,7 +125,7 @@ export function GoalsPanel({
   return (
     <div className="flex flex-col gap-4">
       {current.length > 0 ? (
-        <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
           {current.map((g) => (
             <GoalRow
               key={g.id}
@@ -144,7 +144,7 @@ export function GoalsPanel({
       {activeCount < MAX_ACTIVE ? (
         <form
           onSubmit={add}
-          className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5"
+          className="flex flex-col gap-3 rounded-card border border-line bg-surface shadow-card p-5"
         >
           <p className="font-bold">Add a goal</p>
           <div className="flex flex-wrap items-end gap-3">
@@ -209,7 +209,7 @@ export function GoalsPanel({
           <summary className="min-h-target cursor-pointer py-2 font-bold text-accent">
             Ended goals ({ended.length})
           </summary>
-          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
             {ended.map((g) => (
               <GoalRow key={g.id} goal={g} />
             ))}

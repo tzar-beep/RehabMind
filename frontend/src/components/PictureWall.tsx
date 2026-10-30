@@ -37,7 +37,7 @@ export function PictureWall({
       aria-label={label}
       aria-hidden={label ? undefined : true}
       className={cn(
-        "grid grid-cols-3 gap-2 overflow-hidden rounded-card",
+        "grid grid-cols-3 gap-px overflow-hidden rounded-control border border-line bg-line",
         className,
       )}
     >

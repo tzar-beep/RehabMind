@@ -38,7 +38,7 @@ export function WeekActivity({
   return (
     <section
       aria-labelledby="week-heading"
-      className="grid shrink-0 gap-x-8 gap-y-3 rounded-card border border-line bg-surface p-4 sm:p-5 md:grid-cols-[minmax(0,1fr)_auto] short:max-md:gap-y-2"
+      className="grid shrink-0 gap-x-8 gap-y-3 rounded-card border border-line bg-surface shadow-card p-4 sm:p-5 md:grid-cols-[minmax(0,1fr)_auto] short:max-md:gap-y-2"
     >
       <div className="flex min-w-0 flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">

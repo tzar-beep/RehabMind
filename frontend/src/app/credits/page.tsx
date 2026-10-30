@@ -33,12 +33,18 @@ export default async function CreditsPage() {
   return (
     <>
       <SkipLink />
-      <header className="border-b border-line bg-surface">
+      <header className="strap">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
-          <BrandMark />
+          <p className="flex items-center gap-3">
+            <span
+              aria-hidden="true"
+              className="strap-stud hidden size-7 shrink-0 rounded-full sm:block"
+            />
+            <BrandMark />
+          </p>
           <Link
             href={me ? ROLE_HOME[me.role] : "/login"}
-            className="font-bold text-accent underline-offset-4 hover:underline"
+            className="font-bold text-ink underline-offset-4 hover:underline"
           >
             {me ? "Back to the app" : "Sign in"}
           </Link>
@@ -107,7 +113,7 @@ export default async function CreditsPage() {
           <h2 id="scenes" className="text-xl font-bold">
             Scenes: Wikimedia Commons
           </h2>
-          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
             {scenes.map((c) => (
               <li key={c.image} className="flex items-center gap-4 px-4 py-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

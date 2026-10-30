@@ -156,7 +156,7 @@ export default async function ConstraintsPage({
               }
             />
           )}
-          <ol className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+          <ol className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
             {(showAll ? versions : versions.slice(0, RECENT_VERSIONS)).map(
               (v) => (
                 <VersionRow key={v.id} v={v} />

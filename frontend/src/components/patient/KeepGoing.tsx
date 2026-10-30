@@ -47,12 +47,12 @@ export function KeepGoing({
 
   return (
     <>
-      <p className="max-w-md text-xl text-brand-muted">
+      <p className="max-w-md text-xl text-ink-muted">
         You stopped after {answered} {answered === 1 ? "picture" : "pictures"}.
         You can carry on where you left off.
       </p>
       {error && (
-        <p role="alert" className="text-lg font-bold">
+        <p role="alert" className="text-lg font-bold text-danger">
           {error}
         </p>
       )}
@@ -61,7 +61,7 @@ export function KeepGoing({
           type="button"
           onClick={keepGoing}
           disabled={busy}
-          className="inline-flex min-h-16 w-full items-center justify-center gap-3 rounded-control bg-white px-8 text-xl font-bold whitespace-nowrap text-brand-deep transition-[background-color,transform] hover:bg-accent-soft active:scale-[0.98] disabled:opacity-70 sm:w-fit"
+          className="inline-flex min-h-16 w-full items-center justify-center gap-3 rounded-control bg-accent px-8 text-xl font-bold whitespace-nowrap text-white transition-[background-color,transform] hover:bg-accent-hover active:scale-[0.98] disabled:opacity-70 sm:w-fit"
         >
           {busy ? "Opening…" : "Keep going"}
           <ArrowRight aria-hidden="true" size={24} />

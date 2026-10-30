@@ -62,7 +62,7 @@ export function Facts({
 }) {
   return (
     <dl
-      className={`grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line ${
+      className={`grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line shadow-card ${
         COLUMNS[items.length] ?? "md:grid-cols-4"
       }`}
     >

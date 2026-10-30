@@ -60,7 +60,7 @@ export default async function AdminHome() {
       <div
         tabIndex={0}
         aria-label="Scrollable table"
-        className="overflow-x-auto rounded-card border border-line bg-surface"
+        className="overflow-x-auto rounded-card border border-line bg-surface shadow-card"
       >
         <table className="w-full text-left">
           <caption className="sr-only">All user accounts</caption>

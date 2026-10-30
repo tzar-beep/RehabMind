@@ -55,7 +55,7 @@ function ChartCard({
   return (
     <figure
       aria-labelledby={`${id}-t`}
-      className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-line bg-surface shadow-card p-5"
     >
       <figcaption>
         <p id={`${id}-t`} className="font-bold">

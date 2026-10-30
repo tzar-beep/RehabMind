@@ -80,7 +80,7 @@ export function OwnWords({
           {words.map((w) => (
             <li
               key={w.id}
-              className="flex flex-col gap-2 rounded-card border border-line bg-surface p-3"
+              className="flex flex-col gap-2 rounded-card border border-line bg-surface shadow-card p-3"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -124,7 +124,7 @@ export function OwnWords({
 
       <form
         onSubmit={add}
-        className="grid gap-4 rounded-card border border-line bg-surface p-5 md:grid-cols-[auto_1fr]"
+        className="grid gap-4 rounded-card border border-line bg-surface shadow-card p-5 md:grid-cols-[auto_1fr]"
       >
         <label
           htmlFor={fileId}

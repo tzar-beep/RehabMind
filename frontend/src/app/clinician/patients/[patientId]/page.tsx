@@ -250,7 +250,7 @@ export default async function PatientOverviewPage({
         description="Scripts practised at home in the last 14 days. Lines said are the patient's own report."
       >
         {practisedPhrases.length ? (
-          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
             {practisedPhrases.map((p) => (
               <li
                 key={p.id}

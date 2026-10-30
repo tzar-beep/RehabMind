@@ -236,7 +236,7 @@ export default async function AIGenerationsPage({
             accepted first time · {counts.ai_generated_after_retry ?? 0}{" "}
             accepted after retry · {counts.rule_based_used ?? 0} rule-based.
           </p>
-          <ol className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+          <ol className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
             {runs.map((run, i) => (
               <Run
                 key={`${run.session_id}-${run.position ?? run.created_at}-${i}`}

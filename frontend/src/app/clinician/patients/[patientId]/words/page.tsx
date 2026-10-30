@@ -47,7 +47,7 @@ function lastPractised(iso: string) {
 
 function WordCard({ w }: { w: WordProgress }) {
   return (
-    <li className="flex gap-4 rounded-card border border-line bg-surface p-4">
+    <li className="flex gap-4 rounded-card border border-line bg-surface shadow-card p-4">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={w.image_url}
@@ -116,7 +116,7 @@ export default async function WordsPage({
             {GROUPS.map((g) => (
               <div
                 key={g.status}
-                className="rounded-card border border-line bg-surface p-4"
+                className="rounded-card border border-line bg-surface shadow-card p-4"
               >
                 <dt className="text-sm text-ink-muted">{g.title}</dt>
                 <dd className="text-2xl font-bold tabular-nums">

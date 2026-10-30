@@ -23,7 +23,7 @@ export function WordCard({
   const [revealed, setRevealed] = useState(false);
   const hidden = listenFirst && speakable && !revealed;
   return (
-    <div className="flex flex-wrap items-center justify-center gap-4 rounded-card border border-line bg-surface px-6 py-5 lg:justify-start">
+    <div className="flex flex-wrap items-center justify-center gap-4 rounded-card border border-line bg-surface shadow-card px-6 py-5 lg:justify-start">
       {hidden ? (
         <span className="text-xl text-ink-muted">Listen to the word.</span>
       ) : (

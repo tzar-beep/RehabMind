@@ -229,7 +229,7 @@ export default async function ClinicianDashboard() {
             <h2 id="patient-list" className="text-xl font-bold">
               Patients
             </h2>
-            <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+            <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
               {ordered.map((p) => (
                 <PatientRow key={p.id} p={p} />
               ))}

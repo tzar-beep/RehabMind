@@ -102,7 +102,7 @@ export default async function CarerHome() {
         {summary && <WeekActivity activity={summary.activity} />}
         <section
           aria-labelledby="goals-heading"
-          className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5"
+          className="flex flex-col gap-4 rounded-card border border-line bg-surface shadow-card p-5"
         >
           <h2
             id="goals-heading"

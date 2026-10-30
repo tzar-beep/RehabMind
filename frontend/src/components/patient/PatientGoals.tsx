@@ -10,7 +10,7 @@ export function PatientGoals({ goals }: { goals: Goal[] }) {
   return (
     <section
       aria-labelledby="goals-heading"
-      className="flex w-full flex-col gap-3 rounded-card bg-white/8 p-5 md:w-[22rem]"
+      className="flex w-full flex-col gap-3 rounded-control border border-line bg-canvas p-5 md:w-[20rem]"
     >
       <h2
         id="goals-heading"
@@ -30,7 +30,7 @@ export function PatientGoals({ goals }: { goals: Goal[] }) {
                   <CircleCheck
                     aria-hidden="true"
                     size={20}
-                    className="mt-0.5 shrink-0 text-brand-glow"
+                    className="mt-0.5 shrink-0 text-accent"
                   />
                 )}
                 {g.title}
@@ -38,14 +38,14 @@ export function PatientGoals({ goals }: { goals: Goal[] }) {
               <span className="flex items-center gap-3">
                 <span
                   aria-hidden="true"
-                  className="h-2.5 flex-1 overflow-hidden rounded-full bg-white/15"
+                  className="h-2.5 flex-1 overflow-hidden rounded-full bg-line"
                 >
                   <span
-                    className="block h-full rounded-full bg-brand-glow"
+                    className="block h-full rounded-full bg-accent"
                     style={{ width: `${share * 100}%` }}
                   />
                 </span>
-                <span className="text-sm text-brand-muted tabular-nums">
+                <span className="text-sm text-ink-muted tabular-nums">
                   {reached ? "Reached!" : `${g.progress} of ${g.target}`}
                 </span>
               </span>

@@ -234,7 +234,7 @@ export function PracticeSession() {
               alt=""
               width={200}
               height={200}
-              className="absolute inset-0 size-full rounded-card border border-line bg-surface object-contain p-2"
+              className="absolute inset-0 size-full rounded-card border border-line bg-surface shadow-card object-contain p-2"
             />
           </div>
         )}
@@ -495,7 +495,7 @@ export function PracticeSession() {
                 // Absolutely placed in the space left, so it can never push anything off screen.
                 isPhoto
                   ? "absolute inset-0 size-full rounded-card bg-surface object-contain p-2"
-                  : "absolute inset-0 size-full rounded-card border border-line bg-surface object-contain p-6"
+                  : "absolute inset-0 size-full rounded-card border border-line bg-surface shadow-card object-contain p-6"
               }
             />
           )}
@@ -825,7 +825,7 @@ function SessionRecap({ sessionId }: { sessionId: string }) {
           <li
             key={w.word}
             style={{ "--i": i } as CSSProperties}
-            className="flex w-24 animate-rise flex-col items-center gap-1 rounded-card border border-line bg-surface p-2 [animation-delay:calc(var(--i)*80ms)]"
+            className="flex w-24 animate-rise flex-col items-center gap-1 rounded-card border border-line bg-surface shadow-card p-2 [animation-delay:calc(var(--i)*80ms)]"
           >
             {w.image_url && (
               // eslint-disable-next-line @next/next/no-img-element
