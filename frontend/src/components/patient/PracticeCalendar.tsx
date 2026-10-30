@@ -47,7 +47,13 @@ export function picturesByDay(activity: PracticeActivity): Map<string, number> {
  * The patient's practice as a calendar of days (columns are weeks, Monday at the top).
  * Activity only, never scores, and no streak to break: an empty day is just empty.
  */
-export function PracticeCalendar({ activity }: { activity: PracticeActivity }) {
+export function PracticeCalendar({
+  activity,
+  name,
+}: {
+  activity: PracticeActivity;
+  name?: string;
+}) {
   const byDay = picturesByDay(activity);
   const today = new Date();
   const first = weekStart(today);
@@ -68,8 +74,8 @@ export function PracticeCalendar({ activity }: { activity: PracticeActivity }) {
   return (
     <figure className="flex min-h-0 flex-col gap-1">
       <figcaption className="sr-only">
-        Practice calendar for the last {CALENDAR_WEEKS} weeks: you practised on{" "}
-        {days} {days === 1 ? "day" : "days"}.
+        Practice calendar for the last {CALENDAR_WEEKS} weeks: {name ?? "you"}{" "}
+        practised on {days} {days === 1 ? "day" : "days"}.
       </figcaption>
       <div aria-hidden="true" className="h-28 w-full short:max-md:h-24">
         <HeatmapInteractionProvider>

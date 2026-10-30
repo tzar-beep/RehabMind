@@ -99,7 +99,7 @@ export default async function CarerHome() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-        {summary && <WeekActivity activity={summary.activity} />}
+        {summary && <WeekActivity activity={summary.activity} name={name} />}
         <section
           aria-labelledby="goals-heading"
           className="flex flex-col gap-4 rounded-card border border-line bg-surface shadow-card p-5"

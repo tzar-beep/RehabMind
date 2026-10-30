@@ -16,10 +16,13 @@ const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 export function WeekActivity({
   activity,
   checkIn = false,
+  name,
 }: {
   activity: PracticeActivity;
   /** The patient's own home: ask how they are today. */
   checkIn?: boolean;
+  /** Family see this card about someone else: the patient's name replaces "you". */
+  name?: string;
 }) {
   const byDay = picturesByDay(activity);
   const today = new Date();
@@ -29,10 +32,11 @@ export function WeekActivity({
     return byDay.get(dayKey(d)) ?? 0;
   });
   const activeDays = thisWeek.filter((n) => n > 0).length;
+  const who = name ?? "You";
   const message = thisWeek[0]
-    ? "You practised today. Well done."
+    ? `${who} practised today. Well done.`
     : activeDays
-      ? `You practised on ${activeDays} ${activeDays === 1 ? "day" : "days"} this week.`
+      ? `${who} practised on ${activeDays} ${activeDays === 1 ? "day" : "days"} this week.`
       : "Every day is a fresh start.";
 
   return (
@@ -44,13 +48,13 @@ export function WeekActivity({
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
           <div className="flex flex-wrap items-baseline gap-x-3">
             <h2 id="week-heading" className="text-xl font-bold">
-              Your practice
+              {name ? `${name}’s practice` : "Your practice"}
             </h2>
             <p className="text-ink-muted">{message}</p>
           </div>
           {checkIn && <MoodCheckin />}
         </div>
-        <PracticeCalendar activity={activity} />
+        <PracticeCalendar activity={activity} name={name} />
       </div>
       <dl className="grid grid-cols-2 gap-3 md:w-44 md:grid-cols-1 md:content-center short:max-md:grid-cols-1 short:max-md:gap-0">
         <Stat label="Pictures practised" value={activity.pictures_practised} />

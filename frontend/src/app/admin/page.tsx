@@ -66,19 +66,19 @@ export default async function AdminHome() {
           <caption className="sr-only">All user accounts</caption>
           <thead className="border-b border-line text-sm text-ink-muted">
             <tr>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-4 py-3">
                 Name
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-4 py-3">
                 Role
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-4 py-3">
                 Status
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-4 py-3">
                 Care team
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-4 py-3">
                 Actions
               </th>
             </tr>
@@ -86,45 +86,45 @@ export default async function AdminHome() {
           <tbody className="divide-y divide-line">
             {users.map((u) => (
               <tr key={u.id} className="align-top">
-                <td className="px-6 py-3">
+                <td className="px-4 py-3">
                   <span className="flex items-center gap-3">
                     <Avatar name={u.display_name} size="sm" />
-                    <span className="flex flex-col">
+                    <span className="flex min-w-0 flex-col">
                       <span className="font-bold whitespace-nowrap">
                         {u.display_name}
                       </span>
-                      <span className="text-sm text-ink-muted">{u.email}</span>
+                      <span className="text-sm [overflow-wrap:anywhere] text-ink-muted">
+                        {u.email}
+                      </span>
                     </span>
                   </span>
                 </td>
-                <td className="px-6 py-3">
+                <td className="px-4 py-3">
                   <span className="rounded-full bg-canvas px-3 py-1 text-sm font-bold capitalize">
                     {u.role}
                   </span>
                 </td>
-                <td className="px-6 py-3">
+                <td className="px-4 py-3">
                   {u.is_active ? (
                     <StatusBadge tone="success">Active</StatusBadge>
                   ) : (
                     <StatusBadge tone="neutral">Disabled</StatusBadge>
                   )}
                 </td>
-                <td className="px-6 py-3">
+                <td className="px-4 py-3">
                   {u.role === "carer" ? (
-                    <span className="whitespace-nowrap">
+                    <span>
                       Supports {u.supports.join(", ") || "nobody yet"}
                     </span>
                   ) : u.role !== "patient" ? (
                     <span className="text-ink-muted">—</span>
                   ) : u.care_team.length ? (
-                    <span className="whitespace-nowrap">
-                      {u.care_team.join(", ")}
-                    </span>
+                    <span>{u.care_team.join(", ")}</span>
                   ) : (
                     <StatusBadge tone="warning">Not assigned</StatusBadge>
                   )}
                 </td>
-                <td className="px-6 py-3 align-top">
+                <td className="px-4 py-3 align-top">
                   <AccountActions
                     user={u}
                     clinicians={clinicians}
