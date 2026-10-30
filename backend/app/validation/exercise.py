@@ -86,7 +86,7 @@ def check_clinical(
     return Verdict(not reasons, None if not reasons else "clinical", reasons, out)
 
 
-def _leak_terms(stim: Stimulus, exercise_type: str) -> list[str]:
+def leak_terms(stim: Stimulus, exercise_type: str) -> list[str]:
     if exercise_type == "picture_description":
         return [normalize(c["name"]) for c in stim.task["description"]["concepts"]]
     if exercise_type == "sentence_construction":
@@ -108,7 +108,7 @@ def check_safety(
     out: ExerciseOutput, stim: Stimulus, exercise_type: str = "picture_naming"
 ) -> Verdict:
     reasons: list[str] = []
-    answers = _leak_terms(stim, exercise_type)
+    answers = leak_terms(stim, exercise_type)
     task_words = _task_words(stim)
     texts = [("prompt", out.prompt, MAX_PROMPT_WORDS)]
     if out.semantic_cue:

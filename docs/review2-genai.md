@@ -148,6 +148,10 @@ and is labelled as "not a language model" in the UI.
 
 ## 4. Prompt engineering (criterion 3)
 
+Later versions and a measured comparison are in
+[prompt-engineering.md](prompt-engineering.md). The examples below show the prompts as they
+were at this review.
+
 Code: `backend/app/ai/prompts.py`. Each prompt is a **system message** (role, rules) plus a
 **user message** (structured context and task), and every call sends a **JSON Schema** for the
 output. Versions are stored with every call in `ai_generations.prompt_version`.

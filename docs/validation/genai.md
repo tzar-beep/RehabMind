@@ -80,9 +80,12 @@ blind on relevance, clarity, tone and difficulty fit
   they are about trying again, not about what a word means. Reproduce with
   `uv run python -m app.scripts.genai_audit --repeats 0 --feedback 120`.
 
-- **About 30% of exercise requests fall back to rule-based text.** The fallback is safe, so
-  this is a cost (less varied wording), not a risk. Most rejections are answer leaks and long
-  prompts, so a prompt revision that states the word limits and forbids naming the target
-  should lower it. That would be prompt version 2, re-audited with the same script.
+- **Done (exercise prompt v2):** about 30% of exercise requests fell back to rule-based text.
+  `exercise_generation_v2` cuts that to about 7% on held-out pictures, valid first time 61%
+  to 83%: [prompt-engineering.md](../prompt-engineering.md). Picture description did not
+  clearly improve. The results table at the top of this page predates this change.
+- **Done (feedback prompt v4):** removed an example that described the picture, and flattened
+  answers to one line. On the same audit: 94% valid first time, 96% after the retry, no score
+  contradictions.
 - Blinding in the panel is partial: rule-based questions are always "What is this?". Raters
   are asked to judge the cues, and the analysis reports both sources separately.

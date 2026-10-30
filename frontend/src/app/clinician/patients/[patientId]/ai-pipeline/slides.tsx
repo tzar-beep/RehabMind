@@ -234,13 +234,15 @@ const PROMPT_PARTS: [RegExp, string, string][] = [
     "bg-[#e5edf9] border-[#2f5ea8]",
   ],
   [/^TASK/, "Task", "bg-warning-soft border-warning"],
+  [/^(EXAMPLE|If the candidate|GOOD|Other GOOD|BAD)/, "Few-shot", "bg-canvas border-accent"],
+  [/^CHECK/, "Self-check", "bg-canvas border-line-strong"],
   [/^OUTPUT/, "Format", "bg-[#fde8ef] border-[#9d2c5a]"],
 ];
 
 export function PromptVisual({ gen }: { gen: PipelineGeneration }) {
   const lines = (gen.user_prompt ?? "")
     .split("\n")
-    .filter((l) => /^[A-Z][A-Z ]+[:(]/.test(l));
+    .filter((l) => /^([A-Z][A-Z ]+[:(]|CHECK|If the candidate|Other GOOD)/.test(l));
   return (
     <div className="flex flex-col gap-2">
       <motion.p

@@ -154,11 +154,11 @@ flowchart TD
     REL -- no --> E
     REL -- yes --> NLP
     NLP --> SC[Deterministic score<br/>final, never changed by AI]
-    SC --> FBK[GenAI feedback<br/>prompt feedback_generation_v1]
+    SC --> FBK[GenAI feedback<br/>prompt feedback_generation_v4]
     SC --> PERF[Performance profile +<br/>ML ability estimate]
     PERF --> POL[Difficulty policy<br/>clamped to clinician range]
     POL --> CTX[Structured patient context]
-    CTX --> PR[Prompt engineering<br/>exercise_generation_v1]
+    CTX --> PR[Prompt engineering<br/>exercise_generation_v2]
     PR --> LLM[Transformer LLM<br/>local, via Ollama]
     LLM --> V{Validation<br/>schema · clinical · safety}
     V -- pass --> ISS[ExerciseIssuer + DB trigger]
@@ -241,6 +241,7 @@ Self-hosted HTTPS stack: `docker compose --env-file .env.production -f compose.p
 [Clinical constraints](docs/clinical-constraints.md) ·
 [Clinical validation](docs/validation/README.md) ·
 [AI pipeline](docs/ai-pipeline.md) ·
+[Prompt engineering](docs/prompt-engineering.md) ·
 [Clinician workflow](docs/clinician-workflow.md) ·
 [Security](docs/security.md) ·
 [Privacy](docs/privacy.md) ·

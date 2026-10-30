@@ -166,7 +166,7 @@ function buildSteps(t: Trace, next: Trace | undefined): Step[] {
       summary: gen ? gen.prompt_version : "—",
       state: gen ? "ok" : "skip",
       explain:
-        "A versioned, structured prompt: role, objective, patient context, constraints, task, safety rules and a JSON output format.",
+        "A versioned, structured prompt: role, objective, patient context, constraints, task, safety rules, good and bad examples, a final self-check and a JSON output format.",
       visual: gen ? <PromptVisual gen={gen} /> : noAi,
       raw: gen ? { system: gen.system_prompt, user: gen.user_prompt } : null,
       ms: 6500,
@@ -309,7 +309,7 @@ function buildSteps(t: Trace, next: Trace | undefined): Step[] {
             : "—",
       state: !fb ? (r ? "skip" : "idle") : fb.output ? genState(fb) : "warn",
       explain:
-        "After scoring, the LLM writes a short supportive tip (feedback_generation_v1). Tips that contradict the score are rejected.",
+        "After scoring, the LLM writes a short supportive tip. Tips that contradict the score are rejected.",
       visual: <FeedbackVisual gen={fb} />,
       raw: fb?.attempts ?? null,
       ms: 6000,

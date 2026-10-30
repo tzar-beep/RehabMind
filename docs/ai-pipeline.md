@@ -1,9 +1,10 @@
 # AI pipeline
 
 Generative AI has three bounded jobs (see [review2-genai.md](review2-genai.md) for the full
-write-up): personalize the next exercise's wording for picture naming, sentence construction
-and picture description (`exercise_generation_v1`), write a short supportive tip after an
-answer is scored (`feedback_generation_v1`), and draft a clinician progress summary
+write-up, and [prompt-engineering.md](prompt-engineering.md) for how the prompts were built
+and measured): personalize the next exercise's wording for picture naming, sentence construction
+and picture description (`exercise_generation_v2`), write a short supportive tip after an
+answer is scored (`feedback_generation_v4`), and draft a clinician progress summary
 (`progress_summary_v1`). The real model is a local transformer LLM served by **Ollama**
 (default `qwen2.5:3b`).
 

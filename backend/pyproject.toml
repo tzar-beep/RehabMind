@@ -48,4 +48,4 @@ ignore = ["S101"]
 "tests/**" = ["S105", "S106"]
 "migrations/**" = ["E501"]
 # Seeded, reproducible randomness for validation studies (not security).
-"app/scripts/{simulate_learners,genai_audit}.py" = ["S311"]
+"app/scripts/{simulate_learners,genai_audit,prompt_study}.py" = ["S311"]

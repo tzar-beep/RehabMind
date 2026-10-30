@@ -17,8 +17,8 @@ in `ai_generations`, so each logged output can be traced to the exact prompt tha
 import json
 from typing import Any
 
-EXERCISE_PROMPT_VERSION = "exercise_generation_v1"
-FEEDBACK_PROMPT_VERSION = "feedback_generation_v3"
+EXERCISE_PROMPT_VERSION = "exercise_generation_v2"
+FEEDBACK_PROMPT_VERSION = "feedback_generation_v4"
 SUMMARY_PROMPT_VERSION = "progress_summary_v1"
 
 
@@ -36,7 +36,9 @@ SAFETY RULES:
 - Choose exactly one stimulus from CANDIDATE STIMULI, by its slug. Never invent pictures, \
 image paths, URLs or answers.
 - Copy that stimulus's difficulty value exactly.
-- Never reveal the answer in the prompt or hints.
+- Never reveal the answer in the prompt or hints. A candidate's avoid_words must not appear \
+in anything you write, not even as a plural.
+- You cannot see the pictures. Write only from what the word means.
 - Use familiar, everyday words and short sentences. Be warm and respectful.
 - Never mention health, the brain, recovery, therapy, treatment, diagnosis or medicine.
 - No numbers or digits in any text field. No pressure ("must", "failed").
@@ -45,21 +47,49 @@ image paths, URLs or answers.
 _HINT_RULES = {
     "picture_naming": (
         'Write "semantic_cue": a meaning hint (what the object is or is used for), at most '
-        "12 words. It must NOT contain the answer word or its plural. Example for the "
-        'answer "cup": "You drink tea or coffee from it." Write "phonemic_cue": only the '
-        "first one or two letters of the answer word, letters only, no hyphen. Example for "
-        '"cup": "c". Do not write "hint".'
+        '12 words, using none of the avoid_words. Write "phonemic_cue": copy the first_letters '
+        'value of the chosen candidate exactly. Do not write "hint".'
     ),
     "sentence_construction": (
         'Write "hint": one short tip (at most 12 words) on how to start or order the '
-        "sentence. It may use at most the first two words of the sentence, never the whole "
+        "sentence. It may use at most one important word from the target, never the whole "
         'sentence. Do not write "semantic_cue" or "phonemic_cue".'
     ),
     "picture_description": (
-        'Write "hint": one short tip (at most 12 words) on what to look for, such as who is '
-        "there, what they are doing, or where. Do not name the people, animals, objects or "
-        'actions in the picture. Example: "Say who you can see and what is happening." '
-        'Do not write "semantic_cue" or "phonemic_cue".'
+        'Write "hint": one short tip (at most 12 words) that would fit ANY picture, because you '
+        "cannot see this one. Use only general words such as who, what, where, someone and "
+        "happening. Never name a person, animal, object, place or action, and use none of the "
+        'avoid_words. Do not write "semantic_cue" or "phonemic_cue".'
+    ),
+}
+
+# One good and one bad example per type (contrastive few-shot), about a picture that is never
+# a candidate. The bad example shows the most common rejection for that type in the audit.
+_EXAMPLES = {
+    "picture_naming": (
+        'If the candidate were {"slug": "example_cup", "target": "cup", "difficulty": 1, '
+        '"avoid_words": ["cup", "mug"], "first_letters": "c"}:\n'
+        'GOOD: {"stimulus_slug": "example_cup", "difficulty": 1, "prompt": "What is this?", '
+        '"semantic_cue": "You pour tea or coffee in it.", "phonemic_cue": "c", '
+        '"rationale": "introduce_new"}\n'
+        'BAD: "semantic_cue": "A cup holds your tea." (it uses an avoid word)'
+    ),
+    "sentence_construction": (
+        'If the candidate were {"slug": "example_scene", "target": "The cat sleeps on the bed", '
+        '"difficulty": 2}:\n'
+        'GOOD: {"stimulus_slug": "example_scene", "difficulty": 2, "prompt": '
+        '"Put the words in order.", "hint": "Start with who is doing it.", '
+        '"rationale": "introduce_new"}\n'
+        'BAD: "hint": "Say the cat sleeps, then the bed." (it gives away the sentence)'
+    ),
+    "picture_description": (
+        'If the candidate were {"slug": "example_scene", "difficulty": 2, '
+        '"avoid_words": ["man", "bicycle", "riding"]}:\n'
+        'GOOD: {"stimulus_slug": "example_scene", "difficulty": 2, "prompt": '
+        '"What is happening here?", "hint": "Say who you can see and what is happening.", '
+        '"rationale": "introduce_new"}\n'
+        'Other GOOD hints: "Start with who is there." "Say where it is happening."\n'
+        'BAD: "hint": "Notice the people and the ball." (it guesses what is in the picture)'
     ),
 }
 
@@ -80,6 +110,12 @@ unseen picture after success, or the weak category after mistakes.
 3. {hint_rule}
 4. Set "rationale" to one code: reinforce_recent_error, consolidate_success, introduce_new \
 or category_variety.
+
+EXAMPLE (a different picture; do not copy its words):
+{example}
+
+CHECK before answering: the slug and difficulty are copied from one candidate; no avoid word \
+appears; every text is within its word limit.
 
 OUTPUT: one JSON object with stimulus_slug, difficulty, prompt, {fields}rationale."""
 
@@ -121,6 +157,7 @@ def exercise_prompts(inp: dict[str, Any]) -> tuple[str, str]:
         categories=", ".join(inp["allowed_categories"]) or "all",
         candidates=json.dumps(inp["candidates"]),
         hint_rule=_HINT_RULES[kind],
+        example=_EXAMPLES[kind],
         fields=_FIELDS[kind],
     )
     return EXERCISE_SYSTEM, user
@@ -181,7 +218,7 @@ _OUTCOME_TASK = {
 _OUTCOME_EXAMPLE = {
     "correct": '{"feedback": "You found the exact name for the teapot. Well done.", '
     '"optional_hint": null}',
-    "near_miss": '{"feedback": "Close: you said teapots, and the picture shows one.", '
+    "near_miss": '{"feedback": "Close: you said teapots, and the word is teapot.", '
     '"optional_hint": "Say just one: teapot."}',
     "incorrect": '{"feedback": "Thank you for trying. You pour hot drinks from it.", '
     '"optional_hint": "Think of breakfast in the kitchen."}',
@@ -223,7 +260,8 @@ def feedback_prompts(inp: dict[str, Any]) -> tuple[str, str]:
         exercise_type=inp["exercise_type"],
         target=inp["target"],
         speech_note=", automatic speech transcript" if inp["mode"] == "speech" else "",
-        response=inp["response"].replace('"', "'"),
+        # One line, no double quotes: an answer cannot pose as a new section of the prompt.
+        response=" ".join(inp["response"].split()).replace('"', "'"),
         analysis=inp["analysis"],
         outcome=_OUTCOME_TEXT[inp["outcome"]],
         outcome_task=_OUTCOME_TASK[inp["outcome"]],

@@ -121,6 +121,7 @@ def exercise_input(kind: str, stim: Stimulus, pool: list[Stimulus]) -> dict:
                 "difficulty": s.difficulty,
                 "kind": s.kind,
                 "seen": False,
+                **personalization.prompt_facts(s, kind),
             }
             for s in pool
         ],

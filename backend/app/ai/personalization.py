@@ -29,7 +29,7 @@ from app.ai.provider import AIProvider, AIProviderError, GenerationRequest
 from app.ai.schemas import ExerciseOutput
 from app.clinical.models import ConstraintSet
 from app.core.config import get_settings
-from app.exercises.cues import phonemic_cue
+from app.exercises.cues import phonemic_cue, phonemic_prefix
 from app.exercises.generator import (
     NoSafeExercise,
     Proposal,
@@ -46,7 +46,7 @@ from app.performance.models import PerformanceProfile
 from app.performance.progression import clamp
 from app.sessions import resets
 from app.sessions.models import ExerciseResponse, PracticeSession
-from app.validation.exercise import check_clinical, check_safety, check_schema
+from app.validation.exercise import check_clinical, check_safety, check_schema, leak_terms
 
 TASK = "exercise.personalize"
 MAX_ATTEMPTS = 2
@@ -144,6 +144,7 @@ async def build_input(
                 "difficulty": s.difficulty,
                 "kind": s.kind,
                 "seen": s.id in recent,
+                **prompt_facts(s, exercise_type),
             }
             for s in pool
         ],
@@ -152,6 +153,19 @@ async def build_input(
 
 # Types the AI personalises (picture choice and the cue for it). The newer types are
 # rule-based: their content is fixed by the catalogue (word, sentence frame, choices).
+def prompt_facts(stim: Stimulus, exercise_type: str) -> dict[str, Any]:
+    """Facts the prompt hands the model instead of asking it to work them out: the app knows
+    the first letters and the words the validators reject, and small models get both wrong."""
+    if exercise_type == ExerciseType.PICTURE_NAMING:
+        return {
+            "avoid_words": leak_terms(stim, exercise_type),
+            "first_letters": phonemic_prefix(stim.target),
+        }
+    if exercise_type == ExerciseType.PICTURE_DESCRIPTION:
+        return {"avoid_words": leak_terms(stim, exercise_type)}
+    return {}
+
+
 AI_TYPES = frozenset(
     {
         ExerciseType.PICTURE_NAMING,
@@ -169,7 +183,7 @@ def build_request(inp: dict[str, Any]) -> GenerationRequest:
         system_prompt=system,
         user_prompt=user,
         input=inp,
-        output_schema=exercise_schema(inp["exercise_type"]),
+        output_schema=exercise_schema(inp["exercise_type"], [c["slug"] for c in inp["candidates"]]),
     )
 
 
@@ -183,10 +197,13 @@ _TYPE_FIELDS = {
 _OPTIONAL = {"semantic_cue", "phonemic_cue", "hint"}
 
 
-def exercise_schema(exercise_type: str) -> dict[str, Any]:
+def exercise_schema(exercise_type: str, slugs: list[str] | None = None) -> dict[str, Any]:
+    """`slugs` limits the picture to this request's candidates: the decoder cannot invent one."""
     schema = inline_schema(ExerciseOutput.model_json_schema())
     wanted = _TYPE_FIELDS[exercise_type]
     props = schema["properties"]
+    if slugs:
+        props["stimulus_slug"]["enum"] = slugs
     for name in _OPTIONAL - set(wanted):
         props.pop(name, None)
     for name in wanted:
