@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { apiFetch } from "@/lib/api/client";
+import { apiFetch, markSigningOut } from "@/lib/api/client";
 
 export function SignOutButton() {
   const router = useRouter();
@@ -13,6 +13,7 @@ export function SignOutButton() {
 
   async function signOut() {
     setBusy(true);
+    markSigningOut();
     try {
       await apiFetch("/auth/logout", { method: "POST" });
     } finally {

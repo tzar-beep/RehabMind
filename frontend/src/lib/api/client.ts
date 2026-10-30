@@ -11,6 +11,13 @@ export class ApiError extends Error {
 
 const FALLBACK_MESSAGE = "Something went wrong. Please try again.";
 
+let signingOut = false;
+
+/** Requests still in flight when the patient signs out will get a 401: that is not an expiry. */
+export function markSigningOut() {
+  signingOut = true;
+}
+
 /** Browser-side call to the same-origin API. Cookies are sent automatically. */
 export async function apiFetch<T extends z.ZodType>(
   path: string,
@@ -18,6 +25,7 @@ export async function apiFetch<T extends z.ZodType>(
   schema?: T,
 ): Promise<z.infer<T> | undefined> {
   const { json, ...rest } = init;
+  if (path === "/auth/login") signingOut = false;
   let res: Response;
   try {
     res = await fetch(`/api/v1${path}`, {
@@ -35,7 +43,7 @@ export async function apiFetch<T extends z.ZodType>(
       "We couldn't reach the server. Check your connection and try again.",
     );
   }
-  if (res.status === 401 && path !== "/auth/login") {
+  if (res.status === 401 && path !== "/auth/login" && !signingOut) {
     // Session expired (30 min idle or 12 h): back to sign-in, with an explanation.
     // A full page load on purpose: it drops all in-memory state of the expired session.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
