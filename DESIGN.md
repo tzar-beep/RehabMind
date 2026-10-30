@@ -4,7 +4,7 @@ RehabMind's visual world is a **patient ID wristband**: the calm, printed object
 
 ## Parts
 
-- **Strap** (`.strap`, `.strap-stud`, `.strap-hole` in `globals.css`): moulded mint plastic. It is the header on every signed-in page (`AppShell`) and runs behind the card on the sign-in page. Holes and studs are decoration: always `aria-hidden`, and hidden when space is short.
+- **Strap** (`.strap`, `.strap-stud`, `.strap-hole` in `globals.css`): moulded mint plastic. It is the header on every signed-in page (`AppShell`) and runs behind the card on the sign-in page. Holes and studs are decoration: always `aria-hidden`, hidden when space is short, and only on the sign-in page. In a working header they read as controls or progress steps, so the header keeps the moulded strap alone.
 - **Label**: a white card, `rounded-card border border-line bg-surface shadow-card`. This is the default container. Never nest labels; use `rounded-control` with `bg-canvas` or `bg-accent-soft` for a panel inside one.
 - **Label strip** (`LabelStrip`): the teal strip along the top of a label. Only for a screen's one main panel, never on every card.
 - **Printed cells** (`Facts`, the sign-in details): figures and details in fixed cells split by 1px rules. Rank comes from weight and rules, not from extra type sizes or icons.

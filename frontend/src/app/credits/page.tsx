@@ -36,10 +36,6 @@ export default async function CreditsPage() {
       <header className="strap">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
           <p className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              className="strap-stud hidden size-7 shrink-0 rounded-full sm:block"
-            />
             <BrandMark />
           </p>
           <Link

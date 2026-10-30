@@ -27,7 +27,7 @@ function level(pictures: number): number {
 }
 
 /** Monday of the week containing `d`, at midnight local time. */
-function weekStart(d: Date): Date {
+export function weekStart(d: Date): Date {
   const m = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   m.setDate(m.getDate() - ((m.getDay() + 6) % 7));
   return m;

@@ -4,7 +4,7 @@ import { CountUp } from "@/components/CountUp";
 import type { PracticeActivity } from "@/lib/api/schemas";
 
 import { MoodCheckin } from "./MoodCheckin";
-import { PracticeCalendar, picturesByDay } from "./PracticeCalendar";
+import { PracticeCalendar, picturesByDay, weekStart } from "./PracticeCalendar";
 
 const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
@@ -26,14 +26,16 @@ export function WeekActivity({
 }) {
   const byDay = picturesByDay(activity);
   const today = new Date();
-  const thisWeek = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
+  // "This week" starts on Monday, the same week the patient's goals count.
+  const monday = weekStart(today);
+  const thisWeek = Array.from({ length: ((today.getDay() + 6) % 7) + 1 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
     return byDay.get(dayKey(d)) ?? 0;
   });
   const activeDays = thisWeek.filter((n) => n > 0).length;
   const who = name ?? "You";
-  const message = thisWeek[0]
+  const message = byDay.get(dayKey(today))
     ? `${who} practised today. Well done.`
     : activeDays
       ? `${who} practised on ${activeDays} ${activeDays === 1 ? "day" : "days"} this week.`

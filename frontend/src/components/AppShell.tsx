@@ -43,10 +43,6 @@ export function AppShell({
           className={`mx-auto flex ${width} items-center justify-between gap-4 px-6 py-2`}
         >
           <p className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              className="strap-stud hidden size-7 shrink-0 rounded-full sm:block"
-            />
             <BrandMark />
             {roleLabel && (
               <span className="hidden border-l border-accent/30 pl-3 text-base text-ink-muted sm:inline">
@@ -54,18 +50,6 @@ export function AppShell({
               </span>
             )}
           </p>
-          {/* The strap's punched holes, in whatever room the header has left. */}
-          <span
-            aria-hidden="true"
-            className="hidden h-3.5 min-w-0 flex-1 justify-evenly overflow-hidden lg:flex"
-          >
-            {[0, 1, 2, 3, 4].map((i) => (
-              <span
-                key={i}
-                className="strap-hole size-3.5 shrink-0 rounded-full"
-              />
-            ))}
-          </span>
           <div className="flex items-center gap-3">
             {/* On a phone the header has no room: the home page shows the link instead. */}
             {fit && (
