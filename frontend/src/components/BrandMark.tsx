@@ -1,25 +1,26 @@
 import { cn } from "@/lib/utils";
 
 /**
- * RehabMind logo mark: a speech bubble (language) holding three rising bars (steady
- * progress), on a deep-teal tile. Decorative; the wordmark carries the name.
+ * RehabMind logo mark: an R with a break in its stem, where one dot holds the gap like
+ * a word coming back, on a teal tile. Decorative; the wordmark carries the name.
+ * Masters and usage rules are in brand/logo/.
  */
 export function BrandLogo({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 40 40"
+      viewBox="0 0 256 256"
       aria-hidden="true"
       focusable="false"
       className={cn("size-9 shrink-0", className)}
     >
-      <rect width="40" height="40" rx="11" fill="#0f6e6e" />
-      <path
-        d="M13 9h14a5 5 0 0 1 5 5v7a5 5 0 0 1-5 5H18l-5.5 4.5V26H13a5 5 0 0 1-5-5v-7a5 5 0 0 1 5-5Z"
-        fill="#ffffff"
-      />
-      <rect x="13.5" y="18" width="3" height="4" rx="1.5" fill="#0f6e6e" />
-      <rect x="18.5" y="15.5" width="3" height="6.5" rx="1.5" fill="#0f6e6e" />
-      <rect x="23.5" y="13" width="3" height="9" rx="1.5" fill="#5ec4b6" />
+      <rect width="256" height="256" rx="70" fill="#0f6e6e" />
+      <g transform="translate(32.47 33.92) scale(0.735)">
+        <path
+          d="M65 20H141A72 72 0 0 1 168.92 158.36L198.16 209A18 18 0 0 1 166.98 227L130.61 164H83V218A18 18 0 0 1 47 218V146A18 18 0 0 1 65 128H141A36 36 0 0 0 141 56H65A18 18 0 0 1 65 20Z"
+          fill="#ffffff"
+        />
+        <circle cx="65" cy="92" r="16" fill="#f4b860" />
+      </g>
     </svg>
   );
 }

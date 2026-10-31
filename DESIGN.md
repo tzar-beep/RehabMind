@@ -25,7 +25,7 @@ Tokens live in `@theme` in `globals.css`. Use them rather than raw values.
 | `brand-deep` | `#0a3d3e` | Word chips on photos, AI pipeline map |
 | Strap gradient | `#e3f3f0` to `#b3dbd4` | Strap only |
 
-Teal is the only accent. Success, warning and danger are for state, never decoration. All text pairs meet WCAG 2.1 AA.
+Teal is the only accent. The one exception is the logo's dot (`#f4b860` on dark and teal, `#c8652b` on light), which appears only in the logo, never in the interface. Success, warning and danger are for state, never decoration. All text pairs meet WCAG 2.1 AA.
 
 ## Type
 

@@ -1,0 +1,34 @@
+{
+  "brand": "RehabMind",
+  "tagline": "Short, calm practice between therapy sessions",
+  "brief": "A home practice app for adults recovering language after a stroke. Often older, may use one hand, tires quickly. The logo should feel calm, hopeful and clinical but warm.",
+  "adjectives": ["calm", "hopeful", "clinical", "warm"],
+  "criteria": "Success: readable at 16 px, works in one colour, feels steady rather than childlike, and avoids the brain, heart and pulse-line clichés of health apps.",
+  "mockups": ["app-icon", "website", "favicon-tab", "business-card", "signage", "social"],
+  "nav": ["Practice", "Progress", "Family"],
+  "brand_color": "#0F6E6E",
+  "tile_color": "#0F6E6E",
+  "greyscale": false,
+  "designer": "RehabMind",
+  "round": 2,
+  "concepts": [
+    {
+      "name": "Held R",
+      "symbol": "kit-c-held-r/master/symbol.svg",
+      "lockup": "kit-c-held-r/master/horizontal.svg",
+      "symbol_on_tile": "kit-c-held-r/master/symbol-on-dark.svg",
+      "lockup_on_dark": "kit-c-held-r/master/horizontal-on-dark.svg",
+      "idea": "An R with a break in its stem, where one dot holds the gap like a word coming back.",
+      "rationale": [
+        "Stays a clear R from 16 px upward",
+        "Steady construction reads clinical, rounded ends and the warm dot read human",
+        "Links directly to the name, so it can stand alone as the app icon"
+      ]
+    }
+  ],
+  "recommendation": "Held R is the chosen logo: the clearest mark at every size, and it links directly to the name.",
+  "next_steps": [
+    "Run a professional trademark search before any public pilot",
+    "Have the printer proof the colours before any print use"
+  ]
+}
